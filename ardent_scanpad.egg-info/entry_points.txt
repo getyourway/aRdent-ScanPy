@@ -1,0 +1,2 @@
+[console_scripts]
+scanpad-cli = ardent_scanpad.cli:main

@@ -1,0 +1,23 @@
+# Include documentation and license files
+include README.md
+include LICENSE
+include CHANGELOG.md
+
+# Include examples
+recursive-include examples *.py *.md
+
+# Include package data
+recursive-include ardent_scanpad *.py *.typed
+
+# Exclude development files
+exclude setup.cfg
+exclude tox.ini
+exclude .gitignore
+exclude .flake8
+exclude .pre-commit-config.yaml
+recursive-exclude tests *
+recursive-exclude .github *
+recursive-exclude docs/_build *
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude .DS_Store
