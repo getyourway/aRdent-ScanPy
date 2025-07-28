@@ -62,3 +62,21 @@ class ValidationError(ScanPadError):
     """Raised when data validation fails"""
     def __init__(self, message: str = "Data validation failed"):
         super().__init__(message)
+
+
+class OTAError(ScanPadError):
+    """Raised when OTA update operations fail"""
+    def __init__(self, message: str = "OTA operation failed"):
+        super().__init__(message)
+
+
+class AuthenticationError(ScanPadError):
+    """Raised when authentication fails (API key, credentials, etc.)"""
+    def __init__(self, message: str = "Authentication failed"):
+        super().__init__(message)
+
+
+class NetworkError(ScanPadError):
+    """Raised when network operations fail"""
+    def __init__(self, message: str = "Network operation failed"):
+        super().__init__(message)

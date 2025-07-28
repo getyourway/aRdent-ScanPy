@@ -227,6 +227,7 @@ class Commands:
     OTA_CHECK_VERSION = 0x60      # CMD_OTA_CHECK_VERSION (was wrongly 0x40!)
     OTA_START = 0x61              # CMD_OTA_START (was wrongly 0x41!)
     OTA_GET_STATUS = 0x62         # CMD_OTA_GET_STATUS
+    OTA_STATUS = 0x62             # Alias for OTA_GET_STATUS
     OTA_CANCEL = 0x63             # CMD_OTA_CANCEL
     OTA_GET_PROGRESS = 0x64       # CMD_OTA_GET_PROGRESS
     

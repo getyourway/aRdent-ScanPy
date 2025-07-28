@@ -9,8 +9,13 @@ import asyncio
 import logging
 from typing import Optional, Dict, Any, Union
 
+import os
+import hashlib
+import aiohttp
 from .base import BaseController, Commands
-from ..core.exceptions import ConfigurationError
+from ..core.exceptions import (
+    ConfigurationError, OTAError, AuthenticationError, NetworkError
+)
 from ..utils.constants import DeviceOrientations, BuzzerMelodies
 
 logger = logging.getLogger(__name__)
@@ -271,15 +276,51 @@ class BuzzerSubController:
 
 
 class OTASubController:
-    """OTA update sub-component of DeviceController"""
+    """
+    Secure OTA update sub-component of DeviceController
+    
+    Provides firmware update functionality with authentication.
+    Requires proper credentials for accessing firmware binaries.
+    
+    Note:
+        This functionality requires authentication credentials.
+        Public users will not be able to use OTA without proper API keys.
+    """
     
     def __init__(self, parent_controller):
         self.parent = parent_controller
         self._logger = parent_controller._logger
+        self._api_key = None
+        self._firmware_source = None
+    
+    def configure_auth(self, api_key: Optional[str] = None, 
+                      firmware_source: Optional[str] = None) -> None:
+        """
+        Configure authentication for OTA updates
+        
+        Args:
+            api_key: API key for accessing firmware (or set via environment)
+            firmware_source: Base URL for firmware downloads (optional)
+            
+        Note:
+            If not provided, credentials are read from environment:
+            - ARDENT_OTA_API_KEY
+            - ARDENT_FIRMWARE_SOURCE
+        """
+        # API key from parameter or environment
+        self._api_key = api_key or os.environ.get('ARDENT_OTA_API_KEY')
+        
+        # Firmware source from parameter or environment
+        self._firmware_source = firmware_source or os.environ.get(
+            'ARDENT_FIRMWARE_SOURCE',
+            'https://api.getyourway.com/firmware'  # Private API endpoint
+        )
+        
+        if not self._api_key:
+            self._logger.warning("No OTA API key configured. OTA updates will fail.")
     
     async def check_version(self) -> Optional[str]:
-        """Get current firmware version"""
-        # Get firmware version from device
+        """Get current firmware version from device"""
         response = await self.parent._send_command_and_wait(Commands.OTA_CHECK_VERSION, bytes())
         
         if not response or len(response) < 3:
@@ -290,23 +331,181 @@ class OTASubController:
             if len(response) >= 3 + version_len:
                 try:
                     version = response[3:3+version_len].decode('utf-8')
-                    self._logger.info(f"📱 Current firmware version: {version}")
+                    self._logger.info(f"Current firmware version: {version}")
                     return version
                 except UnicodeDecodeError:
                     self._logger.error("Failed to decode version string")
         
         return None
     
+    async def check_for_update(self, current_version: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Check if firmware update is available
+        
+        Args:
+            current_version: Current version (auto-detected if not provided)
+            
+        Returns:
+            Update information dict with keys:
+            - available: bool
+            - latest_version: str
+            - download_url: str (if authenticated)
+            - changelog: str
+            
+        Raises:
+            AuthenticationError: If API key is invalid
+            NetworkError: If network request fails
+        """
+        if not self._api_key:
+            raise AuthenticationError("OTA API key not configured")
+        
+        # Auto-detect current version if not provided    
+        if current_version is None:
+            current_version = await self.check_version()
+            if not current_version:
+                raise ConfigurationError("Could not determine current firmware version")
+        
+        headers = {
+            'Authorization': f'Bearer {self._api_key}',
+            'User-Agent': 'aRdent-ScanPy/1.0'
+        }
+        
+        try:
+            async with aiohttp.ClientSession() as session:
+                url = f"{self._firmware_source}/check"
+                params = {'current': current_version, 'device': 'scanpad'}
+                
+                async with session.get(url, headers=headers, params=params) as resp:
+                    if resp.status == 401:
+                        raise AuthenticationError("Invalid OTA API key")
+                    elif resp.status != 200:
+                        raise NetworkError(f"Server returned {resp.status}")
+                        
+                    data = await resp.json()
+                    return data
+                    
+        except aiohttp.ClientError as e:
+            raise NetworkError(f"Network error: {e}")
+    
+    async def start_update(self, firmware_url: Optional[str] = None,
+                          progress_callback: Optional[callable] = None) -> bool:
+        """
+        Start secure OTA update process
+        
+        Args:
+            firmware_url: Direct firmware URL (optional, uses check_for_update if not provided)
+            progress_callback: Callback for progress updates (0-100)
+            
+        Returns:
+            True if update successful
+            
+        Raises:
+            OTAError: If update fails
+            AuthenticationError: If not authenticated
+        """
+        # Send CHECK_VERSION command first (required by ESP32)
+        self._logger.info("Checking device OTA readiness...")
+        check_response = await self.parent._send_command_and_wait(
+            Commands.OTA_CHECK_VERSION, bytes()
+        )
+        
+        if not check_response or check_response[0] != 0:
+            raise OTAError("Device not ready for OTA update")
+            
+        # Send START_OTA command
+        self._logger.info("Starting OTA service on device...")
+        start_response = await self.parent._send_command_and_wait(
+            Commands.OTA_START, bytes()
+        )
+        
+        if not start_response or start_response[0] != 0:
+            raise OTAError("Failed to start OTA service")
+            
+        # Device creates WiFi AP "aRdent ScanPad"
+        self._logger.info("Device OTA service started. WiFi AP: 'aRdent ScanPad'")
+        
+        # Monitor OTA progress
+        return await self._monitor_ota_progress(progress_callback)
+    
+    async def get_status(self) -> Dict[str, Any]:
+        """Get current OTA status from device"""
+        response = await self.parent._send_command_and_wait(
+            Commands.OTA_STATUS, bytes()
+        )
+        
+        if not response or len(response) < 3:
+            return {'state': 5, 'progress': 0, 'state_name': 'error'}  # OTA_STATE_ERROR
+            
+        state = response[1]
+        progress = response[2]
+        
+        state_names = {
+            0: "idle", 1: "checking", 2: "downloading", 
+            3: "installing", 4: "success", 5: "error"
+        }
+        
+        return {
+            'state': state,
+            'state_name': state_names.get(state, "unknown"),
+            'progress': progress
+        }
+    
+    async def cancel_update(self) -> bool:
+        """Cancel ongoing OTA update"""
+        success = await self.parent._send_command(Commands.OTA_CANCEL, bytes())
+        if success:
+            self._logger.info("OTA update cancelled")
+        return success
+    
+    async def _monitor_ota_progress(self, progress_callback: Optional[callable] = None) -> bool:
+        """Monitor OTA progress until completion"""
+        last_progress = -1
+        error_count = 0
+        
+        while True:
+            try:
+                status = await self.get_status()
+                state = status['state']
+                progress = status['progress']
+                
+                # Report progress if changed
+                if progress != last_progress:
+                    last_progress = progress
+                    if progress_callback:
+                        progress_callback(progress)
+                    self._logger.info(f"OTA Progress: {progress}% - {status['state_name']}")
+                
+                # Check terminal states
+                if state == 4:  # OTA_STATE_SUCCESS
+                    self._logger.info("OTA update completed successfully")
+                    return True
+                elif state == 5:  # OTA_STATE_ERROR
+                    raise OTAError("OTA update failed on device")
+                    
+                # Reset error count on successful status
+                error_count = 0
+                
+            except Exception as e:
+                error_count += 1
+                if error_count > 5:
+                    raise OTAError(f"Lost communication during OTA: {e}")
+                    
+            await asyncio.sleep(2)  # Check every 2 seconds
+    
     async def start(self) -> bool:
-        """Start OTA update process"""
+        """
+        Start basic OTA process (legacy method)
+        
+        For secure updates, use start_update() instead.
+        """
         success = await self.parent._send_command(Commands.OTA_START, bytes())
         
         if success:
-            self._logger.info("🔄 OTA update process started")
-            self._logger.info("📶 Device should create WiFi AP: 'aRdent ScanPad'")
-            self._logger.info("🌐 Upload firmware to: http://192.168.4.1/firmware")
+            self._logger.info("OTA update process started")
+            self._logger.info("Device should create WiFi AP: 'aRdent ScanPad'")
+            self._logger.info("Upload firmware to: http://192.168.4.1/firmware")
         else:
-            self._logger.error("❌ Failed to start OTA process")
+            self._logger.error("Failed to start OTA process")
         
         return success
 
