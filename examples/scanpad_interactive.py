@@ -16,7 +16,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from ardent_scanpad import ScanPad
 from ardent_scanpad.core.exceptions import (
-    ConfigurationError, InvalidParameterError, TimeoutError
+    ConfigurationError, InvalidParameterError, TimeoutError,
+    AuthenticationError, NetworkError, OTAError
 )
 from ardent_scanpad.utils.constants import (
     KeyIDs, KeyTypes, HIDKeyCodes, HIDModifiers, ConsumerCodes,
