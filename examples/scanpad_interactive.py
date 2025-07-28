@@ -15,6 +15,9 @@ import json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from ardent_scanpad import ScanPad
+from ardent_scanpad.core.exceptions import (
+    ConfigurationError, InvalidParameterError, TimeoutError
+)
 from ardent_scanpad.utils.constants import (
     KeyIDs, KeyTypes, HIDKeyCodes, HIDModifiers, ConsumerCodes,
     DeviceOrientations, KeyboardLayouts, LEDs
@@ -648,6 +651,10 @@ class ScanPadInteractive:
         print(f"  Enabled: {'Yes' if config.get('enabled', False) else 'No'}")
         print(f"  Actions: {config.get('action_count', 0)}")
         
+        # Debug: show raw config
+        if config.get('action_count', 0) == 1:
+            print(f"  Debug - Raw config: {config}")
+        
         for i, action in enumerate(config.get('actions', [])):
             print(f"\n  Action {i + 1}:")
             action_type = action.get('type', 0)
@@ -813,12 +820,23 @@ class ScanPadInteractive:
         print("\nModifiers (combine with +):")
         print("  1=Ctrl, 2=Shift, 4=Alt, 8=Win/Cmd")
         print("  Example: 3 = Ctrl+Shift")
+        print("  Common combinations: 3=Ctrl+Shift, 5=Ctrl+Alt, 6=Shift+Alt")
         
         modifiers = input("Enter modifiers (default 0): ").strip()
         try:
+            # Handle mathematical expressions like "1+2"
+            if modifiers and ('+' in modifiers or '-' in modifiers or '*' in modifiers):
+                print(f"❌ Invalid input: '{modifiers}'")
+                print("   Please enter the combined value directly (e.g., 3 for Ctrl+Shift)")
+                print("   Don't use mathematical operators like '1+2'")
+                return None
             modifiers = int(modifiers) if modifiers else 0
+            if modifiers < 0 or modifiers > 255:
+                print(f"❌ Modifier value {modifiers} out of range (0-255)")
+                return None
         except ValueError:
-            modifiers = 0
+            print(f"❌ Invalid modifier value: '{modifiers}'. Please enter a number.")
+            return None
         
         delay = input("Delay after action (ms, default 0): ").strip()
         try:
@@ -891,13 +909,14 @@ class ScanPadInteractive:
             
             print("\nOptions:")
             print("1. Add key configuration")
-            print("2. View pending configurations")
-            print("3. Send all (burst mode)")
-            print("4. Send all (sequential)")
-            print("5. Clear pending")
+            print("2. Add standard layout (1-9, arrows, ABCD)")
+            print("3. View pending configurations")
+            print("4. Send all (burst mode)")
+            print("5. Send all (sequential)")
+            print("6. Clear pending")
             print("0. Cancel and back")
             
-            choice = input("\nSelect option (0-5): ").strip()
+            choice = input("\nSelect option (0-6): ").strip()
             
             if choice == '0':
                 self.pending_key_configs.clear()
@@ -905,14 +924,16 @@ class ScanPadInteractive:
             elif choice == '1':
                 await self._add_batch_key()
             elif choice == '2':
-                self._view_pending_configs()
+                await self._add_standard_layout()
             elif choice == '3':
+                self._view_pending_configs()
+            elif choice == '4':
                 await self._send_batch_burst()
                 break
-            elif choice == '4':
+            elif choice == '5':
                 await self._send_batch_sequential()
                 break
-            elif choice == '5':
+            elif choice == '6':
                 self.pending_key_configs.clear()
                 print("✅ Pending configurations cleared")
             else:
@@ -945,6 +966,56 @@ class ScanPadInteractive:
             # Detailed configuration (reuse single key logic)
             # ... (similar to _configure_single_key but adds to pending)
             pass
+    
+    async def _add_standard_layout(self):
+        """Add standard keypad layout (1-9, arrows, ABCD)"""
+        print("\n🎹 STANDARD LAYOUT")
+        print("-" * 30)
+        print("This will configure:")
+        print("  Row 0: [1] [2] [3] [A]")
+        print("  Row 1: [4] [5] [6] [B]")
+        print("  Row 2: [7] [8] [9] [C]")
+        print("  Row 3: [←] [0] [→] [D]")
+        
+        if input("\nConfigure standard layout? (y/n): ").lower() != 'y':
+            return
+        
+        # Define the standard layout mapping
+        # Matrix position (row * 4 + col) -> action
+        standard_layout = {
+            # Row 0: 1, 2, 3, A
+            0: self.scanpad.keys.create_text_action("1"),
+            1: self.scanpad.keys.create_text_action("2"),
+            2: self.scanpad.keys.create_text_action("3"),
+            3: self.scanpad.keys.create_text_action("A"),
+            
+            # Row 1: 4, 5, 6, B
+            4: self.scanpad.keys.create_text_action("4"),
+            5: self.scanpad.keys.create_text_action("5"),
+            6: self.scanpad.keys.create_text_action("6"),
+            7: self.scanpad.keys.create_text_action("B"),
+            
+            # Row 2: 7, 8, 9, C
+            8: self.scanpad.keys.create_text_action("7"),
+            9: self.scanpad.keys.create_text_action("8"),
+            10: self.scanpad.keys.create_text_action("9"),
+            11: self.scanpad.keys.create_text_action("C"),
+            
+            # Row 3: Left Arrow, 0, Right Arrow, D
+            12: self.scanpad.keys.create_hid_action(HIDKeyCodes.LEFT_ARROW),
+            13: self.scanpad.keys.create_text_action("0"),
+            14: self.scanpad.keys.create_hid_action(HIDKeyCodes.RIGHT_ARROW),
+            15: self.scanpad.keys.create_text_action("D"),
+        }
+        
+        # Add all keys to pending configurations
+        added_count = 0
+        for key_id, action in standard_layout.items():
+            self.pending_key_configs[key_id] = [action]
+            added_count += 1
+        
+        print(f"\n✅ Added {added_count} keys to pending configurations")
+        print("Use 'Send all' to apply the layout to your device")
     
     def _parse_quick_actions(self, quick: str) -> Optional[List[Dict]]:
         """Parse quick action format"""
