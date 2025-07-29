@@ -544,7 +544,7 @@ class PeripheralController(BaseController):
         success = await self._send_command(Commands.DEVICE_SET_ORIENTATION, payload)
         
         if success:
-            self._logger.debug(f"📱 Orientation set to {orientation}")
+            self._logger.debug(f"Orientation set to {orientation}")
         return success
     
     async def get_orientation(self) -> Optional[int]:
@@ -581,7 +581,7 @@ class PeripheralController(BaseController):
                 return False
                 
             if response[0] == 0x00:  # Success
-                self._logger.debug(f"🌐 Language set to 0x{layout_id:04X}")
+                self._logger.debug(f"Language set to 0x{layout_id:04X}")
                 return True
             else:  # Error status
                 self._logger.error(f"Device rejected layout 0x{layout_id:04X} (status: 0x{response[0]:02X})")
@@ -728,28 +728,28 @@ class PeripheralController(BaseController):
                 "id": DeviceOrientations.PORTRAIT,
                 "name": "Portrait",
                 "description": "0° rotation - Normal vertical orientation",
-                "icon": "📱",
+                "icon": "portrait",
                 "rotation_degrees": 0
             },
             DeviceOrientations.LANDSCAPE: {
                 "id": DeviceOrientations.LANDSCAPE,
                 "name": "Landscape",
                 "description": "90° clockwise rotation - Horizontal orientation",
-                "icon": "📱📐",
+                "icon": "landscape",
                 "rotation_degrees": 90
             },
             DeviceOrientations.REVERSE_PORTRAIT: {
                 "id": DeviceOrientations.REVERSE_PORTRAIT,
                 "name": "Reverse Portrait",
                 "description": "180° rotation - Upside down vertical",
-                "icon": "🙃📱",
+                "icon": "reverse_portrait",
                 "rotation_degrees": 180
             },
             DeviceOrientations.REVERSE_LANDSCAPE: {
                 "id": DeviceOrientations.REVERSE_LANDSCAPE,
                 "name": "Reverse Landscape",
                 "description": "270° clockwise rotation - Reverse horizontal",
-                "icon": "🙃📱📐",
+                "icon": "reverse_landscape",
                 "rotation_degrees": 270
             }
         }

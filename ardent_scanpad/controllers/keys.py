@@ -148,7 +148,7 @@ class KeyConfigurationController(BaseController):
             
         state = "enabled" if enabled else "disabled"
         key_name = KeyIDs.NAMES.get(key_id, f"Key {key_id}")
-        logger.info(f"🔧 {key_name} {state}")
+        logger.info(f"Key configuration: {key_name} {state}")
         return True
     
     async def get_all_configs(self) -> Dict[int, Dict[str, Any]]:
