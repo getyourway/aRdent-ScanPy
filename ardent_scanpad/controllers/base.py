@@ -76,10 +76,10 @@ class BaseController:
     # ========================================
     
     async def _send_command(self, command_id: int, payload: bytes = b'') -> bool:
-        """Send command and wait for ESP32 response, returns success status"""
+        """Send command and wait for device response, returns success status"""
         try:
             response = await self._send_command_and_wait(command_id, payload)
-            # Check ESP32 status byte (0x00 = success)
+            # Check device status byte (0x00 = success)
             return response[0] == 0x00
         except (ConfigurationError, TimeoutError) as e:
             self._logger.error(f"Command 0x{command_id:02X} failed: {e}")
@@ -161,7 +161,7 @@ class BaseController:
             raise ConfigurationError(f"Command failed with status 0x{response[0]:02X}")
 
 
-# COMPLETE Command IDs - SYNCHRONIZED with ESP32 command_types.h
+# COMPLETE Command IDs - Device command definitions
 class Commands:
     """
     Centralized command IDs

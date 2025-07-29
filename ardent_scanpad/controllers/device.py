@@ -233,8 +233,8 @@ class OTASubController:
     """
     Secure OTA update sub-component of DeviceController
     
-    Provides firmware update functionality with authentication.
-    Requires proper credentials for accessing firmware binaries.
+    Provides device firmware update functionality with authentication.
+    Requires proper credentials for accessing update binaries.
     
     Note:
         This functionality requires authentication credentials.
@@ -269,9 +269,9 @@ class OTASubController:
         # API key from parameter or environment
         self._api_key = api_key or os.environ.get('ARDENT_OTA_API_KEY')
         
-        # Firmware source from parameter or environment
+        # Update source from parameter or environment
         self._firmware_source = firmware_source or os.environ.get(
-            'ARDENT_FIRMWARE_SOURCE',
+            'ARDENT_UPDATE_SOURCE',
             'https://api.github.com/repos/getyourway/aRdent-ScanPad'  # GitHub API endpoint
         )
         
@@ -396,7 +396,7 @@ class OTASubController:
             OTAError: If update fails
             AuthenticationError: If not authenticated
         """
-        # Send CHECK_VERSION command first (required by ESP32)
+        # Send CHECK_VERSION command first (required by device)
         self._logger.info("Checking device OTA readiness...")
         check_response = await self.parent._send_command_and_wait(
             Commands.OTA_CHECK_VERSION, bytes()
@@ -516,7 +516,7 @@ class PeripheralController(BaseController):
     - Device settings (direct methods)
     - OTA updates (via .ota sub-controller)
     
-    Architecture aligns with ESP32 firmware domains:
+    Architecture aligns with device firmware domains:
     - Config Domain (0x10-0x2F) → KeyConfigurationController (config_commands characteristic)
     - Device Domain (0x10-0x7F) → PeripheralController (device_commands characteristic)
     Command IDs can be reused in different domains due to BLE characteristic separation
@@ -584,7 +584,7 @@ class PeripheralController(BaseController):
                 self._logger.debug(f"🌐 Language set to 0x{layout_id:04X}")
                 return True
             else:  # Error status
-                self._logger.error(f"ESP32 rejected layout 0x{layout_id:04X} (status: 0x{response[0]:02X})")
+                self._logger.error(f"Device rejected layout 0x{layout_id:04X} (status: 0x{response[0]:02X})")
                 return False
                 
         except Exception as e:
@@ -805,11 +805,11 @@ class PeripheralController(BaseController):
                 "max_blink_frequency": 20.0,
                 "min_blink_frequency": 0.1
             },
-            "esp32_mapping": {
-                "description": "LED IDs map directly to ESP32 firmware LED commands",
-                "individual_gpios": {
-                    1: "GPIO7 - Green LED 1",
-                    2: "GPIO15 - Green LED 2"
+            "device_mapping": {
+                "description": "LED IDs map directly to device LED commands",
+                "individual_leds": {
+                    1: "Green LED 1",
+                    2: "Green LED 2"
                 },
                 "rgb_central_led": "Central RGB LED with 7 color modes (IDs 3-9)"
             }
@@ -883,7 +883,7 @@ class PeripheralController(BaseController):
                 "orientations": self.get_supported_orientations(),
                 "battery": {
                     "monitoring": True,
-                    "fuel_gauge": "MAX17261",
+                    "fuel_gauge": "Integrated",
                     "auto_shutdown": True,
                     "configurable_timeouts": True
                 },
@@ -908,7 +908,7 @@ class PeripheralController(BaseController):
                     "config_domain": "Key/button configuration",
                     "device_domain": "Hardware control (LED/Buzzer/Settings/OTA)"
                 },
-                "command_response": "All commands return ESP32 status confirmation",
+                "command_response": "All commands return device status confirmation",
                 "async_operations": True,
                 "batch_operations": "Limited support"
             },

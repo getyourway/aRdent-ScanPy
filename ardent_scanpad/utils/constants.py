@@ -34,10 +34,10 @@ class KeyIDs:
     MATRIX_3_3 = 15  # Row 3, Col 3 (typically 'D')
     
     # Button actions (16-19) - external buttons
-    SCAN_TRIGGER_DOUBLE = 16  # GPIO13 double-press
-    SCAN_TRIGGER_LONG = 17    # GPIO13 long-press  
-    POWER_SINGLE = 18         # GPIO6 single-press
-    POWER_DOUBLE = 19         # GPIO6 double-press (reserved for shutdown)
+    SCAN_TRIGGER_DOUBLE = 16  # Scan trigger double-press
+    SCAN_TRIGGER_LONG = 17    # Scan trigger long-press  
+    POWER_SINGLE = 18         # Power button single-press
+    POWER_DOUBLE = 19         # Power button double-press
     
     # Collections
     ALL_MATRIX = list(range(0, 16))
@@ -127,31 +127,31 @@ class DeviceOrientations:
 
 class LEDs:
     """LED identifiers and configurations"""
-    # Individual LEDs (ESP32 firmware supports only 1,2 as individual LEDs)
-    GREEN_1 = 1    # GPIO7 - Green LED 1
-    GREEN_2 = 2    # GPIO15 - Green LED 2
+    # Individual LEDs
+    GREEN_1 = 1    # Green LED 1
+    GREEN_2 = 2    # Green LED 2
     
-    # RGB Color modes for central LED (3, 6-9) - matches ESP32 firmware
-    RGB_RED = 3      # ESP32 LED ID 3 = RGB Red mode
-    RGB_GREEN = 4    # ESP32 LED ID 4 = RGB Green mode
-    RGB_BLUE = 5     # ESP32 LED ID 5 = RGB Blue mode
-    RGB_YELLOW = 6   # ESP32 LED ID 6 = RGB Yellow mode
-    RGB_CYAN = 7     # ESP32 LED ID 7 = RGB Cyan mode
-    RGB_MAGENTA = 8  # ESP32 LED ID 8 = RGB Magenta mode
-    RGB_WHITE = 9    # ESP32 LED ID 9 = RGB White mode
+    # RGB Color modes for central LED
+    RGB_RED = 3      # RGB Red mode
+    RGB_GREEN = 4    # RGB Green mode
+    RGB_BLUE = 5     # RGB Blue mode
+    RGB_YELLOW = 6   # RGB Yellow mode
+    RGB_CYAN = 7     # RGB Cyan mode
+    RGB_MAGENTA = 8  # RGB Magenta mode
+    RGB_WHITE = 9    # RGB White mode
     
     # Collections
     ALL = [GREEN_1, GREEN_2]  # Only LEDs 1,2 are individual LEDs
     ALL_RGB = [RGB_RED, RGB_GREEN, RGB_BLUE, RGB_YELLOW, RGB_CYAN, RGB_MAGENTA, RGB_WHITE]
     ALL_WITH_RGB = ALL + ALL_RGB
     
-    # Names for display - matches ESP32 firmware mapping
+    # Names for display
     NAMES = {
-        # Individual LEDs (ESP32 supports 1,2 as separate LEDs)
-        1: "Green LED 1 (GPIO7)",
-        2: "Green LED 2 (GPIO15)", 
+        # Individual LEDs
+        1: "Green LED 1",
+        2: "Green LED 2", 
         
-        # RGB modes (ESP32 LED IDs 3-9 are RGB color modes)
+        # RGB modes
         3: "RGB Red Mode",
         4: "RGB Green Mode",
         5: "RGB Blue Mode", 
@@ -162,7 +162,7 @@ class LEDs:
     }
 
 
-# LEDColors removed - ESP32 works with LED IDs only, not RGB tuples
+# LED Colors work with LED IDs only, not RGB tuples
 
 
 # Configuration limits
@@ -207,7 +207,7 @@ class KeyboardLayouts:
     - Language: US(0x1), French(0x2), Belgian(0x3), German(0x4), Spanish(0x5), etc.
     - Reserved: Always 0x0
     
-    From ESP32 firmware: main/utils/device_settings.h - keyboard_language_t
+    Keyboard layout identifiers for different language configurations
     """
     
     # === Windows/Linux Layouts (Implemented) ===
