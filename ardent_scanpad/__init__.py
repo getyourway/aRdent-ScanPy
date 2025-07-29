@@ -25,7 +25,7 @@ Author: aRdent Solutions
 License: MIT
 """
 
-from .scanpad import ScanPad
+from .scanpad import ScanPad, DeviceInfo
 from .core.exceptions import (
     ScanPadError,
     ConnectionError,
@@ -47,6 +47,7 @@ __license__ = "MIT"
 __all__ = [
     # Main class
     "ScanPad",
+    "DeviceInfo",
     
     # Exceptions
     "ScanPadError",
