@@ -59,84 +59,279 @@ class ScanPadInteractive:
         print("="*70 + "\n")
     
     async def _connect_to_device(self) -> bool:
-        """Connect to first available ScanPad"""
-        print("🔍 Searching for aRdent ScanPad...")
+        """Interactive device selection and connection"""
+        print("🔍 DEVICE CONNECTION")
+        print("="*70)
+        
+        return await self._device_selection_menu()
+    
+    async def _device_selection_menu(self) -> bool:
+        """Interactive device selection with multiple connection options"""
+        while True:
+            print("\n📋 CONNECTION OPTIONS:")
+            print("1. 🚀 Quick connect (auto-discover first device)")
+            print("2. 🔍 Scan and select device") 
+            print("3. 📍 Connect to specific address")
+            print("4. 🏷️  Connect by device name")
+            print("5. ❌ Exit")
+            
+            choice = input("\nSelect option (1-5): ").strip()
+            
+            if choice == "1":
+                return await self._quick_connect()
+            elif choice == "2":
+                return await self._scan_and_select()
+            elif choice == "3":
+                return await self._connect_by_address()
+            elif choice == "4": 
+                return await self._connect_by_name()
+            elif choice == "5":
+                print("👋 Goodbye!")
+                return False
+            else:
+                print("❌ Invalid choice. Please select 1-5.")
+    
+    async def _quick_connect(self) -> bool:
+        """Quick connection to first available device"""
+        print("\n🚀 Quick Connect Mode")
+        print("-" * 30)
+        print("🔍 Auto-discovering first available aRdent ScanPad...")
         
         try:
-            self.scanpad = ScanPad()
-            await self.scanpad.connect()
-            print("✅ Connected successfully!\n")
+            self.scanpad = ScanPad()  # Auto-discovery mode
+            await self.scanpad.connect(timeout=15.0)
+            
+            # Get device info for confirmation
+            info = self.scanpad.device_info
+            if info:
+                print(f"✅ Connected to: {info['name']}")
+                print(f"   📍 Address: {info['address']}")
+                print(f"   🕒 Connected at: {info.get('connected_at', 'Unknown')}")
+            else:
+                print("✅ Connected successfully!")
+            
             return True
+            
         except Exception as e:
-            print(f"❌ Connection failed: {e}")
+            print(f"❌ Quick connect failed: {e}")
+            print("💡 Tip: Try 'Scan and select' to see available devices")
+            return False
+    
+    async def _scan_and_select(self) -> bool:
+        """Scan for devices and let user select"""
+        print("\n🔍 Scan and Select Mode")
+        print("-" * 30)
+        print("📡 Scanning for aRdent ScanPad devices...")
+        
+        try:
+            # Discover devices with timeout
+            devices = await ScanPad.discover_devices(timeout=10.0, debug=False)
+            
+            if not devices:
+                print("❌ No aRdent ScanPad devices found")
+                print("💡 Make sure your device is powered on and in range")
+                return False
+            
+            print(f"\n📱 Found {len(devices)} device(s):")
+            print("-" * 50)
+            
+            # Display devices with selection numbers
+            for i, device in enumerate(devices, 1):
+                rssi = device['rssi']
+                signal_strength = "📶📶📶" if rssi > -50 else "📶📶" if rssi > -70 else "📶"
+                
+                print(f"{i}. {device['name']}")
+                print(f"   📍 Address: {device['address']}")
+                print(f"   📶 Signal: {rssi} dBm {signal_strength}")
+                print(f"   🕒 Discovered: {device['discovered_at']}")
+                print()
+            
+            # Let user select device
+            while True:
+                try:
+                    choice = input(f"Select device (1-{len(devices)}) or 'b' for back: ").strip().lower()
+                    
+                    if choice == 'b':
+                        return False
+                    
+                    device_index = int(choice) - 1
+                    if 0 <= device_index < len(devices):
+                        selected_device = devices[device_index]
+                        break
+                    else:
+                        print(f"❌ Please enter a number between 1 and {len(devices)}")
+                        
+                except ValueError:
+                    print("❌ Please enter a valid number or 'b' for back")
+            
+            # Connect to selected device
+            print(f"\n🔗 Connecting to {selected_device['name']}...")
+            print(f"   📍 Address: {selected_device['address']}")
+            
+            self.scanpad = ScanPad(device_address=selected_device['address'])
+            await self.scanpad.connect(timeout=15.0)
+            
+            print("✅ Connected successfully!")
+            
+            # Show updated device info  
+            info = await self.scanpad.refresh_device_info()
+            if 'battery_level' in info:
+                print(f"🔋 Battery: {info['battery_level']}%")
+            if 'firmware_version' in info:
+                print(f"💻 Firmware: {info['firmware_version']}")
+            
+            return True
+            
+        except Exception as e:
+            print(f"❌ Scan and select failed: {e}")
+            return False
+    
+    async def _connect_by_address(self) -> bool:
+        """Connect to device by specific BLE address"""
+        print("\n📍 Connect by Address Mode")
+        print("-" * 30)
+        
+        # Show example format
+        print("💡 BLE address format examples:")
+        print("   macOS/iOS: 12DE9829-AEC9-E5CD-89AE-10F5CF54DCC9")
+        print("   Windows/Linux: AA:BB:CC:DD:EE:FF")
+        
+        address = input("\nEnter device BLE address: ").strip()
+        
+        if not address:
+            print("❌ No address entered")
+            return False
+        
+        print(f"\n🔗 Connecting to {address}...")
+        
+        try:
+            # Quick availability check first
+            print("🔍 Checking device availability...")
+            is_available = await ScanPad.is_device_available(address, timeout=5.0)
+            
+            if not is_available:
+                print("⚠️  Device not found or not advertising")
+                proceed = input("Continue anyway? (y/n): ").strip().lower()
+                if proceed != 'y':
+                    return False
+            
+            self.scanpad = ScanPad(device_address=address)
+            await self.scanpad.connect(timeout=15.0)
+            
+            print("✅ Connected successfully!")
+            
+            # Show device info
+            info = self.scanpad.device_info
+            if info:
+                print(f"📱 Device: {info['name']}")
+                print(f"🕒 Connected at: {info.get('connected_at', 'Unknown')}")
+            
+            return True
+            
+        except Exception as e:
+            print(f"❌ Connection by address failed: {e}")
+            return False
+    
+    async def _connect_by_name(self) -> bool:
+        """Connect to device by name pattern"""
+        print("\n🏷️  Connect by Name Mode")
+        print("-" * 30)
+        
+        print("💡 Examples: 'aRdent ScanPad', 'ScanPad-1234', 'ScanPad'")
+        
+        name_pattern = input("\nEnter device name or pattern: ").strip()
+        
+        if not name_pattern:
+            print("❌ No name entered")
+            return False
+        
+        print(f"\n🔗 Looking for device with name containing '{name_pattern}'...")
+        
+        try:
+            self.scanpad = ScanPad(device_name=name_pattern)
+            await self.scanpad.connect(timeout=15.0)
+            
+            print("✅ Connected successfully!")
+            
+            # Show which device was found
+            info = self.scanpad.device_info
+            if info:
+                print(f"📱 Found device: {info['name']}")
+                print(f"📍 Address: {info['address']}")
+                print(f"🕒 Connected at: {info.get('connected_at', 'Unknown')}")
+            
+            return True
+            
+        except Exception as e:
+            print(f"❌ Connection by name failed: {e}")
+            print("💡 Tip: Try 'Scan and select' to see available device names")
             return False
     
     async def _display_device_snapshot(self):
-        """Display comprehensive device information"""
-        print("📊 DEVICE SNAPSHOT")
+        """Display comprehensive device information using new device_info property"""
+        print("\n📊 DEVICE SNAPSHOT")
         print("="*70)
         
-        # 1. Device Information Service (DIS) - Most important
-        print("\n📱 Device Information:")
-        print("-" * 30)
+        # Use new comprehensive device info
         try:
-            device_info = await self.scanpad.device.get_device_info()
+            print("🔄 Refreshing comprehensive device information...")
+            device_info = await self.scanpad.refresh_device_info()
             self.device_info = device_info
             
+            print("\n📱 Device Information:")
+            print("-" * 30)
+            print(f"Name: {device_info.get('name', 'Unknown')}")
+            print(f"Address: {device_info.get('address', 'Unknown')}")
             print(f"Manufacturer: {device_info.get('manufacturer', 'Unknown')}")
-            print(f"Model: {device_info.get('model', 'Unknown')}")
-            print(f"Serial Number: {device_info.get('serial_number', 'Unknown')}")
-            print(f"Hardware Rev: {device_info.get('hardware_rev', 'Unknown')}")
-            print(f"Firmware Rev: {device_info.get('firmware_rev', 'Unknown')}")
-            print(f"Software Rev: {device_info.get('software_rev', 'Unknown')}")
-        except Exception as e:
-            print(f"⚠️  Could not retrieve device info: {e}")
-        
-        # 2. Battery Status
-        print("\n🔋 Battery Status:")
-        print("-" * 30)
-        try:
-            battery_level = await self.scanpad.device.get_battery_level()
-            print(f"Battery Level: {battery_level}%")
-        except Exception as e:
-            print(f"⚠️  Could not retrieve battery status: {e}")
-        
-        # 3. Device Configuration
-        print("\n⚙️  Device Configuration:")
-        print("-" * 30)
-        try:
-            # Orientation
-            orientation = await self.scanpad.device.get_orientation()
-            orientation_name = {
-                DeviceOrientations.PORTRAIT: "0° (Normal)",
-                DeviceOrientations.LANDSCAPE: "90° (Rotated Right)",
-                DeviceOrientations.REVERSE_PORTRAIT: "180° (Upside Down)",
-                DeviceOrientations.REVERSE_LANDSCAPE: "270° (Rotated Left)"
-            }.get(orientation, "Unknown")
-            print(f"Orientation: {orientation_name}")
+            print(f"Firmware: {device_info.get('firmware_version', 'Unknown')}")
+            print(f"Hardware: {device_info.get('hardware_version', 'Unknown')}")
+            print(f"Serial: {device_info.get('serial_number', 'Unknown')}")
+            print(f"Connected: {device_info.get('connected_at', 'Unknown')}")
             
-            # Language/Layout
-            language = await self.scanpad.device.get_language()
-            language_name = {
-                KeyboardLayouts.WIN_US_QWERTY: "US English (QWERTY)",
-                KeyboardLayouts.WIN_FR_AZERTY: "French (AZERTY)",
-                KeyboardLayouts.WIN_ES_QWERTY: "Spanish (QWERTY)",
-                KeyboardLayouts.WIN_IT_QWERTY: "Italian (QWERTY)",
-                KeyboardLayouts.WIN_DE_QWERTZ: "German (QWERTZ)",
-                KeyboardLayouts.MAC_US_QWERTY: "UK English (QWERTY)"
-            }.get(language, "Unknown")
-            print(f"Keyboard Layout: {language_name}")
+            # Battery info
+            battery_level = device_info.get('battery_level')
+            if battery_level is not None:
+                print(f"\n🔋 Battery Status:")
+                print("-" * 30)
+                print(f"Level: {battery_level}%")
+                
+                battery_voltage = device_info.get('battery_voltage')
+                if battery_voltage:
+                    print(f"Voltage: {battery_voltage}V")
+                    
+                battery_charging = device_info.get('battery_charging')
+                if battery_charging is not None:
+                    charging_status = "Yes" if battery_charging else "No"
+                    print(f"Charging: {charging_status}")
             
-            # Auto-shutdown settings
-            try:
-                shutdown_config = await self.scanpad.device.get_auto_shutdown_config()
-                print(f"Auto-shutdown (BLE): {shutdown_config.get('ble_timeout', 0)}s")
-                print(f"Auto-shutdown (Activity): {shutdown_config.get('activity_timeout', 0)}s")
-            except:
-                pass
+            # Device settings
+            current_language = device_info.get('current_language')
+            current_orientation = device_info.get('current_orientation')
+            
+            if current_language or current_orientation:
+                print(f"\n⚙️  Current Settings:")
+                print("-" * 30)
+                if current_language:
+                    print(f"Language: {current_language}")
+                if current_orientation:
+                    print(f"Orientation: {current_orientation}")
+            
+            # Connection info
+            connection_rssi = device_info.get('connection_rssi')
+            if connection_rssi:
+                print(f"\n📶 Connection:")
+                print("-" * 30)  
+                print(f"RSSI: {connection_rssi} dBm")
                 
         except Exception as e:
-            print(f"⚠️  Could not retrieve device configuration: {e}")
+            print(f"⚠️  Could not retrieve comprehensive device info: {e}")
+            # Fallback to basic info
+            basic_info = self.scanpad.device_info
+            if basic_info:
+                print(f"\n📱 Basic Device Information:")
+                print("-" * 30)
+                for key, value in basic_info.items():
+                    print(f"{key}: {value}")
         
         # 4. LED States
         print("\n💡 LED States:")
