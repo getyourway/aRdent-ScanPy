@@ -105,9 +105,9 @@ async def demo_device_info():
                 for key, value in basic_info.items():
                     print(f"   {key}: {value}")
             
-            # Refresh comprehensive device info
-            print("\n🔄 Refreshing comprehensive device information...")
-            detailed_info = await scanpad.refresh_device_info()
+            # Fetch comprehensive device info
+            print("\n🔄 Fetching comprehensive device information...")
+            detailed_info = await scanpad.fetch_device_info()
             
             print("\n📋 Detailed Device Information:")
             for key, value in detailed_info.items():
@@ -227,7 +227,7 @@ async def demo_ui_integration():
         await scanpad.connect()
         
         # Display connection status (like in a UI status bar)
-        info = await scanpad.refresh_device_info()
+        info = await scanpad.fetch_device_info()
         battery = info.get('battery_level', 'Unknown')
         firmware = info.get('firmware_version', 'Unknown')
         

@@ -109,7 +109,17 @@ class ScanPadInteractive:
             if info:
                 print(f"✅ Connected to: {info['name']}")
                 print(f"   📍 Address: {info['address']}")
-                print(f"   🕒 Connected at: {info.get('connected_at', 'Unknown')}")
+                # connected_at is available in device_info property
+                connected_time = info.get('connected_at', 'Unknown')
+                if connected_time != 'Unknown':
+                    # Format the ISO timestamp to be more readable
+                    try:
+                        from datetime import datetime
+                        dt = datetime.fromisoformat(connected_time)
+                        connected_time = dt.strftime("%H:%M:%S")
+                    except:
+                        pass
+                print(f"   🕒 Connected at: {connected_time}")
             else:
                 print("✅ Connected successfully!")
             
@@ -177,7 +187,7 @@ class ScanPadInteractive:
             print("✅ Connected successfully!")
             
             # Show updated device info  
-            info = await self.scanpad.refresh_device_info()
+            info = await self.scanpad.fetch_device_info()
             if 'battery_level' in info:
                 print(f"🔋 Battery: {info['battery_level']}%")
             if 'firmware_version' in info:
@@ -227,7 +237,17 @@ class ScanPadInteractive:
             info = self.scanpad.device_info
             if info:
                 print(f"📱 Device: {info['name']}")
-                print(f"🕒 Connected at: {info.get('connected_at', 'Unknown')}")
+                # connected_at is available in device_info property
+                connected_time = info.get('connected_at', 'Unknown')
+                if connected_time != 'Unknown':
+                    # Format the ISO timestamp to be more readable
+                    try:
+                        from datetime import datetime
+                        dt = datetime.fromisoformat(connected_time)
+                        connected_time = dt.strftime("%H:%M:%S")
+                    except:
+                        pass
+                print(f"🕒 Connected at: {connected_time}")
             
             return True
             
@@ -261,7 +281,17 @@ class ScanPadInteractive:
             if info:
                 print(f"📱 Found device: {info['name']}")
                 print(f"📍 Address: {info['address']}")
-                print(f"🕒 Connected at: {info.get('connected_at', 'Unknown')}")
+                # connected_at is available in device_info property
+                connected_time = info.get('connected_at', 'Unknown')
+                if connected_time != 'Unknown':
+                    # Format the ISO timestamp to be more readable
+                    try:
+                        from datetime import datetime
+                        dt = datetime.fromisoformat(connected_time)
+                        connected_time = dt.strftime("%H:%M:%S")
+                    except:
+                        pass
+                print(f"🕒 Connected at: {connected_time}")
             
             return True
             
@@ -329,7 +359,17 @@ class ScanPadInteractive:
             info = self.scanpad.device_info
             if info:
                 print(f"📱 Device: {info['name']}")
-                print(f"🕒 Connected at: {info.get('connected_at', 'Unknown')}")
+                # connected_at is available in device_info property
+                connected_time = info.get('connected_at', 'Unknown')
+                if connected_time != 'Unknown':
+                    # Format the ISO timestamp to be more readable
+                    try:
+                        from datetime import datetime
+                        dt = datetime.fromisoformat(connected_time)
+                        connected_time = dt.strftime("%H:%M:%S")
+                    except:
+                        pass
+                print(f"🕒 Connected at: {connected_time}")
             
             return True
             
@@ -345,8 +385,8 @@ class ScanPadInteractive:
         
         # Use new comprehensive device info
         try:
-            print("🔄 Refreshing comprehensive device information...")
-            device_info = await self.scanpad.refresh_device_info()
+            print("🔄 Fetching comprehensive device information...")
+            device_info = await self.scanpad.fetch_device_info()
             self.device_info = device_info
             
             print("\n📱 Device Information:")
@@ -357,7 +397,17 @@ class ScanPadInteractive:
             print(f"Firmware: {device_info.get('firmware_version', 'Unknown')}")
             print(f"Hardware: {device_info.get('hardware_version', 'Unknown')}")
             print(f"Serial: {device_info.get('serial_number', 'Unknown')}")
-            print(f"Connected: {device_info.get('connected_at', 'Unknown')}")
+            # connected_at is available in device_info property
+            connected_time = device_info.get('connected_at', 'Unknown')
+            if connected_time != 'Unknown':
+                # Format the ISO timestamp to be more readable
+                try:
+                    from datetime import datetime
+                    dt = datetime.fromisoformat(connected_time)
+                    connected_time = dt.strftime("%H:%M:%S")
+                except:
+                    pass
+            print(f"Connected: {connected_time}")
             
             # Battery info
             battery_level = device_info.get('battery_level')
@@ -404,33 +454,30 @@ class ScanPadInteractive:
                 for key, value in basic_info.items():
                     print(f"{key}: {value}")
         
-        # 4. LED States
+        # 4. LED States (Optimized with bulk retrieval)
         print("\n💡 LED States:")
         print("-" * 30)
         try:
-            led_states = []
-            for led_id in range(1, 6):  # LEDs 1-5
-                try:
-                    state = await self.scanpad.device.led.get_state(led_id)
-                    led_states.append(state)
-                except:
-                    led_states.append(False)
-            # Use 1-based LED IDs to match API (LEDs.NAMES from constants.py)
+            # Use new optimized bulk LED state retrieval (1 BLE call instead of 5)
+            led_states = await self.scanpad.device.led.get_all_states()
+            
+            # Logical LED names for display (clean API)
             led_names = {
-                1: "Green LED 1 (GPIO7)",
-                2: "Green LED 2 (GPIO15)", 
-                3: "RGB Red Mode",
-                4: "RGB Green Mode",
-                5: "RGB Blue Mode"
+                'led1_green': "LED Position 1 (Green)",
+                'led2_red': "LED Position 2 (Red Component)", 
+                'led2_green': "LED Position 2 (Green Component)",
+                'led2_blue': "LED Position 2 (Blue Component)",
+                'led3_green': "LED Position 3 (Green)"
             }
             
-            for i, state in enumerate(led_states):
-                led_id = i + 1  # Convert 0-based index to 1-based LED ID
-                led_name = led_names.get(led_id, f"LED {led_id}")
-                status = "ON" if state else "OFF"
-                print(f"{led_name}: {status}")
+            for led_id, state in led_states.items():
+                led_name = led_names.get(led_id, f"Unknown LED {led_id}")
+                status = "ON ✅" if state else "OFF ⬜"
+                print(f"  {led_name}: {status}")
+                
         except Exception as e:
             print(f"⚠️  Could not retrieve LED states: {e}")
+            print("  (Use LED Control menu for individual LED states)")
         
         # 5. Key Configuration Summary
         print("\n⌨️  Key Configuration Summary:")
@@ -1531,30 +1578,37 @@ class ScanPadInteractive:
         
         try:
             # Get current settings
-            current = await self.scanpad.device.get_auto_shutdown_config()
-            print(f"Current BLE timeout: {current.get('ble_timeout', 0)}s")
-            print(f"Current activity timeout: {current.get('activity_timeout', 0)}s")
+            current = await self.scanpad.device.get_auto_shutdown()
+            if current:
+                print(f"Auto-shutdown enabled: {'Yes' if current.get('enabled', False) else 'No'}")
+                print(f"Current BLE timeout: {current.get('no_connection_timeout_min', 0)} minutes")
+                print(f"Current activity timeout: {current.get('no_activity_timeout_min', 0)} minutes")
+            else:
+                print("Could not retrieve current auto-shutdown settings")
             
             print("\nEnter new values (0 to disable, Enter to keep current):")
             
             # BLE timeout
-            ble_input = input(f"BLE disconnect timeout [{current.get('ble_timeout', 0)}s]: ").strip()
+            current_ble = current.get('no_connection_timeout_min', 60) if current else 60
+            ble_input = input(f"BLE disconnect timeout (minutes) [{current_ble}]: ").strip()
             if ble_input:
                 ble_timeout = int(ble_input)
             else:
-                ble_timeout = current.get('ble_timeout', 0)
+                ble_timeout = current_ble
             
             # Activity timeout
-            activity_input = input(f"Activity timeout [{current.get('activity_timeout', 0)}s]: ").strip()
+            current_activity = current.get('no_activity_timeout_min', 30) if current else 30
+            activity_input = input(f"Activity timeout (minutes) [{current_activity}]: ").strip()
             if activity_input:
                 activity_timeout = int(activity_input)
             else:
-                activity_timeout = current.get('activity_timeout', 0)
+                activity_timeout = current_activity
             
             # Send new configuration
-            success = await self.scanpad.device.set_auto_shutdown_config(
-                ble_timeout=ble_timeout,
-                activity_timeout=activity_timeout
+            success = await self.scanpad.device.set_auto_shutdown(
+                enabled=True,
+                no_connection_timeout_min=ble_timeout,
+                no_activity_timeout_min=activity_timeout
             )
             
             if success:

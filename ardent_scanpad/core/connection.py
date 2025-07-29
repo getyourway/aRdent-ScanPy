@@ -228,29 +228,28 @@ class BLEConnection:
         logger.info("✅ Disconnected from device")
     
     async def _discover_characteristics(self) -> None:
-        """Discover and cache BLE characteristics"""
+        """Discover and cache BLE characteristics (optimized)"""
         if not self.client or not self.client.is_connected:
             raise ConnectionError("Not connected to device")
             
-        logger.debug("🔍 Discovering characteristics")
+        logger.debug("🔍 Discovering characteristics (optimized)")
+        
+        # Optimized: use get_characteristic() directly instead of double loop
+        services = self.client.services  # Instantaneous after connect()
         
         for name, uuid in CHAR_UUIDS.items():
             try:
-                services = self.client.services
-                for service in services:
-                    for char in service.characteristics:
-                        if char.uuid == uuid:
-                            self.characteristics[name] = char
-                            logger.debug(f"📡 Found characteristic: {name} ({uuid})")
-                            break
-                            
-                if name not in self.characteristics:
+                char = services.get_characteristic(uuid)
+                if char:
+                    self.characteristics[name] = char
+                    logger.debug(f"📡 Found characteristic: {name} ({uuid})")
+                else:
                     logger.warning(f"⚠️ Characteristic not found: {name} ({uuid})")
                     
             except Exception as e:
                 logger.warning(f"Error discovering characteristic {name}: {e}")
         
-        logger.info(f"✅ Discovered {len(self.characteristics)} characteristics")
+        logger.info(f"✅ Discovered {len(self.characteristics)} characteristics (optimized)")
     
     def _on_disconnect(self, client: BleakClient) -> None:
         """Handle unexpected disconnection"""

@@ -270,10 +270,3 @@ class ScanPadTesting(ScanPad):
         logger.info("🧪 Testing interface disconnected")
 
 
-# For backward compatibility with existing test scripts
-class ScanPadForceAPI(ScanPadTesting):
-    """Deprecated: Use ScanPadTesting instead"""
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        logger.warning("⚠️  ScanPadForceAPI is deprecated. Use ScanPadTesting instead.")

@@ -91,7 +91,7 @@ class ScanPad:
             # Device Settings
             await scanpad.device.set_orientation("LANDSCAPE")
             await scanpad.device.set_language(0x1220)  # FR_AZERTY
-            await scanpad.device.set_auto_shutdown(60)
+            await scanpad.device.set_auto_shutdown(enabled=True, no_connection_timeout_min=60, no_activity_timeout_min=60)
             
             # OTA Updates
             version = await scanpad.ota.check_for_updates()
@@ -437,53 +437,56 @@ class ScanPad:
     @property
     def device_info(self) -> Optional[Dict[str, Any]]:
         """
-        Complete device information dictionary
+        Get cached device information (fast, no BLE calls)
+        
+        Returns device information structure with connection details always available
+        and BLE service data (DIS/BAS) populated only after fetch_device_info().
+        
+        Connection info (always available):
+        - address, name, connected_at, connection_status
+        
+        BLE service data (None until fetch_device_info()):
+        - manufacturer, firmware_version, serial_number (from Device Information Service)
+        - battery_level (from Battery Service)
         
         Returns:
-            Dictionary with comprehensive device information:
-            {
-                "address": "AA:BB:CC:DD:EE:FF",
-                "name": "aRdent ScanPad",
-                "firmware_version": "1.2.3",
-                "hardware_version": "2.1", 
-                "serial_number": "SP240001234",
-                "battery_level": 85,
-                "connection_rssi": -42,
-                "connected_at": "2025-01-29T10:30:00.123456",
-                "connection_status": "connected"
-            }
-            
-        Returns None if not connected.
+            Dictionary with device information structure or None if not connected
         """
         if not self.connection.is_connected:
             return None
             
-        # Return cached info if available
-        if self._device_info:
-            return self._device_info.copy()
-            
-        # Build basic info from connection
-        basic_info = {
+        # Return complete device info structure (with cached or None values)
+        base_info = {
             "address": self.connection.address or "Unknown",
-            "name": "aRdent ScanPad",  # Default name
+            "name": "aRdent ScanPad",
             "connected_at": self._connected_at,
-            "connection_status": "connected" if self.connection.is_connected else "disconnected"
+            "connection_status": "connected" if self.connection.is_connected else "disconnected",
+            # Essential fields filled by fetch_device_info() or None if not fetched yet
+            "manufacturer": None,
+            "firmware_version": None,
+            "serial_number": None,
+            "battery_level": None,
         }
         
-        return basic_info
+        # Update with cached values if available
+        if self._device_info:
+            base_info.update(self._device_info)
+            
+        return base_info
     
-    async def refresh_device_info(self) -> Dict[str, Any]:
+    async def fetch_device_info(self) -> Dict[str, Any]:
         """
-        Refresh and return complete device information
+        Fetch complete device information from device via BLE
         
-        Fetches latest information from device including:
-        - Device Information Service data
-        - Battery level
-        - Connection RSSI
-        - System information
+        Retrieves fresh information from device including:
+        - Device Information Service (DIS): manufacturer, firmware_version, serial_number
+        - Battery Service (BAS): battery_level
+        - Connection info: address, name, status, connected_at
+        
+        This method makes multiple BLE calls and updates the device_info cache.
         
         Returns:
-            Updated device information dictionary
+            Complete device information dictionary with all fields populated
         """
         if not self.connection.is_connected:
             raise ConnectionError("Device not connected")
@@ -502,11 +505,11 @@ class ScanPad:
             if self.device:
                 # Get device info (firmware version, hardware, etc.)
                 try:
-                    device_details = await self.device.get_info()
+                    device_details = await self.device.get_device_info()
                     if device_details:
                         info.update({
-                            "firmware_version": device_details.get("firmware_version", "Unknown"),
-                            "hardware_version": device_details.get("hardware_version", "Unknown"),
+                            "firmware_version": device_details.get("firmware_rev", "Unknown"),
+                            "hardware_version": device_details.get("hardware_rev", "Unknown"),
                             "serial_number": device_details.get("serial_number", "Unknown"),
                             "manufacturer": device_details.get("manufacturer", "Get Your Way")
                         })
@@ -515,11 +518,9 @@ class ScanPad:
                 
                 # Get battery level
                 try:
-                    battery_info = await self.device.get_battery_status()
-                    if battery_info:
-                        info["battery_level"] = battery_info.get("level", None)
-                        info["battery_voltage"] = battery_info.get("voltage", None)
-                        info["battery_charging"] = battery_info.get("charging", None)
+                    battery_level = await self.device.get_battery_level()
+                    if battery_level is not None:
+                        info["battery_level"] = battery_level
                 except Exception as e:
                     logger.debug(f"Could not fetch battery info: {e}")
                 
@@ -577,12 +578,7 @@ class ScanPad:
         logger.debug("   🔧 device: LED/Buzzer/Settings/OTA")
         logger.debug("   🚀 ota: Firmware updates")
         
-        # Refresh device info after controllers are ready
-        try:
-            await self.refresh_device_info()
-            logger.debug("📱 Device information refreshed")
-        except Exception as e:
-            logger.debug(f"⚠️  Could not refresh device info during initialization: {e}")
+        logger.debug("Controllers initialized successfully")
     
     async def _setup_notifications(self) -> None:
         """Setup BLE notification handlers"""
@@ -635,16 +631,6 @@ class ScanPad:
         
         return device_info
     
-    @property
-    def device_info(self) -> Dict[str, Any]:
-        """Get basic device information - synchronous version"""
-        return {
-            'name': 'aRdent ScanPad',
-            'connected': self.is_connected,
-            'address': self.connection.address,
-            'auto_reconnect': self.connection.auto_reconnect,
-            'timeout': self.connection.timeout
-        }
     
     # CONVENIENCE METHODS (shortcuts to common operations)
     

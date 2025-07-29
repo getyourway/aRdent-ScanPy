@@ -636,38 +636,16 @@ class PeripheralController(BaseController):
             pass
         return None
     
-    async def set_auto_shutdown(self, timeout_or_enabled=True, no_connection_timeout_min: int = None, 
-                               no_activity_timeout_min: int = None) -> bool:
-        """Set auto shutdown configuration"""
+    async def set_auto_shutdown(self, enabled: bool = True, 
+                               no_connection_timeout_min: int = 60, 
+                               no_activity_timeout_min: int = 30) -> bool:
+        """Set auto shutdown configuration - KISS version"""
         
-        # Pattern 1: Single timeout parameter
-        if isinstance(timeout_or_enabled, int):
-            timeout = timeout_or_enabled
-            self._validate_range('timeout', timeout, 1, 1440)  # Raises exception if invalid
-            
-            enabled = True
-            no_connection_timeout_min = timeout
-            no_activity_timeout_min = timeout
-            
-            self._logger.debug(f"Setting auto shutdown: enabled, unified timeout: {timeout}min")
+        # Simple validation
+        self._validate_range('no_connection_timeout_min', no_connection_timeout_min, 1, 1440)
+        self._validate_range('no_activity_timeout_min', no_activity_timeout_min, 1, 1440)
         
-        # Pattern 2: Full control
-        else:
-            enabled = bool(timeout_or_enabled)
-            
-            if no_connection_timeout_min is None:
-                no_connection_timeout_min = 60
-            if no_activity_timeout_min is None:
-                no_activity_timeout_min = 30
-            
-            self._validate_range('no_connection_timeout_min', no_connection_timeout_min, 1, 1440)  # Raises exception if invalid
-            self._validate_range('no_activity_timeout_min', no_activity_timeout_min, 1, 1440)  # Raises exception if invalid
-            
-            self._logger.debug(f"Setting auto shutdown: {'enabled' if enabled else 'disabled'}, "
-                              f"no connection: {no_connection_timeout_min}min, "
-                              f"no activity: {no_activity_timeout_min}min")
-        
-        # Format: [enabled, no_conn_low, no_conn_high, no_activity_low, no_activity_high]
+        # Create payload: [enabled, no_conn_low, no_conn_high, no_activity_low, no_activity_high]
         payload = bytes([
             1 if enabled else 0,
             no_connection_timeout_min & 0xFF,
@@ -676,11 +654,9 @@ class PeripheralController(BaseController):
             (no_activity_timeout_min >> 8) & 0xFF
         ])
         
-        success = await self._send_command(Commands.POWER_SET_AUTO_SHUTDOWN, payload)
+        self._logger.debug(f"Auto shutdown: enabled={enabled}, no_conn={no_connection_timeout_min}min, no_act={no_activity_timeout_min}min")
         
-        if success:
-            self._logger.debug(f"🔋 Auto shutdown configured")
-        return success
+        return await self._send_command(Commands.POWER_SET_AUTO_SHUTDOWN, payload)
     
     async def get_auto_shutdown(self) -> Optional[Dict[str, Any]]:
         """Get auto shutdown configuration"""
