@@ -87,8 +87,14 @@ class TestingInterface:
         if not bypass_validation:
             self.scanpad.device._validate_led_id(led_id)
         
-        # Convert frequency to period (ESP32 expects period in 100ms units)
-        period = max(1, int(10.0 / frequency))
+        # Handle zero frequency for testing (would cause division by zero)
+        if frequency <= 0:
+            if not bypass_validation:
+                raise ValueError("Frequency must be positive")
+            period = 255  # Max period for testing
+        else:
+            # Convert frequency to period (ESP32 expects period in 100ms units)
+            period = max(1, int(10.0 / frequency))
         
         if bypass_validation and (led_id < 0 or led_id > 255):
             payload = struct.pack('<BbB', led_id & 0xFF, 2, period)
@@ -157,10 +163,19 @@ class TestingInterface:
                 raise ValueError("Volume must be between 0 and 100")
         
         # Allow invalid volumes for testing if bypass is enabled
-        vol = volume if bypass_validation else max(0, min(100, volume))
+        if bypass_validation:
+            # Handle negative volumes by using struct to pack as signed then interpret as unsigned
+            if volume < 0:
+                vol = (256 + volume) & 0xFF  # Two's complement for negative
+            elif volume > 255:
+                vol = volume & 0xFF  # Truncate high values
+            else:
+                vol = volume
+        else:
+            vol = max(0, min(100, volume))
         payload = bytes([vol, 1 if enabled else 0])
         
-        success = await self.scanpad.device._send_command(Commands.BUZZER_SET_VOLUME, payload)
+        success = await self.scanpad.device._send_command(Commands.BUZZER_SET_CONFIG, payload)
         self._logger.debug(f"🧪 Testing buzzer volume {volume} enabled={enabled} (bypass={bypass_validation}): {'✅' if success else '❌'}")
         return success
     
@@ -174,7 +189,7 @@ class TestingInterface:
         # Allow invalid language IDs for testing
         payload = struct.pack('<H', layout_id & 0xFFFF if bypass_validation else layout_id)
         
-        success = await self.scanpad.device._send_command(Commands.SET_LANGUAGE, payload)
+        success = await self.scanpad.device._send_command(Commands.DEVICE_SET_LANGUAGE, payload)
         self._logger.debug(f"🧪 Testing set_language {layout_id:04X} (bypass={bypass_validation}): {'✅' if success else '❌'}")
         return success
     
