@@ -36,7 +36,7 @@ class OTAController:
         self._logger = logging.getLogger(__name__)
         
         # Default GitHub repository configuration
-        self._github_repo = "getyourway/aRdent-ScanPad"
+        self._github_repo = "getyourway/aRdent-ScanPy"
         self._github_api_base = "https://api.github.com"
         
     async def update_firmware(self,

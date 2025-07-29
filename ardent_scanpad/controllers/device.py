@@ -250,16 +250,16 @@ class OTASubController:
     def configure_auth(self, api_key: Optional[str] = None, 
                       firmware_source: Optional[str] = None) -> None:
         """
-        Configure authentication for private repository OTA updates
+        Configure authentication for OTA updates
         
         Args:
-            api_key: GitHub Personal Access Token for private repository access
+            api_key: GitHub Personal Access Token for repository access
             firmware_source: Base URL for firmware downloads (optional)
             
         Note:
-            For private repositories (aRdent-ScanPad), you MUST provide a GitHub Personal Access Token:
+            For authenticated repository access, you MUST provide a GitHub Personal Access Token:
             1. Create token at: https://github.com/settings/tokens
-            2. Required permissions: 'repo' (Full control of private repositories)
+            2. Required permissions: 'repo' (Repository access)
             3. Set via parameter or environment variable ARDENT_OTA_API_KEY
             
             Environment variables:
@@ -272,13 +272,13 @@ class OTASubController:
         # Update source from parameter or environment
         self._firmware_source = firmware_source or os.environ.get(
             'ARDENT_UPDATE_SOURCE',
-            'https://api.github.com/repos/getyourway/aRdent-ScanPad'  # GitHub API endpoint
+            'https://api.github.com/repos/getyourway/aRdent-ScanPy'  # GitHub API endpoint
         )
         
         if not self._api_key:
             self._logger.warning("No GitHub token configured. Private repository access will fail.")
             self._logger.warning("Create a Personal Access Token at: https://github.com/settings/tokens")
-            self._logger.warning("Required permissions: 'repo' (Full control of private repositories)")
+            self._logger.warning("Required permissions: 'repo' (Repository access)")
     
     async def check_version(self) -> Optional[str]:
         """Get current firmware version from device"""
@@ -358,7 +358,7 @@ class OTASubController:
                     # Find ble_hid.bin asset
                     for asset in release_data.get('assets', []):
                         if asset['name'] == 'ble_hid.bin':
-                            # For private repos, use API URL instead of browser download URL
+                            # For authenticated repos, use API URL instead of browser download URL
                             if self._api_key:
                                 download_url = asset['url']  # API URL for authenticated download
                             else:

@@ -1687,9 +1687,9 @@ class ScanPadInteractive:
             print("Using GitHub token from ARDENT_OTA_API_KEY environment variable")
             return env_token
         
-        print("\nGitHub Personal Access Token required for private repository access")
+        print("\nGitHub Personal Access Token required for repository access")
         print("Create one at: https://github.com/settings/tokens")
-        print("Required permissions: 'repo' (Full control of private repositories)")
+        print("Required permissions: 'repo' (Repository access)")
         
         token = input("\nEnter GitHub token (or set ARDENT_OTA_API_KEY env var): ").strip()
         return token if token else None

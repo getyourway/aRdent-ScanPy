@@ -1,11 +1,11 @@
 """
 aRdent ScanPad Testing Interface
 
-INTERNAL USE ONLY - Not part of the public API
+Testing Interface - Advanced API for development and testing
 
-This module provides testing interfaces with relaxed validation for internal
-testing purposes. These methods bypass normal validation and should only be
-used for testing ESP32 error handling and boundary conditions.
+This module provides testing interfaces with relaxed validation for 
+testing purposes. These methods bypass normal validation and should be
+used primarily for testing error handling and boundary conditions.
 
 Example:
     ```python
@@ -21,8 +21,8 @@ Example:
     ```
 
 Warning:
-    These methods are for internal testing only and may cause unpredictable
-    behavior if used incorrectly. The public API in ScanPad should be used
+    These methods are for testing and development purposes and may cause unpredictable
+    behavior if used incorrectly. The main ScanPad API should be used
     for all production code.
 """
 
