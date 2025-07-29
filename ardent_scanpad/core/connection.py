@@ -176,7 +176,9 @@ class BLEConnection:
         logger.info(f"🔌 Connecting to {address}")
         
         try:
-            self.client = BleakClient(address)
+            # Create BleakClient with disconnect callback in constructor (modern Bleak API)
+            disconnect_callback = self._on_disconnect if self.auto_reconnect else None
+            self.client = BleakClient(address, disconnected_callback=disconnect_callback)
             
             # Connect with timeout
             await asyncio.wait_for(
@@ -192,11 +194,6 @@ class BLEConnection:
             
             # Discover and cache characteristics
             await self._discover_characteristics()
-            
-            # Setup disconnect callback for auto-reconnect (modern bleak API)
-            if self.auto_reconnect and hasattr(self.client, 'set_disconnected_callback'):
-                # Use old API if available for compatibility
-                self.client.set_disconnected_callback(self._on_disconnect)
                 
         except asyncio.TimeoutError:
             raise TimeoutError(f"Connection timed out after {connect_timeout}s")
