@@ -86,12 +86,44 @@ class LEDSubController:
     
     async def get_state(self, led_id: int) -> bool:
         """Get LED current state"""
-        self.parent._validate_range('led_id', led_id, 1, 5)  # Only individual LEDs support state query
+        self.parent._validate_range('led_id', led_id, 1, 9)  # LEDs 1-9: LED1, LED2_RGB(R,G,B,combinations), LED3
         
         payload = bytes([led_id])
         response = await self.parent._send_command_and_wait(Commands.LED_GET_STATE, payload)
         state = self.parent._parse_uint8_response(response)
         return bool(state)
+    
+    async def get_all_states(self) -> Dict[int, bool]:
+        """
+        Get all LED states in one BLE call (optimized for device snapshot)
+        
+        Returns:
+            Dictionary mapping LED ID to state: {1: True, 2: False, ...}
+            Returns states for available LEDs based on ESP32 implementation
+        """
+        # Use special led_id = 0 to get all states from ESP32
+        payload = bytes([0])
+        response = await self.parent._send_command_and_wait(Commands.LED_GET_STATE, payload)
+        
+        # ESP32 returns 5 hardware GPIO states: LED1_G, LED2_R, LED2_G, LED2_B, LED3_G
+        states_data = self.parent._parse_struct_response(response, expected_count=5)
+        
+        # Return hardware LED states with logical names (not GPIO details):
+        # states[0] = LED Position 1: Green
+        # states[1] = LED Position 2: Red component  
+        # states[2] = LED Position 2: Green component
+        # states[3] = LED Position 2: Blue component
+        # states[4] = LED Position 3: Green
+        led_states = {
+            'led1_green': bool(states_data[0]),      # LED Position 1: Green
+            'led2_red': bool(states_data[1]),        # LED Position 2: Red component
+            'led2_green': bool(states_data[2]),      # LED Position 2: Green component  
+            'led2_blue': bool(states_data[3]),       # LED Position 2: Blue component
+            'led3_green': bool(states_data[4])       # LED Position 3: Green
+        }
+        
+        self._logger.debug(f"💡 All LED states retrieved: {led_states}")
+        return led_states
     
     async def all_off(self) -> bool:
         """Turn off all LEDs"""
@@ -284,18 +316,17 @@ class OTASubController:
         """Get current firmware version from device"""
         response = await self.parent._send_command_and_wait(Commands.OTA_CHECK_VERSION, bytes())
         
-        if not response or len(response) < 3:
+        if not response or len(response) < 4:
             return None
             
-        if response[0] == 0 and len(response) > 3:  # Success
-            version_len = response[2]
-            if len(response) >= 3 + version_len:
+        if response[0] == 0 and response[2] == 0x05 and response[3] == 2:
+            if len(response) >= 5:
+                version_bytes = response[5:]
                 try:
-                    version = response[3:3+version_len].decode('utf-8')
-                    self._logger.info(f"Current firmware version: {version}")
+                    version = version_bytes.decode('utf-8')
                     return version
                 except UnicodeDecodeError:
-                    self._logger.error("Failed to decode version string")
+                    pass
         
         return None
     
