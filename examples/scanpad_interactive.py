@@ -70,12 +70,13 @@ class ScanPadInteractive:
         while True:
             print("\n📋 CONNECTION OPTIONS:")
             print("1. 🚀 Quick connect (auto-discover first device)")
-            print("2. 🔍 Scan and select device") 
+            print("2. 🔍 Scan and select device (5s scan)") 
             print("3. 📍 Connect to specific address")
             print("4. 🏷️  Connect by device name")
+            print("6. ⚡ Fast scan (2s timeout)")
             print("5. ❌ Exit")
             
-            choice = input("\nSelect option (1-5): ").strip()
+            choice = input("\nSelect option (1-6): ").strip()
             
             if choice == "1":
                 return await self._quick_connect()
@@ -85,11 +86,13 @@ class ScanPadInteractive:
                 return await self._connect_by_address()
             elif choice == "4": 
                 return await self._connect_by_name()
+            elif choice == "6":
+                return await self._fast_scan_and_select()
             elif choice == "5":
                 print("👋 Goodbye!")
                 return False
             else:
-                print("❌ Invalid choice. Please select 1-5.")
+                print("❌ Invalid choice. Please select 1-6.")
     
     async def _quick_connect(self) -> bool:
         """Quick connection to first available device"""
@@ -124,8 +127,8 @@ class ScanPadInteractive:
         print("📡 Scanning for aRdent ScanPad devices...")
         
         try:
-            # Discover devices with timeout
-            devices = await ScanPad.discover_devices(timeout=10.0, debug=False)
+            # Discover devices with faster timeout
+            devices = await ScanPad.discover_devices(timeout=5.0, debug=False)
             
             if not devices:
                 print("❌ No aRdent ScanPad devices found")
@@ -207,7 +210,7 @@ class ScanPadInteractive:
         try:
             # Quick availability check first
             print("🔍 Checking device availability...")
-            is_available = await ScanPad.is_device_available(address, timeout=5.0)
+            is_available = await ScanPad.is_device_available(address, timeout=2.0)
             
             if not is_available:
                 print("⚠️  Device not found or not advertising")
@@ -265,6 +268,74 @@ class ScanPadInteractive:
         except Exception as e:
             print(f"❌ Connection by name failed: {e}")
             print("💡 Tip: Try 'Scan and select' to see available device names")
+            return False
+    
+    async def _fast_scan_and_select(self) -> bool:
+        """Fast scan with reduced timeout for quick discovery"""
+        print("\n⚡ Fast Scan Mode")
+        print("-" * 30)
+        print("📡 Quick scanning for aRdent ScanPad devices (2s timeout)...")
+        
+        try:
+            # Fast discovery with short timeout
+            devices = await ScanPad.discover_devices(timeout=2.0, debug=False)
+            
+            if not devices:
+                print("❌ No aRdent ScanPad devices found in fast scan")
+                print("💡 Try normal scan (option 2) for slower devices")
+                return False
+            
+            print(f"\n📱 Found {len(devices)} device(s) quickly:")
+            print("-" * 50)
+            
+            # Display devices with selection numbers (same as normal scan)
+            for i, device in enumerate(devices, 1):
+                rssi = device['rssi']
+                signal_strength = "📶📶📶" if rssi > -50 else "📶📶" if rssi > -70 else "📶"
+                
+                print(f"{i}. {device['name']} ⚡")
+                print(f"   📍 Address: {device['address']}")
+                print(f"   📶 Signal: {rssi} dBm {signal_strength}")
+                print()
+            
+            # Let user select device
+            while True:
+                try:
+                    choice = input(f"Select device (1-{len(devices)}) or 'b' for back: ").strip().lower()
+                    
+                    if choice == 'b':
+                        return False
+                    
+                    device_index = int(choice) - 1
+                    if 0 <= device_index < len(devices):
+                        selected_device = devices[device_index]
+                        break
+                    else:
+                        print(f"❌ Please enter a number between 1 and {len(devices)}")
+                        
+                except ValueError:
+                    print("❌ Please enter a valid number or 'b' for back")
+            
+            # Connect to selected device (fast connection)
+            print(f"\n🔗 Quick connecting to {selected_device['name']}...")
+            print(f"   📍 Address: {selected_device['address']}")
+            
+            self.scanpad = ScanPad(device_address=selected_device['address'])
+            await self.scanpad.connect(timeout=8.0)  # Faster connection timeout
+            
+            print("✅ Connected successfully!")
+            
+            # Show basic device info quickly 
+            info = self.scanpad.device_info
+            if info:
+                print(f"📱 Device: {info['name']}")
+                print(f"🕒 Connected at: {info.get('connected_at', 'Unknown')}")
+            
+            return True
+            
+        except Exception as e:
+            print(f"❌ Fast scan failed: {e}")
+            print("💡 Try normal scan (option 2) for more reliable discovery")
             return False
     
     async def _display_device_snapshot(self):
