@@ -126,39 +126,34 @@ class DeviceOrientations:
 
 
 class LEDs:
-    """LED identifiers and configurations"""
-    # Individual LEDs
-    GREEN_1 = 1    # Green LED 1
-    GREEN_2 = 2    # Green LED 2
-    
-    # RGB Color modes for central LED
-    RGB_RED = 3      # RGB Red mode
-    RGB_GREEN = 4    # RGB Green mode
-    RGB_BLUE = 5     # RGB Blue mode
-    RGB_YELLOW = 6   # RGB Yellow mode
-    RGB_CYAN = 7     # RGB Cyan mode
-    RGB_MAGENTA = 8  # RGB Magenta mode
-    RGB_WHITE = 9    # RGB White mode
+    """LED identifiers and configurations - EXACT match with ESP32 hardware cases 1-9"""
+    # Individual LEDs - exact ESP32 case mapping
+    GREEN_1 = 1    # case 1: LED1 Green (GPIO 7)
+    RED = 2        # case 2: LED2 RED (GPIO 17)
+    GREEN_2 = 3    # case 3: LED2 GREEN (GPIO 15)  
+    BLUE = 4       # case 4: LED2 BLUE (GPIO 16)
+    YELLOW = 5     # case 5: LED2 YELLOW (R+G)
+    CYAN = 6       # case 6: LED2 CYAN (G+B)
+    MAGENTA = 7    # case 7: LED2 MAGENTA (R+B)
+    WHITE = 8      # case 8: LED2 WHITE (R+G+B)
+    GREEN_3 = 9    # case 9: LED3 Green (GPIO 18)
     
     # Collections
-    ALL = [GREEN_1, GREEN_2]  # Only LEDs 1,2 are individual LEDs
-    ALL_RGB = [RGB_RED, RGB_GREEN, RGB_BLUE, RGB_YELLOW, RGB_CYAN, RGB_MAGENTA, RGB_WHITE]
-    ALL_WITH_RGB = ALL + ALL_RGB
+    INDIVIDUAL_LEDS = [GREEN_1, GREEN_3]  # Physical individual LEDs (1, 9)
+    RGB_COLORS = [RED, GREEN_2, BLUE, YELLOW, CYAN, MAGENTA, WHITE]  # RGB LED2 colors (2-8)  
+    ALL = [GREEN_1, RED, GREEN_2, BLUE, YELLOW, CYAN, MAGENTA, WHITE, GREEN_3]  # All valid IDs 1-9
     
-    # Names for display
+    # Names for display - EXACT ESP32 case mapping
     NAMES = {
-        # Individual LEDs
-        1: "Green LED 1",
-        2: "Green LED 2", 
-        
-        # RGB modes
-        3: "RGB Red Mode",
-        4: "RGB Green Mode",
-        5: "RGB Blue Mode", 
-        6: "RGB Yellow Mode",
-        7: "RGB Cyan Mode",
-        8: "RGB Magenta Mode",
-        9: "RGB White Mode"
+        1: "Green LED 1 (GPIO7)",         # case 1: LED1 Green
+        2: "Red LED2 (GPIO17)",           # case 2: LED2 RED
+        3: "Green LED2 (GPIO15)",         # case 3: LED2 GREEN  
+        4: "Blue LED2 (GPIO16)",          # case 4: LED2 BLUE
+        5: "Yellow LED2 (R+G)",           # case 5: LED2 YELLOW
+        6: "Cyan LED2 (G+B)",             # case 6: LED2 CYAN
+        7: "Magenta LED2 (R+B)",          # case 7: LED2 MAGENTA
+        8: "White LED2 (R+G+B)",          # case 8: LED2 WHITE
+        9: "Green LED 3 (GPIO18)"         # case 9: LED3 Green
     }
 
 
