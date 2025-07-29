@@ -201,12 +201,12 @@ class ScanPad:
                     discovered_devices.append(device_info.to_dict())
                     
                     if debug:
-                        logger.debug(f"📱 Found device: {device_name} at {device.address} (RSSI: {advertisement_data.rssi} dBm)")
+                        logger.debug(f"Found device: {device_name} at {device.address} (RSSI: {advertisement_data.rssi} dBm)")
             
             # Sort by RSSI (strongest signal first)
             discovered_devices.sort(key=lambda d: d['rssi'], reverse=True)
             
-            logger.info(f"✅ Discovery complete: Found {len(discovered_devices)} aRdent ScanPad device(s)")
+            logger.info(f"Discovery complete: Found {len(discovered_devices)} aRdent ScanPad device(s)")
             
             if not discovered_devices:
                 raise DeviceNotFoundError(f"No aRdent ScanPad devices found during {timeout}s scan")
@@ -216,7 +216,7 @@ class ScanPad:
         except Exception as e:
             if isinstance(e, DeviceNotFoundError):
                 raise
-            logger.error(f"❌ Discovery failed: {e}")
+            logger.error(f"Discovery failed: {e}")
             raise DeviceNotFoundError(f"Device discovery failed: {e}")
         finally:
             if debug:
@@ -241,14 +241,14 @@ class ScanPad:
             
             for device in devices:
                 if device.address.lower() == device_address.lower():
-                    logger.debug(f"✅ Device {device_address} is available")
+                    logger.debug(f"Device {device_address} is available")
                     return True
                     
-            logger.debug(f"❌ Device {device_address} not found during scan")
+            logger.debug(f"Device {device_address} not found during scan")
             return False
             
         except Exception as e:
-            logger.warning(f"⚠️  Availability check failed for {device_address}: {e}")
+            logger.warning(f"Availability check failed for {device_address}: {e}")
             return False
     
     @staticmethod
@@ -310,7 +310,7 @@ class ScanPad:
                     callback(device_info.to_dict())
                     
                     if debug:
-                        logger.debug(f"📱 Live discovery: {device_name} at {device.address} (RSSI: {advertisement_data.rssi} dBm)")
+                        logger.debug(f"Live discovery: {device_name} at {device.address} (RSSI: {advertisement_data.rssi} dBm)")
                         
             except Exception as e:
                 logger.warning(f"⚠️  Error in live scan callback: {e}")
@@ -325,10 +325,10 @@ class ScanPad:
             
             await scanner.stop()
             
-            logger.info(f"✅ Live scan complete: Found {len(found_addresses)} unique device(s)")
+            logger.info(f"Live scan complete: Found {len(found_addresses)} unique device(s)")
             
         except Exception as e:
-            logger.error(f"❌ Live scan failed: {e}")
+            logger.error(f"Live scan failed: {e}")
             raise DeviceNotFoundError(f"Live device scan failed: {e}")
         finally:
             if debug:
@@ -378,7 +378,7 @@ class ScanPad:
                     for device in devices:
                         if self._preferred_name in device['name']:
                             target_address = device['address']
-                            logger.info(f"✅ Found preferred device '{self._preferred_name}' at {target_address}")
+                            logger.info(f"Found preferred device '{self._preferred_name}' at {target_address}")
                             break
                     
                     if not target_address:
@@ -408,7 +408,7 @@ class ScanPad:
         await self._setup_notifications()
         
         self._initialized = True
-        logger.info("✅ aRdent ScanPad ready")
+        logger.info("aRdent ScanPad ready")
     
     async def disconnect(self) -> None:
         """Disconnect from device"""
@@ -424,7 +424,7 @@ class ScanPad:
         # Disconnect BLE
         await self.connection.disconnect()
         
-        logger.info("✅ Disconnected from aRdent ScanPad")
+        logger.info("Disconnected from aRdent ScanPad")
         
         # Clear device info
         self._device_info = None
@@ -488,7 +488,7 @@ class ScanPad:
         if not self.connection.is_connected:
             raise ConnectionError("Device not connected")
             
-        logger.debug("🔄 Refreshing device information")
+        logger.debug("Refreshing device information")
         
         info = {
             "address": self.connection.address or "Unknown",
@@ -550,11 +550,11 @@ class ScanPad:
             # Cache the refreshed info
             self._device_info = info.copy()
             
-            logger.debug("✅ Device information refreshed")
+            logger.debug("Device information refreshed")
             return info
             
         except Exception as e:
-            logger.error(f"❌ Failed to refresh device info: {e}")
+            logger.error(f"Failed to refresh device info: {e}")
             # Return basic info even if detailed fetch fails
             self._device_info = info
             return info
@@ -572,7 +572,7 @@ class ScanPad:
         # OTA update controller
         self.ota = OTAController(self.device)
         
-        logger.debug("✅ Controllers initialized")
+        logger.debug("Controllers initialized")
         logger.debug("   📋 keys: Key/button configuration")
         logger.debug("   🔧 device: LED/Buzzer/Settings/OTA")
         logger.debug("   🚀 ota: Firmware updates")
@@ -588,7 +588,7 @@ class ScanPad:
         """Setup BLE notification handlers"""
         # Use default notification handler which stores responses in connection._received_responses
         await self.connection.setup_notifications()
-        logger.debug("✅ BLE notifications configured")
+        logger.debug("BLE notifications configured")
     
     def _handle_config_notification(self, sender, data: bytearray) -> None:
         """Handle config domain notifications"""
@@ -689,7 +689,7 @@ class ScanPad:
         
         # Save configuration
         await self.keys.save_config()
-        logger.info("✅ Quick setup completed")
+        logger.info("Quick setup completed")
     
     async def backup_config(self) -> Dict[str, Any]:
         """
@@ -745,7 +745,7 @@ class ScanPad:
         
         # Save restored configuration
         await self.keys.save_config()
-        logger.info("✅ Configuration restored")
+        logger.info("Configuration restored")
 
 
 # Convenience function for simple usage
