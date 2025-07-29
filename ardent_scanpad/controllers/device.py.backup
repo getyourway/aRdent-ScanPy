@@ -20,6 +20,7 @@ from ..utils.constants import DeviceOrientations, BuzzerMelodies
 
 logger = logging.getLogger(__name__)
 
+
 class LEDSubController:
     """LED control sub-component of DeviceController"""
     
@@ -100,6 +101,7 @@ class LEDSubController:
             self._logger.debug("💡 All LEDs turned OFF")
         return success
 
+
 class BuzzerSubController:
     """Buzzer control sub-component of DeviceController"""
     
@@ -114,15 +116,18 @@ class BuzzerSubController:
         Args:
             duration_ms: Beep duration in milliseconds (50-5000)
             volume: Optional volume override (0-100)
+            _force: Internal parameter to bypass validation for testing
         """
-        self.parent._validate_range('duration_ms', duration_ms, 50, 5000)  # Raises exception if invalid
+        if not _force:
+            self.parent._validate_range('duration_ms', duration_ms, 50, 5000)  # Raises exception if invalid
         
         # Two-step process: set volume if specified, then beep
         if volume is not None:
-            self.parent._validate_range('volume', volume, 0, 100)  # Raises exception if invalid
+            if not _force:
+                self.parent._validate_range('volume', volume, 0, 100)  # Raises exception if invalid
             self._logger.debug(f"Playing beep: {duration_ms}ms at {volume}% volume")
             
-            if not await self.set_volume(volume):
+            if not await self.set_volume(volume, _force=_force):
                 return False
             await asyncio.sleep(0.1)
         else:
@@ -144,7 +149,8 @@ class BuzzerSubController:
         Args:
             melody_name: Name of melody to play
             volume: Optional volume override (0-100)
-                    """
+            _force: Internal parameter to bypass validation for testing
+        """
         melody_map = {
             'KEY': BuzzerMelodies.KEY,
             'START': BuzzerMelodies.START,
@@ -157,15 +163,17 @@ class BuzzerSubController:
             'SUCCESS': BuzzerMelodies.SUCCESS
         }
         
-        melody_choices = list(melody_map.keys())
-        self.parent._validate_choices('melody_name', melody_name.upper(), melody_choices)  # Raises exception if invalid
+        if not _force:
+            melody_choices = list(melody_map.keys())
+            self.parent._validate_choices('melody_name', melody_name.upper(), melody_choices)  # Raises exception if invalid
         
         melody_id = melody_map[melody_name.upper()]
         if volume is not None:
-            self.parent._validate_range('volume', volume, 0, 100)  # Raises exception if invalid
+            if not _force:
+                self.parent._validate_range('volume', volume, 0, 100)  # Raises exception if invalid
             self._logger.debug(f"Playing melody: {melody_name} at {volume}% volume")
             
-            if not await self.set_volume(volume):
+            if not await self.set_volume(volume, _force=_force):
                 return False
             await asyncio.sleep(0.1)
         else:
@@ -184,8 +192,10 @@ class BuzzerSubController:
         Args:
             volume: Volume level 0-100
             enabled: Enable/disable buzzer
-                    """
-        self.parent._validate_range('volume', volume, 0, 100)  # Raises exception if invalid
+            _force: Internal parameter to bypass validation for testing
+        """
+        if not _force:
+            self.parent._validate_range('volume', volume, 0, 100)  # Raises exception if invalid
         
         self._logger.debug(f"Setting buzzer volume to {volume}%")
         payload = bytes([1 if enabled else 0, volume])
@@ -228,6 +238,7 @@ class BuzzerSubController:
     async def play_confirm(self, volume: int = None) -> bool:
         """Play confirmation melody"""
         return await self.play_melody('CONFIRM', volume)
+
 
 class OTASubController:
     """
@@ -506,6 +517,7 @@ class OTASubController:
         
         return success
 
+
 class PeripheralController(BaseController):
     """
     Peripheral Controller - All Hardware Control
@@ -565,8 +577,10 @@ class PeripheralController(BaseController):
         
         Args:
             layout_id: Keyboard layout ID (0-65535)
-                    """
-        self._validate_range('layout_id', layout_id, 0, 65535)  # Raises exception if invalid
+            _force: Internal parameter to bypass validation for testing
+        """
+        if not _force:
+            self._validate_range('layout_id', layout_id, 0, 65535)  # Raises exception if invalid
         
         self._logger.debug(f"Setting keyboard layout to 0x{layout_id:04X}")
         

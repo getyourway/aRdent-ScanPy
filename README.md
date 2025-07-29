@@ -252,6 +252,32 @@ logging.getLogger('ardent_scanpad').setLevel(logging.DEBUG)
 logging.getLogger('ardent_scanpad').setLevel(logging.ERROR)
 ```
 
+### OTA Updates (Private Repository)
+
+The aRdent-ScanPad firmware repository is private and requires authentication for OTA updates:
+
+```python
+# Configure GitHub Personal Access Token
+device.device.ota.configure_auth(api_key="your_github_token_here")
+
+# Or use environment variable
+# export ARDENT_OTA_API_KEY="your_github_token_here"
+device.device.ota.configure_auth()
+
+# Check for updates
+update_info = await device.device.ota.check_for_update()
+if update_info['available']:
+    print(f"Update available: {update_info['latest_version']}")
+    
+    # Start OTA update
+    await device.device.ota.start_update()
+```
+
+**GitHub Token Setup:**
+1. Create Personal Access Token at: https://github.com/settings/tokens
+2. Required permissions: `repo` (Full control of private repositories)
+3. Set environment variable `ARDENT_OTA_API_KEY` or pass to `configure_auth()`
+
 ## 🧪 Examples
 
 See the `examples/` directory for complete usage examples:

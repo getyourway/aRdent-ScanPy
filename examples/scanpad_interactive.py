@@ -1344,7 +1344,7 @@ class ScanPadInteractive:
             print("❌ Factory reset cancelled")
     
     async def _ota_update(self):
-        """OTA firmware update with secure authentication"""
+        """OTA firmware update"""
         print("\n🎯 OTA FIRMWARE UPDATE")
         print("="*60)
         
@@ -1357,126 +1357,150 @@ class ScanPadInteractive:
                 print("⚠️  Could not determine current firmware version")
                 current_version = "unknown"
             
-            print("\n🔐 SECURE OTA OPTIONS:")
-            print("1. ✅ Check for GitHub updates (requires API key)")
-            print("2. 🚀 Start secure update from GitHub")
-            print("3. 🔧 Start basic OTA service (manual upload)")
-            print("4. 📊 Check OTA status")
-            print("0. ❌ Cancel")
+            print("\nOTA OPTIONS:")
+            print("1. Check for updates")
+            print("2. Update firmware (automatic)")
+            print("3. Start OTA service (manual upload)")
+            print("4. Check OTA status")
+            print("0. Cancel")
             
             choice = input("\nSelect option (0-4): ").strip()
             
             if choice == '1':
-                await self._check_github_update(current_version)
+                await self._check_for_updates()
             elif choice == '2':
-                await self._start_secure_update(current_version)
+                await self._update_firmware()
             elif choice == '3':
-                await self._start_basic_ota()
+                await self._manual_ota()
             elif choice == '4':
                 await self._check_ota_status()
             elif choice == '0':
-                print("❌ OTA cancelled")
+                print("OTA cancelled")
             else:
-                print("❌ Invalid choice")
+                print("Invalid choice")
                 
         except Exception as e:
             print(f"❌ Error: {e}")
     
-    async def _check_github_update(self, current_version: str):
-        """Check for GitHub updates with authentication"""
+    async def _check_for_updates(self):
+        """Check for available firmware updates"""
         try:
-            # Configure authentication
-            api_key = input("\n🔑 Enter OTA API key (or press Enter to use environment): ").strip()
-            if api_key:
-                self.scanpad.device.ota.configure_auth(api_key=api_key)
-            else:
-                self.scanpad.device.ota.configure_auth()  # Use environment variables
+            # Get API token
+            api_token = self._get_api_token()
+            if not api_token:
+                return
             
-            print("\n🔍 Checking GitHub for updates...")
-            update_info = await self.scanpad.device.ota.check_for_update(current_version)
+            print("\nChecking for updates...")
             
-            print("\n📋 UPDATE INFORMATION:")
-            print(f"  Current version: {current_version}")
-            print(f"  Latest version:  {update_info.get('latest_version', 'N/A')}")
-            print(f"  Update available: {'✅ Yes' if update_info.get('available', False) else '❌ No'}")
+            # Use integrated OTA controller
+            update_info = await self.scanpad.ota.check_for_updates(api_token)
             
-            if update_info.get('changelog'):
-                print(f"  Changelog: {update_info['changelog']}")
+            print("\nUPDATE INFORMATION:")
+            print(f"  Current: {update_info['current_version']}")
+            print(f"  Latest:  {update_info['latest_version']}")
+            print(f"  Available: {'Yes' if update_info['update_available'] else 'No'}")
+            
+            if update_info.get('release_notes'):
+                print(f"\nRelease Notes:\n{update_info['release_notes']}")
                 
-        except AuthenticationError:
-            print("❌ Authentication failed - Invalid API key")
-            print("💡 Set ARDENT_OTA_API_KEY environment variable or provide valid key")
-        except NetworkError as e:
-            print(f"❌ Network error: {e}")
+        except AuthenticationError as e:
+            print(f"Authentication failed: {e}")
+            print("Set ARDENT_OTA_API_KEY environment variable with your GitHub token")
         except Exception as e:
-            print(f"❌ Error checking updates: {e}")
+            print(f"Error: {e}")
+        
+        input("\nPress Enter to continue...")
     
-    async def _start_secure_update(self, current_version: str):
-        """Start secure OTA update from GitHub"""
+    def _get_api_token(self) -> Optional[str]:
+        """Get GitHub API token from user or environment"""
+        import os
+        
+        # Check environment first
+        env_token = os.environ.get('ARDENT_OTA_API_KEY')
+        if env_token:
+            print("Using GitHub token from ARDENT_OTA_API_KEY environment variable")
+            return env_token
+        
+        print("\nGitHub Personal Access Token required for private repository access")
+        print("Create one at: https://github.com/settings/tokens")
+        print("Required permissions: 'repo' (Full control of private repositories)")
+        
+        token = input("\nEnter GitHub token (or set ARDENT_OTA_API_KEY env var): ").strip()
+        return token if token else None
+    
+    async def _update_firmware(self):
+        """Update firmware with progress monitoring"""
         try:
-            # Configure authentication
-            api_key = input("\n🔑 Enter OTA API key (or press Enter to use environment): ").strip()
-            if api_key:
-                self.scanpad.device.ota.configure_auth(api_key=api_key)
-            else:
-                self.scanpad.device.ota.configure_auth()
-            
-            # Check for updates first
-            print("\n🔍 Checking for updates...")
-            update_info = await self.scanpad.device.ota.check_for_update(current_version)
-            
-            if not update_info.get('available', False):
-                print("✅ No updates available - you're up to date!")
+            # Get API token
+            api_token = self._get_api_token()
+            if not api_token:
                 return
             
-            print(f"\n📋 UPDATE AVAILABLE:")
-            print(f"  {current_version} → {update_info.get('latest_version', 'N/A')}")
+            print("\nStarting firmware update...")
             
-            confirm = input("\n⚠️  Start OTA update? This will restart the device. (y/N): ").strip().lower()
-            if confirm != 'y':
-                print("❌ Update cancelled")
+            # Progress tracking
+            last_progress = -1
+            last_status = ""
+            
+            def progress_callback(progress: int, status: str):
+                nonlocal last_progress, last_status
+                if progress != last_progress or status != last_status:
+                    # Create progress bar
+                    bar_length = 30
+                    filled = int(bar_length * progress / 100)
+                    bar = '█' * filled + '░' * (bar_length - filled)
+                    
+                    print(f"\rProgress: [{bar}] {progress}% - {status.title()}", end="", flush=True)
+                    last_progress = progress
+                    last_status = status
+            
+            # Get user confirmation
+            print("\nThis will update your device firmware and restart it.")
+            if input("Continue? (y/N): ").lower() != 'y':
+                print("Update cancelled")
                 return
             
-            # Progress callback
-            def progress_callback(percent):
-                print(f"📊 Update Progress: {percent}%")
-            
-            print("\n🚀 Starting secure OTA update...")
-            print("📶 Device will create WiFi AP: 'aRdent ScanPad'")
-            
-            success = await self.scanpad.device.ota.start_update(
+            # Start update (the controller handles WiFi AP creation and prompting)
+            result = await self.scanpad.ota.update_firmware(
+                api_token=api_token,
                 progress_callback=progress_callback
             )
             
-            if success:
-                print("✅ OTA update completed successfully!")
-                print("🔄 Device should restart with new firmware")
-            else:
-                print("❌ OTA update failed")
-                
-        except AuthenticationError:
-            print("❌ Authentication failed - Invalid API key")
-        except OTAError as e:
-            print(f"❌ OTA error: {e}")
-        except Exception as e:
-            print(f"❌ Error during update: {e}")
-    
-    async def _start_basic_ota(self):
-        """Start basic OTA service for manual upload"""
-        try:
-            print("\n🔧 Starting basic OTA service...")
-            success = await self.scanpad.device.ota.start()
+            print()  # New line after progress bar
             
-            if success:
-                print("✅ OTA service started successfully!")
-                print("📶 Device created WiFi AP: 'aRdent ScanPad'")
-                print("🌐 Upload firmware to: http://192.168.4.1/firmware")
-                print("💡 You can now upload firmware manually via web interface")
+            if result['success']:
+                print(f"Update completed successfully!")
+                print(f"Updated from {result['previous_version']} to {result['new_version']}")
+                print(f"Duration: {result['duration']:.1f} seconds")
             else:
-                print("❌ Failed to start OTA service")
+                print(f"Update failed: {result.get('error', 'Unknown error')}")
                 
         except Exception as e:
-            print(f"❌ Error starting OTA: {e}")
+            print(f"\nUpdate failed: {e}")
+        
+        input("\nPress Enter to continue...")
+    
+    async def _manual_ota(self):
+        """Start manual OTA service"""
+        try:
+            print("\nStarting OTA service for manual upload...")
+            
+            # Use the device controller's OTA service for manual mode
+            success = await self.scanpad.device.ota.start()
+            if success:
+                print("OTA service started")
+                print("WiFi AP: 'aRdent ScanPad' (no password)")
+                print("Upload URL: http://192.168.4.1/firmware")
+                
+                input("\nConnect to WiFi and upload firmware, then press Enter...")
+            else:
+                print("Failed to start OTA service")
+                
+        except Exception as e:
+            print(f"Error: {e}")
+        
+        input("\nPress Enter to continue...")
+    
     
     async def _check_ota_status(self):
         """Check current OTA status"""

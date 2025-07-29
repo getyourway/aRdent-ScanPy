@@ -6,17 +6,18 @@ Provides high-level async API for key configuration, LED control, device setting
 
 Example:
     ```python
-    from ardent_scanpad import ScanPad
+    from ardent_scanpad import ScanPad, HIDKeyCodes, HIDModifiers
     
     async with ScanPad() as device:
         # Configure a key to type "Hello"
-        await device.keys.set_key_sequence("Hello", key_id=0)
+        text_action = device.keys.create_text_action("Hello")
+        await device.keys.set_key_config(0, [text_action])
         
-        # Blink LED in red
-        await device.leds.blink(led_id=1, color="red", duration=2.0)
+        # Blink LED
+        await device.device.led.blink(1, frequency=2.0)
         
         # Set French keyboard layout
-        await device.device.set_language("french")
+        await device.device.set_language(0x040C)  # FR_AZERTY
     ```
 
 Version: 1.0.0

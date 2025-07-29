@@ -13,6 +13,7 @@ from .core.connection import BLEConnection
 from .core.exceptions import ConnectionError, ConfigurationError
 from .controllers.keys import KeyConfigurationController
 from .controllers.device import PeripheralController
+from .controllers.ota_controller import OTAController
 
 logger = logging.getLogger(__name__)
 
@@ -54,8 +55,8 @@ class ScanPad:
             await scanpad.device.set_auto_shutdown(60)
             
             # OTA Updates
-            version = await scanpad.device.ota.check_version()
-            await scanpad.device.ota.start()
+            version = await scanpad.ota.check_for_updates()
+            await scanpad.ota.update_firmware()
         ```
     """
     
@@ -73,6 +74,7 @@ class ScanPad:
         # Controllers (initialized after connection)
         self.keys: Optional[KeyConfigurationController] = None        # Key configuration controller
         self.device: Optional[PeripheralController] = None  # Device control controller
+        self.ota: Optional[OTAController] = None            # OTA update controller
         
         # State
         self._initialized = False
@@ -122,6 +124,7 @@ class ScanPad:
         # Cleanup controllers
         self.keys = None
         self.device = None
+        self.ota = None
         
         # Disconnect BLE
         await self.connection.disconnect()
@@ -138,9 +141,13 @@ class ScanPad:
         # Hardware control controller
         self.device = PeripheralController(self.connection)
         
+        # OTA update controller
+        self.ota = OTAController(self.device)
+        
         logger.debug("✅ Controllers initialized")
         logger.debug("   📋 keys: Key/button configuration")
         logger.debug("   🔧 device: LED/Buzzer/Settings/OTA")
+        logger.debug("   🚀 ota: Firmware updates")
     
     async def _setup_notifications(self) -> None:
         """Setup BLE notification handlers"""
