@@ -96,7 +96,8 @@ class ScanPadQRInteractive:
             print("  6. Single text key")
             print("  7. HID key command")
             print("  8. Multi-action key")
-            print("  9. Numeric keypad preset")
+            print("  9. 🛠️  Complete Keyboard Builder (All 16 keys + multi-actions)")
+            print("  20. Numeric keypad preset (legacy)")
             print()
             print("⚙️  DEVICE SETTINGS:")
             print("  10. Device orientation")
@@ -131,6 +132,8 @@ class ScanPadQRInteractive:
                 elif choice == "8":
                     self._multi_action_key_menu()
                 elif choice == "9":
+                    self._complete_keyboard_builder()
+                elif choice == "20":
                     self._numeric_keypad_preset()
                 elif choice == "10":
                     self._orientation_menu()
@@ -297,16 +300,17 @@ class ScanPadQRInteractive:
         print("\n⌨️  TEXT KEY CONFIGURATION")
         print("="*30)
         
-        # Show available keys
-        print("Available keys (first 8 for simplicity):")
-        for i in range(8):
-            key_name = KeyIDs.NAMES.get(i, f"Key {i}")
-            print(f"  {i}: {key_name}")
+        # Show matrix keys layout
+        print("Matrix keys (4x4 layout):")
+        print("  Row 0: [0] [1] [2] [3]")
+        print("  Row 1: [4] [5] [6] [7]")
+        print("  Row 2: [8] [9] [10] [11]")
+        print("  Row 3: [12] [13] [14] [15]")
         
         try:
-            key_id = int(input("Enter key ID (0-7): "))
-            if not (0 <= key_id <= 7):
-                print("❌ Key ID must be 0-7")
+            key_id = int(input("Enter key ID (0-15): "))
+            if not (0 <= key_id <= 15):
+                print("❌ Key ID must be 0-15")
                 return
                 
             text = input("Enter text to type (max 8 UTF-8 bytes): ")
@@ -341,9 +345,9 @@ class ScanPadQRInteractive:
             print(f"  {name}: 0x{code:02X}")
         
         try:
-            key_id = int(input("\nEnter key ID (0-7): "))
-            if not (0 <= key_id <= 7):
-                print("❌ Key ID must be 0-7")
+            key_id = int(input("\nEnter key ID (0-15): "))
+            if not (0 <= key_id <= 15):
+                print("❌ Key ID must be 0-15")
                 return
             
             keycode_input = input("Enter HID keycode (hex like 0x28 or decimal): ")
@@ -373,9 +377,9 @@ class ScanPadQRInteractive:
         print("="*30)
         
         try:
-            key_id = int(input("Enter key ID (0-7): "))
-            if not (0 <= key_id <= 7):
-                print("❌ Key ID must be 0-7")
+            key_id = int(input("Enter key ID (0-15): "))
+            if not (0 <= key_id <= 15):
+                print("❌ Key ID must be 0-15")
                 return
             
             actions = []
@@ -454,6 +458,504 @@ class ScanPadQRInteractive:
                 print(f"❌ Failed to create command for key {key_id}: {e}")
         
         print(f"✅ Generated {count} numeric keypad commands")
+    
+    def _complete_keyboard_builder(self):
+        """Complete keyboard builder with all 16 keys and multi-actions support"""
+        print("\n🛠️  COMPLETE KEYBOARD BUILDER")
+        print("="*60)
+        print("Configure all 16 matrix keys with multiple actions support")
+        print("Supports full keyboard configuration with $FULL: QR format")
+        print()
+        
+        config = {}
+        
+        while True:
+            # Show keyboard matrix status
+            self._display_keyboard_matrix(config)
+            
+            print("\n📋 CONFIGURATION OPTIONS:")
+            print("1. 🔧 Configure single key (with multi-actions)")
+            print("2. 🎹 Add standard layout (1-9, A-D, arrows)")
+            print("3. 🔤 Add alphabetic layout (A-P)")
+            print("4. 🔢 Add numeric layout (0-9)")
+            print("5. 📋 View current configuration")
+            print("6. 🗑️  Clear key configuration")
+            print("7. 📦 Generate $FULL: QR Code")
+            print("8. 💡 Help & Examples")
+            print("0. ❌ Back to main menu")
+            
+            choice = input("\nSelect option (0-8): ").strip()
+            
+            if choice == '0':
+                return
+            elif choice == '1':
+                self._configure_single_key_interactive(config)
+            elif choice == '2':
+                self._add_standard_layout_to_config(config)
+            elif choice == '3':
+                self._add_alphabetic_layout_to_config(config)
+            elif choice == '4':
+                self._add_numeric_layout_to_config(config)
+            elif choice == '5':
+                self._view_current_config(config)
+            elif choice == '6':
+                self._clear_key_interactive(config)
+            elif choice == '7':
+                if config:
+                    self._generate_full_qr_from_config(config)
+                else:
+                    print("❌ No keys configured")
+            elif choice == '8':
+                self._show_complete_help()
+            else:
+                print("❌ Invalid choice")
+    
+    def _display_keyboard_matrix(self, config):
+        """Display 4x4 keyboard matrix with configuration status"""
+        print("\n⌨️  KEYBOARD MATRIX (4x4):")
+        print("=" * 40)
+        
+        for row in range(4):
+            print("  ", end="")
+            for col in range(4):
+                key_id = row * 4 + col
+                if key_id in config:
+                    action_count = len(config[key_id])
+                    if action_count == 1:
+                        # Single action - show type
+                        action = config[key_id][0]
+                        if action['type'] == KeyTypes.UTF8:  # UTF8 = 0
+                            symbol = f"'{action.get('text', '?')[:2]}'"
+                        elif action['type'] == KeyTypes.HID:  # HID = 1
+                            symbol = f"H{action.get('value', 0):02X}"
+                        elif action['type'] == KeyTypes.CONSUMER:  # CONSUMER = 2
+                            symbol = f"C{action.get('value', 0)}"
+                        else:
+                            symbol = f"?{action.get('type', 0)}"
+                    else:
+                        symbol = f"[{action_count}]"
+                    status = f"{symbol:>6}"
+                else:
+                    status = "  ---"
+                print(f"{status}", end="  ")
+            print()  # New line after each row
+        
+        print(f"\n📊 Status: {len(config)}/16 keys configured")
+        if config:
+            total_actions = sum(len(actions) for actions in config.values())
+            print(f"   Total actions: {total_actions}")
+    
+    def _configure_single_key_interactive(self, config):
+        """Configure a single key with multiple actions support"""
+        print("\n🔧 SINGLE KEY CONFIGURATION")
+        print("-" * 40)
+        
+        # Key selection
+        print("Matrix keys: 0-15 (0=top-left, 3=top-right, 12=bottom-left, 15=bottom-right)")
+        print("Or enter as 'row,col' (e.g., '0,0' for top-left)")
+        
+        key_input = input("\nEnter key to configure: ").strip()
+        key_id = self._parse_key_input(key_input)
+        
+        if key_id is None or not (0 <= key_id <= 15):
+            print("❌ Invalid key (must be matrix key 0-15)")
+            return
+        
+        row, col = divmod(key_id, 4)
+        print(f"\n📝 Configuring Key [{row},{col}] (ID: {key_id})")
+        
+        # Show current configuration if exists
+        if key_id in config:
+            print(f"Current: {len(config[key_id])} action(s)")
+            for i, action in enumerate(config[key_id]):
+                print(f"  {i+1}. {self._action_summary(action)}")
+            
+            choice = input("\nReplace (r) or add to (a) existing config? [r]: ").lower()
+            if choice == 'a':
+                actions = config[key_id][:]
+            else:
+                actions = []
+        else:
+            actions = []
+        
+        # Build actions (up to 10 total)
+        while len(actions) < 10:
+            remaining = 10 - len(actions)
+            print(f"\n⚡ Action {len(actions) + 1} (max {remaining} more):")
+            print("1. 📝 UTF-8 Text")
+            print("2. ⌨️  HID Key (with modifiers)")
+            print("3. 🎛️  Consumer Control")
+            print("4. ✅ Finish configuration")
+            
+            choice = input("\nAction type (1-4): ").strip()
+            
+            if choice == '4' or not choice:
+                break
+            elif choice == '1':
+                action = self._create_utf8_action_interactive()
+            elif choice == '2':
+                action = self._create_hid_action_interactive()
+            elif choice == '3':
+                action = self._create_consumer_action_interactive()
+            else:
+                print("❌ Invalid choice")
+                continue
+            
+            if action:
+                actions.append(action)
+                print(f"✅ Action {len(actions)} added: {self._action_summary(action)}")
+        
+        if actions:
+            config[key_id] = actions
+            print(f"\n✅ Key [{row},{col}] configured with {len(actions)} action(s)")
+        else:
+            print("❌ No actions configured")
+    
+    def _parse_key_input(self, key_input: str):
+        """Parse key input (matrix notation or direct ID)"""
+        key_input = key_input.strip()
+        
+        # Try direct ID first
+        try:
+            key_id = int(key_input)
+            if 0 <= key_id <= 15:
+                return key_id
+        except ValueError:
+            pass
+        
+        # Try matrix notation (row,col)
+        if ',' in key_input:
+            try:
+                row, col = map(int, key_input.split(','))
+                if 0 <= row <= 3 and 0 <= col <= 3:
+                    return row * 4 + col
+            except ValueError:
+                pass
+        
+        return None
+    
+    def _create_utf8_action_interactive(self):
+        """Create UTF-8 text action interactively"""
+        print("\n📝 UTF-8 TEXT ACTION")
+        print("Examples: 'Hello', 'café', 'naïve', '1', 'A'")
+        
+        text = input("Enter text (max 8 UTF-8 bytes): ").strip()
+        if not text:
+            return None
+        
+        if len(text.encode('utf-8')) > 8:
+            print(f"❌ Text '{text}' is {len(text.encode('utf-8'))} bytes (max 8)")
+            return None
+        
+        delay = input("Delay after action (ms, default 0): ").strip()
+        try:
+            delay = int(delay) if delay else 0
+        except ValueError:
+            delay = 0
+        
+        return self.qr_generator.create_text_action(text, delay)
+    
+    def _create_hid_action_interactive(self):
+        """Create HID key action interactively"""
+        print("\n⌨️  HID KEY ACTION")
+        print("Common keys:")
+        print("  Letters: A=4, B=5, C=6... Z=29")
+        print("  Numbers: 1=30, 2=31... 0=39")
+        print("  Special: Enter=40, Esc=41, Backspace=42, Tab=43, Space=44")
+        print("  Arrows: Right=79, Left=80, Down=81, Up=82")
+        print("  Function: F1=58, F2=59... F12=69")
+        
+        key_code = input("\nEnter HID key code (0-255): ").strip()
+        try:
+            key_code = int(key_code)
+            if not (0 <= key_code <= 255):
+                print("❌ Key code must be 0-255")
+                return None
+        except ValueError:
+            print("❌ Invalid key code")
+            return None
+        
+        # Modifiers with better explanation
+        print("\nModifier keys (combine values):")
+        print("  1 = Left Ctrl     2 = Left Shift")
+        print("  4 = Left Alt      8 = Left Win/Cmd")
+        print("  16 = Right Ctrl   32 = Right Shift")
+        print("  64 = Right Alt    128 = Right Win/Cmd")
+        print("\nCommon combinations:")
+        print("  3 = Ctrl+Shift    5 = Ctrl+Alt    6 = Shift+Alt")
+        print("  9 = Ctrl+Win      10 = Shift+Win")
+        
+        modifiers = input("Enter modifier value (default 0): ").strip()
+        try:
+            modifiers = int(modifiers) if modifiers else 0
+            if not (0 <= modifiers <= 255):
+                print("❌ Modifier value must be 0-255")
+                return None
+        except ValueError:
+            print("❌ Invalid modifier value")
+            return None
+        
+        delay = input("Delay after action (ms, default 0): ").strip()
+        try:
+            delay = int(delay) if delay else 0
+        except ValueError:
+            delay = 0
+        
+        return self.qr_generator.create_hid_action(key_code, modifiers, delay)
+    
+    def _create_consumer_action_interactive(self):
+        """Create consumer control action interactively"""
+        print("\n🎛️  CONSUMER CONTROL ACTION")
+        print("Common controls:")
+        print("  Volume: Up=233, Down=234, Mute=226")
+        print("  Media: Play/Pause=205, Stop=183, Next=181, Previous=182")
+        print("  System: Power=48, Sleep=50, Wake=51")
+        print("  Browser: Home=35, Back=36, Forward=37")
+        
+        control = input("\nEnter consumer control code: ").strip()
+        try:
+            control = int(control)
+        except ValueError:
+            print("❌ Invalid control code")
+            return None
+        
+        delay = input("Delay after action (ms, default 0): ").strip()
+        try:
+            delay = int(delay) if delay else 0
+        except ValueError:
+            delay = 0
+        
+        return self.qr_generator.create_consumer_action(control, delay)
+    
+    def _action_summary(self, action):
+        """Get summary description of an action"""
+        action_type = action.get('type', 0)
+        
+        if action_type == KeyTypes.UTF8:  # UTF8 = 0
+            text = action.get('text', '')
+            return f"Text: '{text}'"
+        elif action_type == KeyTypes.HID:  # HID = 1
+            key = action.get('value', 0)
+            mods = action.get('mask', 0)
+            desc = f"HID: {key} (0x{key:02X})"
+            if mods:
+                mod_names = []
+                if mods & 1: mod_names.append("Ctrl")
+                if mods & 2: mod_names.append("Shift")
+                if mods & 4: mod_names.append("Alt")
+                if mods & 8: mod_names.append("Win")
+                desc = f"{'+'.join(mod_names)}+{desc}"
+            return desc
+        elif action_type == KeyTypes.CONSUMER:  # CONSUMER = 2
+            return f"Consumer: {action.get('value', 0)}"
+        else:
+            return f"Unknown (type={action_type})"
+    
+    def _add_standard_layout_to_config(self, config):
+        """Add standard keypad layout (1-9, A-D, arrows)"""
+        print("\n🎹 STANDARD LAYOUT")
+        print("This will add/replace:")
+        print("  Row 0: [1] [2] [3] [A]")
+        print("  Row 1: [4] [5] [6] [B]")
+        print("  Row 2: [7] [8] [9] [C]")
+        print("  Row 3: [←] [0] [→] [D]")
+        
+        if not self._confirm("Add standard layout?"):
+            return
+        
+        # Define the standard layout
+        standard_layout = {
+            # Row 0: 1, 2, 3, A
+            0: [self.qr_generator.create_text_action("1")],
+            1: [self.qr_generator.create_text_action("2")],
+            2: [self.qr_generator.create_text_action("3")],
+            3: [self.qr_generator.create_text_action("A")],
+            
+            # Row 1: 4, 5, 6, B
+            4: [self.qr_generator.create_text_action("4")],
+            5: [self.qr_generator.create_text_action("5")],
+            6: [self.qr_generator.create_text_action("6")],
+            7: [self.qr_generator.create_text_action("B")],
+            
+            # Row 2: 7, 8, 9, C
+            8: [self.qr_generator.create_text_action("7")],
+            9: [self.qr_generator.create_text_action("8")],
+            10: [self.qr_generator.create_text_action("9")],
+            11: [self.qr_generator.create_text_action("C")],
+            
+            # Row 3: Left Arrow, 0, Right Arrow, D
+            12: [self.qr_generator.create_hid_action(HIDKeyCodes.LEFT_ARROW)],
+            13: [self.qr_generator.create_text_action("0")],
+            14: [self.qr_generator.create_hid_action(HIDKeyCodes.RIGHT_ARROW)],
+            15: [self.qr_generator.create_text_action("D")],
+        }
+        
+        # Add to config
+        added_count = 0
+        for key_id, actions in standard_layout.items():
+            config[key_id] = actions
+            added_count += 1
+        
+        print(f"✅ Added {added_count} keys to configuration")
+    
+    def _add_alphabetic_layout_to_config(self, config):
+        """Add alphabetic layout (A-P)"""
+        print("\n🔤 ALPHABETIC LAYOUT")
+        print("This will add/replace keys 0-15 with letters A-P")
+        
+        if not self._confirm("Add alphabetic layout?"):
+            return
+        
+        added_count = 0
+        for i in range(16):
+            letter = chr(ord('A') + i)  # A, B, C... P
+            config[i] = [self.qr_generator.create_text_action(letter)]
+            added_count += 1
+        
+        print(f"✅ Added {added_count} alphabetic keys (A-P)")
+    
+    def _add_numeric_layout_to_config(self, config):
+        """Add numeric layout (0-9)"""
+        print("\n🔢 NUMERIC LAYOUT")
+        print("This will add/replace first 10 keys with numbers 0-9")
+        
+        if not self._confirm("Add numeric layout?"):
+            return
+        
+        added_count = 0
+        for i in range(10):
+            number = str(i)
+            config[i] = [self.qr_generator.create_text_action(number)]
+            added_count += 1
+        
+        print(f"✅ Added {added_count} numeric keys (0-9)")
+    
+    def _view_current_config(self, config):
+        """View current configuration details"""
+        if not config:
+            print("\n❌ No keys configured")
+            return
+        
+        print(f"\n📋 CURRENT CONFIGURATION ({len(config)} keys)")
+        print("=" * 60)
+        
+        for key_id in sorted(config.keys()):
+            actions = config[key_id]
+            row, col = divmod(key_id, 4)
+            print(f"\n🔑 Key [{row},{col}] (ID: {key_id}): {len(actions)} action(s)")
+            for i, action in enumerate(actions):
+                print(f"  {i+1}. {self._action_summary(action)}")
+        
+        total_actions = sum(len(actions) for actions in config.values())
+        print(f"\n📊 Total: {len(config)} keys, {total_actions} actions")
+        
+        input("\nPress Enter to continue...")
+    
+    def _clear_key_interactive(self, config):
+        """Clear key configuration interactively"""
+        if not config:
+            print("\n❌ No keys configured to clear")
+            return
+        
+        print("\n🗑️  CLEAR KEY CONFIGURATION")
+        print("Options:")
+        print("1. Clear specific key")
+        print("2. Clear all keys")
+        print("0. Cancel")
+        
+        choice = input("\nSelect option (0-2): ").strip()
+        
+        if choice == '1':
+            key_input = input("Enter key to clear: ").strip()
+            key_id = self._parse_key_input(key_input)
+            
+            if key_id is not None and key_id in config:
+                row, col = divmod(key_id, 4)
+                del config[key_id]
+                print(f"✅ Cleared key [{row},{col}] (ID: {key_id})")
+            else:
+                print("❌ Key not found in configuration")
+        elif choice == '2':
+            if self._confirm("Clear ALL keys?"):
+                config.clear()
+                print("✅ All keys cleared")
+            else:
+                print("❌ Cancelled")
+    
+    def _generate_full_qr_from_config(self, config):
+        """Generate $FULL: QR code from current configuration"""
+        print(f"\n📦 GENERATING $FULL: QR CODE")
+        print(f"Configuration: {len(config)} keys configured")
+        
+        total_actions = sum(len(actions) for actions in config.values())
+        print(f"Total actions: {total_actions}")
+        
+        try:
+            qr_command = self.qr_generator.create_full_keyboard_config(config)
+            
+            # Show compression statistics
+            metadata = qr_command.metadata
+            print(f"\n📊 Configuration Statistics:")
+            print(f"  Keys configured: {metadata['keys_configured']}")
+            print(f"  Total actions: {metadata['total_actions']}")
+            print(f"  Original size: {metadata['original_size_bytes']} bytes")
+            print(f"  Compressed size: {metadata['compressed_size_bytes']} bytes")
+            print(f"  Base64 size: {metadata['base64_size_chars']} characters")
+            print(f"  Compression ratio: {metadata['compression_ratio_percent']}%")
+            print(f"  QR format: ${metadata['qr_format']}:")
+            
+            self._add_and_preview_command(qr_command)
+            print("\n✅ $FULL: QR code generated successfully!")
+            print("You can now scan this QR code with your aRdent ScanPad device")
+            
+        except Exception as e:
+            print(f"❌ Error generating QR code: {e}")
+    
+    def _show_complete_help(self):
+        """Show complete help information"""
+        print("\n💡 COMPLETE KEYBOARD BUILDER HELP")
+        print("=" * 60)
+        
+        print("\n🗝️  KEY IDENTIFICATION:")
+        print("Matrix keys are numbered 0-15 in row-major order:")
+        print("  Row 0: [0] [1] [2] [3]")
+        print("  Row 1: [4] [5] [6] [7]")
+        print("  Row 2: [8] [9] [10] [11]")
+        print("  Row 3: [12] [13] [14] [15]")
+        print("\nYou can also use 'row,col' notation (e.g., '0,0' = key 0)")
+        
+        print("\n📝 ACTION TYPES:")
+        print("1. UTF-8 Text: Any text up to 8 UTF-8 bytes")
+        print("   - Examples: 'Hello', 'café', '1', 'A'")
+        print("   - Supports international characters")
+        
+        print("\n2. HID Keys: Standard keyboard keys with modifiers")
+        print("   - Key codes: A=4, B=5... Z=29, 1=30... 0=39")
+        print("   - Special: Enter=40, Esc=41, Space=44, Tab=43")
+        print("   - Arrows: Up=82, Down=81, Left=80, Right=79")
+        print("   - Function: F1=58, F2=59... F12=69")
+        print("   - Modifiers: Ctrl=1, Shift=2, Alt=4, Win=8")
+        
+        print("\n3. Consumer Controls: Media and system controls")
+        print("   - Volume: Up=233, Down=234, Mute=226")
+        print("   - Media: Play/Pause=205, Stop=183, Next=181")
+        print("   - System: Power=48, Sleep=50, Wake=51")
+        
+        print("\n⚡ MULTI-ACTIONS:")
+        print("Each key can have up to 10 actions executed in sequence")
+        print("Perfect for complex macros and key combinations")
+        
+        print("\n🎹 QUICK LAYOUTS:")
+        print("- Standard: Numbers 1-9, letters A-D, arrow keys")
+        print("- Alphabetic: Letters A-P across all 16 keys")
+        print("- Numeric: Numbers 0-9 on first 10 keys")
+        
+        print("\n📦 $FULL: FORMAT:")
+        print("Uses compressed binary format for complete keyboard config")
+        print("Single QR code contains all 16 keys with all actions")
+        print("Automatic compression reduces QR code size significantly")
+        
+        input("\nPress Enter to continue...")
     
     # ========================================
     # DEVICE SETTINGS

@@ -13,6 +13,8 @@ Architecture:
 
 import io
 import logging
+import base64
+import zlib
 from typing import Optional, Dict, Any, Union, List
 from pathlib import Path
 
@@ -349,6 +351,17 @@ class QRGeneratorController:
             'delay': delay
         }
     
+    def create_consumer_action(self, control_code: int, delay: int = 10) -> Dict[str, Any]:
+        """Create a consumer control action for key configuration (helper method)"""
+        if not (0 <= control_code <= 65535):
+            raise ValueError(f"Consumer control code must be 0-65535, got {control_code}")
+            
+        return {
+            'type': KeyTypes.CONSUMER,
+            'value': control_code,
+            'delay': delay
+        }
+    
     def create_key_config_command(self, key_id: int, actions: list) -> QRCommand:
         """Create key configuration command"""
         if not (0 <= key_id <= 19):
@@ -463,3 +476,209 @@ class QRGeneratorController:
                 self._logger.error(f"Error saving {filepath}: {e}")
         
         return saved_files
+    
+    # ========================================
+    # FULL KEYBOARD CONFIGURATION ($FULL:)
+    # ========================================
+    
+    def create_full_keyboard_config(self, 
+                                   keyboard_config: Dict[int, List[Dict[str, Any]]],
+                                   compression_level: int = 6) -> QRCommand:
+        """
+        Create a full keyboard configuration QR code with $FULL: format
+        
+        This method generates a compressed QR code containing the complete
+        keyboard configuration for all specified keys using the binary format:
+        
+        Header: [GYW][version][key_count]
+        Per Key: [key_id][action_count][actions...]
+        Per Action: [type][delay/text_len][value/text_data...] (depending on type)
+        
+        Args:
+            keyboard_config: Dict mapping key_id (0-19) to list of actions
+            compression_level: zlib compression level (1-9, 6=default)
+            
+        Returns:
+            QRCommand with $FULL: format
+            
+        Example:
+            config = {
+                0: [qr.create_text_action("1")],
+                1: [qr.create_text_action("2")], 
+                2: [qr.create_hid_action(HIDKeyCodes.ENTER)]
+            }
+            full_qr = qr.create_full_keyboard_config(config)
+        """
+        if not keyboard_config:
+            raise ValueError("Keyboard configuration cannot be empty")
+            
+        if not (1 <= compression_level <= 9):
+            raise ValueError("Compression level must be 1-9")
+            
+        # Validate key IDs and actions
+        for key_id, actions in keyboard_config.items():
+            if not (0 <= key_id <= 19):
+                raise ValueError(f"Key ID must be 0-19, got {key_id}")
+            if not actions:
+                raise ValueError(f"Key {key_id} must have at least one action")
+            if len(actions) > 10:
+                raise ValueError(f"Key {key_id} has too many actions (max 10): {len(actions)}")
+                
+        # Build binary configuration
+        binary_config = bytearray()
+        
+        # Header: Magic + Version + Key Count
+        binary_config.extend(b"GYW")  # Magic header
+        binary_config.append(0x01)   # Version
+        binary_config.append(len(keyboard_config))  # Key count
+        
+        # Process each key
+        total_actions = 0
+        for key_id in sorted(keyboard_config.keys()):
+            actions = keyboard_config[key_id]
+            
+            # Key header: [key_id][action_count]
+            binary_config.append(key_id)
+            binary_config.append(len(actions))
+            
+            # Process each action
+            for action in actions:
+                if not isinstance(action, dict) or 'type' not in action:
+                    raise ValueError(f"Key {key_id} action must be dict with 'type' key")
+                    
+                action_type = action['type']
+                
+                if action_type == KeyTypes.UTF8:
+                    # UTF-8 text action: [type=0][text_len][delay][text_data...]
+                    text = action.get('text', '')
+                    delay = action.get('delay', 10)
+                    
+                    text_bytes = text.encode('utf-8')
+                    if len(text_bytes) > 8:
+                        raise ValueError(f"Key {key_id} text too long (max 8 UTF-8 bytes): {text}")
+                        
+                    binary_config.append(0)  # UTF-8 type
+                    binary_config.append(len(text_bytes))  # text length
+                    binary_config.append(delay & 0xFF)     # delay
+                    binary_config.extend(text_bytes)       # text data
+                    
+                elif action_type == KeyTypes.HID:
+                    # HID action: [type=1][hid_code][modifiers][delay]
+                    value = action.get('value', 0)
+                    mask = action.get('mask', 0)
+                    delay = action.get('delay', 10)
+                    
+                    if not (0 <= value <= 255):
+                        raise ValueError(f"Key {key_id} HID value must be 0-255: {value}")
+                    if not (0 <= mask <= 255):
+                        raise ValueError(f"Key {key_id} HID mask must be 0-255: {mask}")
+                        
+                    binary_config.append(1)        # HID type
+                    binary_config.append(value)    # HID keycode
+                    binary_config.append(mask)     # HID modifiers 
+                    binary_config.append(delay & 0xFF)  # delay
+                    
+                else:
+                    raise ValueError(f"Key {key_id} unsupported action type: {action_type}")
+                    
+                total_actions += 1
+        
+        # Compress binary configuration
+        try:
+            compressed_data = zlib.compress(bytes(binary_config), level=compression_level)
+        except Exception as e:
+            raise ValueError(f"Compression failed: {e}")
+            
+        # Encode to Base64
+        try:
+            b64_data = base64.b64encode(compressed_data).decode('ascii')
+        except Exception as e:
+            raise ValueError(f"Base64 encoding failed: {e}")
+            
+        # Create $FULL: command
+        command_data = f"$FULL:{b64_data}$"
+        
+        # Calculate compression statistics
+        original_size = len(binary_config)
+        compressed_size = len(compressed_data)
+        b64_size = len(b64_data)
+        compression_ratio = (compressed_size / original_size) * 100 if original_size > 0 else 0
+        
+        description = f"Full keyboard: {len(keyboard_config)} keys, {total_actions} actions"
+        
+        metadata = {
+            'keys_configured': len(keyboard_config),
+            'total_actions': total_actions,
+            'original_size_bytes': original_size,
+            'compressed_size_bytes': compressed_size,
+            'base64_size_chars': b64_size,
+            'compression_ratio_percent': round(compression_ratio, 1),
+            'compression_level': compression_level,
+            'qr_format': 'FULL'
+        }
+        
+        return QRCommand(command_data, "Full Keyboard Config", description, metadata)
+    
+    def create_standard_numpad_config(self) -> QRCommand:
+        """
+        Create a standard numeric keypad configuration (keys 0-9)
+        
+        Returns:
+            QRCommand with numeric keypad layout
+        """
+        config = {}
+        
+        # Keys 0-9 with corresponding numbers
+        for i in range(10):
+            config[i] = [self.create_text_action(str(i))]
+            
+        return self.create_full_keyboard_config(config)
+    
+    def create_standard_alpha_config(self) -> QRCommand:
+        """
+        Create a standard alphabetic configuration (A-P for keys 0-15)
+        
+        Returns:
+            QRCommand with alphabetic layout
+        """
+        config = {}
+        
+        # Keys 0-15 with letters A-P
+        for i in range(16):
+            letter = chr(ord('A') + i)  # A, B, C, ..., P
+            config[i] = [self.create_text_action(letter)]
+            
+        return self.create_full_keyboard_config(config)
+    
+    def create_demo_mixed_config(self) -> QRCommand:
+        """
+        Create a demonstration configuration with mixed action types
+        
+        Returns:
+            QRCommand with demonstration layout including text, HID, and special keys
+        """
+        config = {
+            # Numbers 1-9
+            0: [self.create_text_action("1")],
+            1: [self.create_text_action("2")], 
+            2: [self.create_text_action("3")],
+            3: [self.create_text_action("4")],
+            4: [self.create_text_action("5")],
+            5: [self.create_text_action("6")],
+            6: [self.create_text_action("7")],
+            7: [self.create_text_action("8")],
+            8: [self.create_text_action("9")],
+            
+            # Letters A-D
+            9: [self.create_text_action("A")],
+            10: [self.create_text_action("B")],
+            11: [self.create_text_action("C")],
+            12: [self.create_text_action("D")],
+            
+            # Special keys with HID codes
+            13: [self.create_hid_action(HIDKeyCodes.LEFT_ARROW)],   # ←
+            14: [self.create_hid_action(HIDKeyCodes.RIGHT_ARROW)],  # →
+            15: [self.create_hid_action(HIDKeyCodes.ENTER)],        # ↵
+        }
+        
+        return self.create_full_keyboard_config(config)

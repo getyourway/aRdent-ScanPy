@@ -16,6 +16,7 @@ from .core.exceptions import ConnectionError, ConfigurationError, DeviceNotFound
 from .controllers.keys import KeyConfigurationController
 from .controllers.device import PeripheralController
 from .controllers.ota_controller import OTAController
+from .controllers.qr_generator import QRGeneratorController
 
 logger = logging.getLogger(__name__)
 
@@ -126,6 +127,7 @@ class ScanPad:
         self.keys: Optional[KeyConfigurationController] = None        # Key configuration controller
         self.device: Optional[PeripheralController] = None  # Device control controller
         self.ota: Optional[OTAController] = None            # OTA update controller
+        self.qr: QRGeneratorController = QRGeneratorController()      # QR code generator (no connection needed)
         
         # Device info (populated after connection)
         self._device_info: Optional[Dict[str, Any]] = None
