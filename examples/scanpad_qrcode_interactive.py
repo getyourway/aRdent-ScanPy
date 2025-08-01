@@ -990,40 +990,134 @@ class ScanPadQRInteractive:
             print("❌ Invalid orientation. Must be a number.")
     
     def _language_menu(self):
-        """Keyboard language command"""
-        print("\n⚙️  KEYBOARD LANGUAGE")
-        print("="*30)
+        """Keyboard language command with guided selection"""
+        print("\n⚙️  KEYBOARD LANGUAGE CONFIGURATION")
+        print("="*40)
         
-        # Show common layouts
-        common_layouts = {
-            'US QWERTY': KeyboardLayouts.WIN_US_QWERTY,
-            'French AZERTY': KeyboardLayouts.WIN_FR_AZERTY,
-            'German QWERTZ': KeyboardLayouts.WIN_DE_QWERTZ,
-        }
-        
-        print("Common layouts:")
-        for name, layout_id in common_layouts.items():
-            print(f"  {name}: 0x{layout_id:04X}")
+        # Step 1: Select Operating System
+        print("Step 1 - Select Operating System:")
+        print("  1. Windows")
+        print("  2. macOS") 
+        print("  3. Linux")
         
         try:
-            layout_input = input("\nEnter layout ID (hex like 0x1110 or decimal): ")
-            if layout_input.startswith('0x'):
-                layout_id = int(layout_input, 16)
-            else:
-                layout_id = int(layout_input)
-            
-            if not (0 <= layout_id <= 65535):
-                print("❌ Layout ID must be 0-65535")
+            os_choice = input("\nSelect OS (1-3): ").strip()
+            if os_choice not in ["1", "2", "3"]:
+                print("❌ Invalid OS selection")
                 return
+                
+            os_names = {"1": "Windows", "2": "macOS", "3": "Linux"}
+            selected_os = os_names[os_choice]
             
-            # Create language command (simulate - not fully in controller)
+            # Step 2: Select Layout Type
+            print(f"\nStep 2 - Select Layout Type for {selected_os}:")
+            print("  1. QWERTY (English/US)")
+            print("  2. AZERTY (French)")
+            print("  3. QWERTZ (German)")
+            
+            layout_choice = input("\nSelect layout (1-3): ").strip()
+            if layout_choice not in ["1", "2", "3"]:
+                print("❌ Invalid layout selection")
+                return
+                
+            layout_names = {"1": "QWERTY", "2": "AZERTY", "3": "QWERTZ"}
+            selected_layout = layout_names[layout_choice]
+            
+            # Step 3: Select Language/Region
+            print(f"\nStep 3 - Select Language/Region for {selected_layout}:")
+            
+            # Build available languages based on selections
+            available_languages = []
+            
+            # Map OS codes: Windows=1, macOS=2, Linux=3 (hypothetical mapping)
+            os_code = int(os_choice)
+            
+            if layout_choice == "1":  # QWERTY
+                if os_choice == "1":  # Windows
+                    available_languages = [
+                        ("1. US English", KeyboardLayouts.WIN_US_QWERTY),
+                        ("2. Spanish", KeyboardLayouts.WIN_ES_QWERTY),
+                        ("3. Italian", KeyboardLayouts.WIN_IT_QWERTY),
+                        ("4. Portuguese", KeyboardLayouts.WIN_PT_QWERTY),
+                        ("5. Dutch", KeyboardLayouts.WIN_NL_QWERTY),
+                    ]
+                elif os_choice == "2":  # macOS
+                    available_languages = [
+                        ("1. US English", 0x2110),  # macOS US (hypothetical)
+                    ]
+                else:  # Linux
+                    available_languages = [
+                        ("1. US English", 0x5110),  # Linux US (0x5 = Linux)
+                    ]
+                    
+            elif layout_choice == "2":  # AZERTY
+                if os_choice == "1":  # Windows
+                    available_languages = [
+                        ("1. French (France)", KeyboardLayouts.WIN_FR_AZERTY),
+                        ("2. French (Belgium)", KeyboardLayouts.WIN_BE_AZERTY),
+                    ]
+                elif os_choice == "2":  # macOS
+                    available_languages = [
+                        ("1. French (France)", 0x2220),  # Hypothetical macOS FR
+                    ]
+                else:  # Linux
+                    available_languages = [
+                        ("1. French (France)", 0x5220),  # Linux FR (0x5 = Linux)
+                    ]
+                    
+            elif layout_choice == "3":  # QWERTZ
+                if os_choice == "1":  # Windows
+                    available_languages = [
+                        ("1. German", KeyboardLayouts.WIN_DE_QWERTZ),
+                    ]
+                elif os_choice == "2":  # macOS
+                    available_languages = [
+                        ("1. German", 0x2340),  # macOS DE (hypothetical)
+                    ]
+                else:  # Linux
+                    available_languages = [
+                        ("1. German", 0x5340),  # Linux DE (0x5 = Linux)
+                    ]
+            
+            # Display available languages
+            for desc, code in available_languages:
+                print(f"  {desc} (0x{code:04X})")
+            
+            max_choice = len(available_languages)
+            lang_choice = input(f"\nSelect language (1-{max_choice}): ").strip()
+            
+            try:
+                lang_idx = int(lang_choice) - 1
+                if not (0 <= lang_idx < max_choice):
+                    print("❌ Invalid language selection")
+                    return
+            except ValueError:
+                print("❌ Invalid language selection")
+                return
+                
+            # Get selected language info
+            selected_desc, layout_id = available_languages[lang_idx]
+            language_name = selected_desc.split(". ")[1]  # Extract name after number
+            
+            print(f"\n✅ Selected Configuration:")
+            print(f"   OS: {selected_os}")
+            print(f"   Layout: {selected_layout}")
+            print(f"   Language: {language_name}")
+            print(f"   Code: 0x{layout_id:04X}")
+            
+            # Create language command
             payload = bytes([layout_id & 0xFF, (layout_id >> 8) & 0xFF])
             command_data = f"$CMD:DEV:42{payload.hex().upper()}CMD$"
             
             command = QRCommand(
-                command_data, "Device Settings",
-                f"Set keyboard layout: 0x{layout_id:04X}",
-                {'layout_id': layout_id}
+                command_data, "Keyboard Language",
+                f"Set keyboard to {language_name} (0x{layout_id:04X})",
+                {
+                    'layout_id': layout_id,
+                    'os': selected_os,
+                    'layout_type': selected_layout,
+                    'language': language_name
+                }
             )
             
             self._add_and_preview_command(command)
