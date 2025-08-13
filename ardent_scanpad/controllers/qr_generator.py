@@ -682,3 +682,279 @@ class QRGeneratorController:
         }
         
         return self.create_full_keyboard_config(config)
+    
+    # ========================================
+    # LUA SCRIPT DEPLOYMENT COMMANDS
+    # ========================================
+    
+    def create_lua_script_qr(self, 
+                           script_content: str,
+                           max_qr_size: int = 1000,
+                           compression_level: int = 6) -> List[QRCommand]:
+        """
+        Create QR codes for Lua script deployment with automatic fragmentation
+        
+        This method generates compressed and fragmented QR codes for deploying
+        Lua scripts to the device using the protocol:
+        - Single QR: $LUAX:base64$ (if fits in one QR)
+        - Multiple QRs: $LUA1:base64$, $LUA2:base64$, ..., $LUAX:base64$
+        
+        The script is compressed with zlib and encoded in base64 before fragmentation.
+        
+        Args:
+            script_content: Lua script as string
+            max_qr_size: Maximum bytes per QR code (default: 1000 for QR readability)
+            compression_level: zlib compression level (1-9, 6=default)
+            
+        Returns:
+            List of QRCommand objects for each fragment
+            
+        Example:
+            # Single QR for small script
+            qr_commands = qr.create_lua_script_qr("print('Hello World')")
+            
+            # Multiple QRs for large script  
+            large_script = open('my_script.lua', 'r').read()
+            qr_commands = qr.create_lua_script_qr(large_script)
+            
+            # Save all QR codes
+            for i, cmd in enumerate(qr_commands):
+                cmd.save(f"lua_script_part_{i+1}.png")
+        """
+        if not script_content.strip():
+            raise ValueError("Script content cannot be empty")
+            
+        if not (1 <= compression_level <= 9):
+            raise ValueError("Compression level must be 1-9")
+            
+        if max_qr_size < 100:
+            raise ValueError("max_qr_size too small (min 100 bytes)")
+        
+        try:
+            # Compress the script
+            script_bytes = script_content.encode('utf-8')
+            compressed_data = zlib.compress(script_bytes, level=compression_level)
+            
+            # Encode to base64
+            b64_data = base64.b64encode(compressed_data).decode('ascii')
+            
+        except Exception as e:
+            raise ValueError(f"Script compression/encoding failed: {e}")
+        
+        # Calculate compression statistics
+        original_size = len(script_bytes)
+        compressed_size = len(compressed_data)
+        b64_size = len(b64_data)
+        compression_ratio = (compressed_size / original_size) * 100 if original_size > 0 else 0
+        
+        self._logger.info(f"Lua script compression: {original_size}→{compressed_size}→{b64_size} bytes "
+                         f"({compression_ratio:.1f}% ratio)")
+        
+        # Calculate fragment overhead: "$LUAn:" + "$" = 7 chars for fragment 1-9, 8 chars for 10+
+        base_overhead = 7  # Assume single digit fragments initially
+        available_size = max_qr_size - base_overhead
+        
+        if available_size <= 0:
+            raise ValueError(f"max_qr_size {max_qr_size} too small for fragment overhead")
+        
+        # Fragment the base64 data
+        fragments = []
+        offset = 0
+        fragment_num = 1
+        
+        while offset < len(b64_data):
+            # Adjust overhead for fragment number
+            current_overhead = 7 if fragment_num <= 9 else 8  # $LUA1:$ vs $LUA10:$
+            current_available = max_qr_size - current_overhead
+            
+            if current_available <= 0:
+                raise ValueError(f"Fragment {fragment_num}: max_qr_size too small")
+            
+            # Extract fragment
+            fragment_data = b64_data[offset:offset + current_available]
+            fragments.append(fragment_data)
+            
+            offset += len(fragment_data)
+            fragment_num += 1
+            
+            # Safety check to prevent infinite loop
+            if fragment_num > 99:
+                raise ValueError("Script too large (would require >99 QR fragments)")
+        
+        if not fragments:
+            raise ValueError("No fragments generated (empty script?)")
+        
+        # Generate QR commands
+        qr_commands = []
+        total_fragments = len(fragments)
+        
+        for i, fragment_data in enumerate(fragments):
+            fragment_num = i + 1
+            
+            # Determine QR format - KISS: ALL fragments have $ terminator
+            if total_fragments == 1:
+                # Single QR - use execute format
+                command_data = f"$LUAX:{fragment_data}$"
+                fragment_desc = "Execute"
+            elif fragment_num == total_fragments:
+                # Last fragment - use execute format with terminator
+                command_data = f"$LUAX:{fragment_data}$"
+                fragment_desc = f"Fragment {fragment_num}/{total_fragments} (Execute)"
+            else:
+                # Intermediate fragments - WITH terminator (KISS approach)
+                command_data = f"$LUA{fragment_num}:{fragment_data}$"
+                fragment_desc = f"Fragment {fragment_num}/{total_fragments}"
+            
+            # Generate description
+            if total_fragments == 1:
+                description = f"Lua Script ({original_size} bytes, {compression_ratio:.1f}% compressed)"
+            else:
+                description = f"Lua Script {fragment_desc}"
+            
+            # Create metadata
+            metadata = {
+                'script_type': 'lua',
+                'fragment_number': fragment_num,
+                'total_fragments': total_fragments,
+                'fragment_size_chars': len(fragment_data),
+                'qr_size_chars': len(command_data),
+                'is_final_fragment': fragment_num == total_fragments,
+                'original_size_bytes': original_size,
+                'compressed_size_bytes': compressed_size,
+                'base64_size_chars': b64_size,
+                'compression_ratio_percent': round(compression_ratio, 1),
+                'compression_level': compression_level
+            }
+            
+            # Add overall statistics to first fragment
+            if fragment_num == 1:
+                metadata.update({
+                    'script_preview': script_content[:100] + ("..." if len(script_content) > 100 else ""),
+                    'script_lines': len(script_content.split('\n'))
+                })
+            
+            qr_command = QRCommand(
+                command_data=command_data,
+                command_type="Lua Script Deployment",
+                description=description,
+                metadata=metadata
+            )
+            
+            qr_commands.append(qr_command)
+        
+        self._logger.info(f"Generated {len(qr_commands)} QR code(s) for Lua script deployment")
+        
+        return qr_commands
+    
+    def create_lua_script_from_file(self, 
+                                  script_path: Union[str, Path],
+                                  **kwargs) -> List[QRCommand]:
+        """
+        Create QR codes from a Lua script file
+        
+        Args:
+            script_path: Path to .lua script file
+            **kwargs: Additional arguments for create_lua_script_qr()
+            
+        Returns:
+            List of QRCommand objects for each fragment
+        """
+        script_file = Path(script_path)
+        
+        if not script_file.exists():
+            raise FileNotFoundError(f"Script file not found: {script_path}")
+        
+        if not script_file.suffix.lower() == '.lua':
+            self._logger.warning(f"File {script_path} doesn't have .lua extension")
+        
+        try:
+            with open(script_file, 'r', encoding='utf-8') as f:
+                script_content = f.read()
+        except Exception as e:
+            raise ValueError(f"Failed to read script file {script_path}: {e}")
+        
+        # Pass script content to main method (remove metadata from kwargs since it's not supported)
+        clean_kwargs = {k: v for k, v in kwargs.items() if k != 'metadata'}
+        qr_commands = self.create_lua_script_qr(script_content, **clean_kwargs)
+        
+        # Add file info to all commands
+        for cmd in qr_commands:
+            cmd.metadata.update({
+                'script_filename': script_file.name,
+                'script_filepath': str(script_file),
+                'file_size_bytes': script_file.stat().st_size
+            })
+        
+        return qr_commands
+    
+    def save_lua_script_qr_sequence(self,
+                                   script_content: str,
+                                   output_dir: Union[str, Path],
+                                   filename_prefix: str = "lua_script_",
+                                   **kwargs) -> List[str]:
+        """
+        Generate and save complete QR sequence for a Lua script
+        
+        Args:
+            script_content: Lua script content
+            output_dir: Directory to save QR codes
+            filename_prefix: Prefix for QR filenames
+            **kwargs: Additional arguments for create_lua_script_qr()
+            
+        Returns:
+            List of saved file paths
+            
+        Example:
+            script = '''
+            function on_scan(data)
+                print("Scanned: " .. data)
+                led(1, true)  -- Turn on LED 1
+                beep()        -- Play beep
+            end
+            '''
+            
+            files = qr.save_lua_script_qr_sequence(
+                script, 
+                "output/",
+                max_qr_size=800
+            )
+            print(f"Saved {len(files)} QR codes: {files}")
+        """
+        # Generate QR commands
+        qr_commands = self.create_lua_script_qr(script_content, **kwargs)
+        
+        # Save with numbered filenames
+        output_path = Path(output_dir)
+        output_path.mkdir(parents=True, exist_ok=True)
+        
+        saved_files = []
+        total_fragments = len(qr_commands)
+        
+        for i, command in enumerate(qr_commands):
+            fragment_num = i + 1
+            
+            if total_fragments == 1:
+                filename = f"{filename_prefix}single.png"
+            else:
+                filename = f"{filename_prefix}{fragment_num:02d}_of_{total_fragments:02d}.png"
+            
+            filepath = output_path / filename
+            
+            try:
+                # Add QR generation options for better readability
+                qr_options = {
+                    'size': 400,  # Larger QR for complex data
+                    'border': 6,  # More border for better scanning
+                    'error_correction': qrcode.constants.ERROR_CORRECT_L if QR_AVAILABLE else None
+                }
+                
+                if command.save(filepath, **qr_options):
+                    saved_files.append(str(filepath))
+                    self._logger.info(f"Saved QR {fragment_num}/{total_fragments}: {filepath}")
+                else:
+                    self._logger.error(f"Failed to save QR {fragment_num}/{total_fragments}: {filepath}")
+                    
+            except Exception as e:
+                self._logger.error(f"Error saving QR {fragment_num}/{total_fragments} to {filepath}: {e}")
+        
+        return saved_files
