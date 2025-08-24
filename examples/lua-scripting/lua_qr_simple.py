@@ -35,8 +35,8 @@ def main():
         print(f"📊 Compression: {original_size} → {compressed_size} bytes ({compression_ratio}%)")
         print(f"📱 Generated {len(qr_commands)} QR code(s)")
         
-        # Create output directory
-        output_dir = Path("output")
+        # Create output directory in same folder as script
+        output_dir = Path(__file__).parent / "output"
         output_dir.mkdir(exist_ok=True)
         
         # Save QR codes with descriptive names

@@ -363,7 +363,7 @@ def main():
         print(f"   Fragments needed: {len(qr_commands)}")
         
         # Create output directory
-        output_dir = Path("output/advanced_inventory")
+        output_dir = Path(__file__).parent / "output" / "advanced_inventory"
         output_dir.mkdir(parents=True, exist_ok=True)
         
         print(f"\n💾 Saving {len(qr_commands)} QR codes...")

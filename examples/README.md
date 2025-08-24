@@ -1,110 +1,104 @@
-# aRdent ScanPad Python Examples
+# 📚 aRdent ScanPad Python Examples
 
-Collection complète d'exemples d'utilisation de la librairie Python `ardent_scanpad`.
+Collection complète d'exemples d'utilisation de la librairie Python `ardent_scanpad`, organisée par fonctionnalités.
 
 ## 🚀 Démarrage Rapide
 
 ```bash
-# Installer la librairie
-pip install bleak
+# Installer les dépendances
+pip install bleak qrcode[pil]
 
-# Lancer un exemple
-cd tools/python-library/examples
-python3 basic_led_demo.py
-```
-
-## 📁 Exemples Disponibles
-
-### 1. 🎮 **scanpad_interactive.py** - Terminal Interactif Complet
-**Application complète pour tester toutes les fonctionnalités**
-
-```bash
+# Lancer un exemple Bluetooth
+cd tools/python-library/examples/bluetooth
 python3 scanpad_interactive.py
+
+# Ou générer des QR codes
+cd ../qr-commands  
+python3 scanpad_qrcode_interactive.py
 ```
 
-- Snapshot complet de l'appareil au démarrage
-- Menu interactif pour tous les contrôles
-- Configuration avancée des touches (batch mode)
-- Tests de tous les périphériques (LEDs, buzzer, etc.)
-- Paramètres de l'appareil (orientation, langue, auto-shutdown)
+## 📁 Structure par Fonctionnalités
 
-→ [Documentation détaillée](README_INTERACTIVE.md)
-
-### 2. 💡 **basic_led_demo.py** - Contrôle des LEDs
-**Démonstration des fonctionnalités LED**
+### 📡 **bluetooth/** - Contrôle BLE en Temps Réel
+**Exemples nécessitant une connexion Bluetooth avec l'appareil**
 
 ```bash
-python3 basic_led_demo.py
+cd bluetooth/
+python3 scanpad_interactive.py  # Terminal interactif complet
 ```
 
-- Contrôle individuel des LEDs
-- Couleurs RGB (LEDs 3-5)
-- Effets de clignotement
-- Contrôle global (all on/off)
+**8 scripts disponibles** :
+- 🎮 `scanpad_interactive.py` - Terminal interactif complet avec tous les contrôles
+- 🔗 `connection_demo.py` - Démonstration de connexion BLE
+- 🔍 `device_discovery_demo.py` - Découverte et sélection d'appareils  
+- 📝 `basic_usage.py` - Configuration simple et rapide
+- 💡 `basic_led_demo.py` - Contrôle complet des LEDs
+- 🔊 `buzzer_demo.py` - Contrôle audio et mélodies
+- ⌨️ `simple_key_config.py` - Configuration des touches
+- 🧪 `test_clear_functionality.py` - Tests et validation
 
-### 3. ⌨️ **simple_key_config.py** - Configuration des Touches
-**Configuration basique des touches**
+**Idéal pour** : Développement d'applications, tests en temps réel, debugging
+
+→ [Documentation complète](bluetooth/README.md)
+
+---
+
+### 📱 **qr-commands/** - Génération QR (Sans BLE)
+**Génération de QR codes pour configurer l'appareil sans Bluetooth**
 
 ```bash
-python3 simple_key_config.py
+cd qr-commands/
+python3 scanpad_qrcode_interactive.py  # Terminal QR interactif
+# QR codes générés → qr-commands/output/
 ```
 
-- Actions UTF-8 simples
-- Raccourcis clavier (Ctrl+C)
-- Contrôles média (Volume)
-- Séquences d'actions avec délais
-- Configuration des boutons externes
+**4 générateurs disponibles** :
+- 🎮 `scanpad_qrcode_interactive.py` - Terminal QR complet avec menus
+- 🔧 `generate_backslash_filter_qr.py` - QR pour filtre backslash
+- 📊 `generate_barcode_filter_qr.py` - QR pour filtre codes-barres
+- 🔄 `generate_duplicate_detector_qr.py` - QR pour détecteur doublons
 
-### 4. 📱 **device_info_demo.py** - Informations de l'Appareil
-**Récupération des informations système**
+**Idéal pour** : Applications web, documentation, déploiement à distance
+
+→ [Documentation complète](qr-commands/README.md)
+
+---
+
+### 🛠️ **lua-scripting/** - Scripts Lua Avancés
+**Scripts Lua personnalisés et génération QR pour logique métier**
 
 ```bash
-python3 device_info_demo.py
+cd lua-scripting/
+python3 lua_qr_simple.py  # QR depuis fichier Lua
+# QR codes générés → lua-scripting/output/
 ```
 
-- Device Information Service (DIS)
-- État de la batterie
-- Configuration (orientation, langue)
-- État des LEDs
-- Résumé des touches configurées
+**3 générateurs + 5 scripts d'exemple** :
+- 📝 `lua_qr_simple.py` - Génération QR simple depuis fichier
+- 🔧 `lua_qr_advanced.py` - Génération QR avec options avancées  
+- 🗑️ `generate_clear_lua_qr.py` - QR pour nettoyer scripts
+- 📁 `demo_scripts/` - Collection de scripts Lua prêts à l'emploi
 
-### 5. 🔊 **buzzer_demo.py** - Contrôle Audio
-**Démonstration des capacités audio**
+**Idéal pour** : Logique métier complexe, automatisation, workflows spécialisés
 
-```bash
-python3 buzzer_demo.py
-```
+→ [Documentation complète](lua-scripting/README.md)
 
-- Beeps simples et multiples
-- Contrôle du volume
-- Mélodies prédéfinies
-- Patterns rythmiques personnalisés
-- Feedback interactif simulé
+## 🎯 Guide par Cas d'Usage
 
-### 6. 📝 **basic_usage.py** - Exemple Basique (Hérité)
-Configuration simple de touches :
-- Configuration texte
-- Raccourcis clavier (Ctrl+C, Ctrl+V)  
-- Contrôles média (Volume, Play/Pause)
-- Touches de fonction et Enter
-- Sauvegarde/restauration de configuration
+### 🚀 Je découvre l'aRdent ScanPad
+1. `bluetooth/connection_demo.py` → Première connexion
+2. `bluetooth/basic_led_demo.py` → Contrôles de base
+3. `bluetooth/scanpad_interactive.py` → Exploration complète
 
-```bash
-python3 basic_usage.py
-```
+### 💻 Je développe une application
+1. `bluetooth/simple_key_config.py` → Configuration touches
+2. `bluetooth/buzzer_demo.py` → Feedback audio
+3. `qr-commands/scanpad_qrcode_interactive.py` → QR pour GUI
 
-## 🎯 Cas d'Usage par Exemple
-
-### Débutant
-- **device_info_demo.py** → Comprendre votre appareil
-- **basic_led_demo.py** → Premiers contrôles
-
-### Développement d'Applications
-- **simple_key_config.py** → Configurer des touches pour votre app
-- **buzzer_demo.py** → Ajouter du feedback audio
-
-### Test et Validation
-- **scanpad_interactive.py** → Test complet de tous les composants
+### 🏭 Je déploie en production
+1. `qr-commands/` → Configuration sans BLE
+2. `lua-scripting/` → Logique métier avancée
+3. `bluetooth/test_clear_functionality.py` → Validation
 
 ## 🔧 Structure des Exemples
 

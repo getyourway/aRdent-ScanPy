@@ -47,7 +47,7 @@ class ScanPadQRInteractive:
     def __init__(self):
         self.qr_generator = QRGeneratorController()
         self.generated_commands: List[QRCommand] = []
-        self.output_dir = Path.cwd() / "scanpad_qr_codes"
+        self.output_dir = Path(__file__).parent / "output"
         
     def run(self):
         """Main entry point"""
@@ -103,6 +103,12 @@ class ScanPadQRInteractive:
             print("  10. Device orientation")
             print("  11. Keyboard language")
             print()
+            print("🔧 LUA SCRIPT DEPLOYMENT:")
+            print("  17. 🛠️  Deploy Lua script from file")
+            print("  18. 📝 Deploy custom Lua script")
+            print("  19. 🗑️  Clear Lua script")
+            print("  21. ℹ️  Lua script info")
+            print()
             print("📦 BATCH OPERATIONS:")
             print("  12. View generated commands")
             print("  13. Save all QR codes to files")
@@ -112,7 +118,7 @@ class ScanPadQRInteractive:
             print("❌ EXIT:")
             print("  16. Exit")
             
-            choice = input("\nSelect option (1-16): ").strip()
+            choice = input("\nSelect option (1-21): ").strip()
             
             try:
                 if choice == "1":
@@ -149,8 +155,16 @@ class ScanPadQRInteractive:
                     self._load_config_json()
                 elif choice == "16":
                     break
+                elif choice == "17":
+                    self._lua_script_from_file_menu()
+                elif choice == "18":
+                    self._lua_custom_script_menu()
+                elif choice == "19":
+                    self._lua_clear_script()
+                elif choice == "21":
+                    self._lua_script_info()
                 else:
-                    print("❌ Invalid choice. Please select 1-16.")
+                    print("❌ Invalid choice. Please select 1-21.")
                     
             except Exception as e:
                 print(f"❌ Error: {e}")
@@ -1278,6 +1292,270 @@ class ScanPadQRInteractive:
         """Ask for user confirmation"""
         response = input(f"{message} (y/n): ").strip().lower()
         return response in ['y', 'yes']
+    
+    # ========================================
+    # LUA SCRIPT DEPLOYMENT
+    # ========================================
+    
+    def _lua_script_from_file_menu(self):
+        """Deploy Lua script from file with automatic fragmentation"""
+        print("\n🛠️  DEPLOY LUA SCRIPT FROM FILE")
+        print("="*40)
+        print("This will generate QR codes for Lua script deployment with:")
+        print("- Automatic multi-QR fragmentation if needed")
+        print("- zlib compression + base64 encoding")
+        print("- $LUA1:, $LUA2:, ..., $LUAX: format")
+        print()
+        
+        filename = input("Enter Lua script filename (.lua): ").strip()
+        if not filename:
+            print("❌ No filename provided")
+            return
+            
+        # Add .lua extension if missing
+        if not filename.endswith('.lua'):
+            filename += '.lua'
+        
+        script_path = Path(filename)
+        if not script_path.exists():
+            print(f"❌ Script file not found: {script_path}")
+            
+            # Try current directory
+            current_dir_path = Path.cwd() / filename
+            if current_dir_path.exists():
+                script_path = current_dir_path
+                print(f"📁 Found script in current directory: {script_path}")
+            else:
+                print("\n💡 Tip: Place your .lua file in the same directory or use full path")
+                return
+        
+        try:
+            # Display script info
+            with open(script_path, 'r', encoding='utf-8') as f:
+                script_content = f.read()
+            
+            script_size = len(script_content.encode('utf-8'))
+            script_lines = len(script_content.split('\n'))
+            
+            print(f"\n📄 Script Info:")
+            print(f"   File: {script_path.name}")
+            print(f"   Size: {script_size} bytes")
+            print(f"   Lines: {script_lines}")
+            
+            # Show script preview
+            print(f"\n📖 Preview (first 300 chars):")
+            print("-" * 50)
+            preview = script_content[:300]
+            print(preview + ("..." if len(script_content) > 300 else ""))
+            print("-" * 50)
+            
+            if not self._confirm("\nGenerate QR codes for this script?"):
+                return
+            
+            # QR generation options
+            print("\n⚙️  QR Generation Options:")
+            max_size = input("Max QR size (chars, default 1000): ").strip()
+            try:
+                max_size = int(max_size) if max_size else 1000
+            except ValueError:
+                max_size = 1000
+            
+            compression = input("Compression level (1-9, default 6): ").strip()
+            try:
+                compression = int(compression) if compression else 6
+                compression = max(1, min(9, compression))
+            except ValueError:
+                compression = 6
+            
+            print(f"\nGenerating QR codes with max_size={max_size}, compression={compression}...")
+            
+            # Generate QR codes
+            qr_commands = self.qr_generator.create_lua_script_from_file(
+                script_path, 
+                max_qr_size=max_size, 
+                compression_level=compression
+            )
+            
+            # Display results
+            print(f"\n✅ Generated {len(qr_commands)} QR code(s):")
+            
+            for i, command in enumerate(qr_commands):
+                metadata = command.metadata
+                fragment_info = ""
+                if len(qr_commands) > 1:
+                    if metadata.get('is_final_fragment'):
+                        fragment_info = f" (Final - Execute)"
+                    else:
+                        fragment_info = f" (Fragment {i+1}/{len(qr_commands)})"
+                
+                qr_size = metadata.get('qr_size_chars', len(command.command_data))
+                print(f"   {i+1}. QR Code{fragment_info}: {qr_size} chars")
+            
+            # Show compression stats from first QR
+            if qr_commands:
+                metadata = qr_commands[0].metadata
+                print(f"\n📊 Compression Statistics:")
+                print(f"   Original: {metadata.get('original_size_bytes', 0)} bytes")
+                print(f"   Compressed: {metadata.get('compressed_size_bytes', 0)} bytes") 
+                print(f"   Base64: {metadata.get('base64_size_chars', 0)} chars")
+                print(f"   Ratio: {metadata.get('compression_ratio_percent', 0)}%")
+            
+            # Add to generated commands
+            for command in qr_commands:
+                self.generated_commands.append(command)
+            
+            print(f"\n✅ Added {len(qr_commands)} Lua deployment QR codes to queue")
+            
+            # Ask to save immediately
+            if QR_AVAILABLE and self._confirm("Save QR codes to files now?"):
+                self._save_lua_qr_sequence(qr_commands, script_path.stem)
+        
+        except Exception as e:
+            print(f"❌ Error processing Lua script: {e}")
+    
+    def _lua_custom_script_menu(self):
+        """Deploy custom Lua script (manual entry)"""
+        print("\n📝 DEPLOY CUSTOM LUA SCRIPT")
+        print("="*40)
+        print("Enter your Lua script interactively.")
+        print("Type 'END' on a new line to finish, or Ctrl+C to cancel")
+        print()
+        
+        script_lines = []
+        line_num = 1
+        
+        try:
+            while True:
+                line = input(f"{line_num:2d}| ")
+                if line.strip() == 'END':
+                    break
+                script_lines.append(line)
+                line_num += 1
+                
+        except KeyboardInterrupt:
+            print("\n❌ Script entry cancelled")
+            return
+        
+        if not script_lines:
+            print("❌ No script entered")
+            return
+        
+        script_content = '\n'.join(script_lines)
+        
+        # Show script summary
+        script_size = len(script_content.encode('utf-8'))
+        print(f"\n📄 Script Summary:")
+        print(f"   Lines: {len(script_lines)}")
+        print(f"   Size: {script_size} bytes")
+        print(f"\n📖 Full Script:")
+        print("-" * 50)
+        print(script_content)
+        print("-" * 50)
+        
+        if not self._confirm("Generate QR codes for this script?"):
+            return
+        
+        try:
+            # Generate QR codes
+            qr_commands = self.qr_generator.create_lua_script_qr(script_content)
+            
+            # Add to generated commands
+            for command in qr_commands:
+                self.generated_commands.append(command)
+            
+            print(f"\n✅ Generated {len(qr_commands)} Lua deployment QR code(s)")
+            
+            # Ask to save immediately
+            if QR_AVAILABLE and self._confirm("Save QR codes to files now?"):
+                self._save_lua_qr_sequence(qr_commands, "custom_lua_script")
+            
+        except Exception as e:
+            print(f"❌ Error generating Lua script QR: {e}")
+    
+    def _lua_clear_script(self):
+        """Clear/delete currently loaded Lua script"""
+        print("\n🗑️  CLEAR LUA SCRIPT")
+        print("="*30)
+        print("This generates a QR code to clear/delete the currently")
+        print("loaded Lua script from the device.")
+        
+        if not self._confirm("Generate clear Lua script QR code?"):
+            return
+        
+        try:
+            command = self.qr_generator.create_lua_clear_command()
+            self._add_and_preview_command(command)
+            
+        except Exception as e:
+            print(f"❌ Error generating clear command: {e}")
+    
+    def _lua_script_info(self):
+        """Get Lua script information"""
+        print("\nℹ️  LUA SCRIPT INFO")
+        print("="*30)
+        print("This generates a QR code to request information about")
+        print("the currently loaded Lua script from the device.")
+        
+        if not self._confirm("Generate Lua script info QR code?"):
+            return
+        
+        try:
+            command = self.qr_generator.create_lua_info_command()
+            self._add_and_preview_command(command)
+            
+        except Exception as e:
+            print(f"❌ Error generating info command: {e}")
+    
+    def _save_lua_qr_sequence(self, qr_commands, script_name):
+        """Save Lua QR sequence with descriptive filenames"""
+        try:
+            self.output_dir.mkdir(parents=True, exist_ok=True)
+            
+            saved_files = []
+            total_fragments = len(qr_commands)
+            
+            for i, command in enumerate(qr_commands):
+                fragment_num = i + 1
+                
+                if total_fragments == 1:
+                    filename = f"lua_{script_name}_deploy.png"
+                else:
+                    is_final = command.metadata.get('is_final_fragment', False)
+                    if is_final:
+                        filename = f"lua_{script_name}_final_execute.png"
+                    else:
+                        filename = f"lua_{script_name}_part_{fragment_num:02d}_of_{total_fragments:02d}.png"
+                
+                filepath = self.output_dir / filename
+                
+                if command.save(filepath):
+                    saved_files.append(str(filepath))
+                    print(f"✅ Saved: {filename}")
+                else:
+                    print(f"❌ Failed to save: {filename}")
+            
+            print(f"\n✅ Saved {len(saved_files)} Lua QR codes to {self.output_dir}")
+            
+            if total_fragments > 1:
+                print("\n📖 Deployment Instructions:")
+                print("1. Flash firmware to your aRdent ScanPad")
+                print("2. Scan QR codes in order:")
+                for i, command in enumerate(qr_commands):
+                    fragment_num = i + 1
+                    is_final = command.metadata.get('is_final_fragment', False)
+                    if is_final:
+                        print(f"   {fragment_num}. Final (Execute) - deploys and runs script")
+                    else:
+                        print(f"   {fragment_num}. Fragment {fragment_num} - loads data")
+                print("3. Script will be deployed and executed automatically")
+            else:
+                print("\n📖 Deployment Instructions:")
+                print("1. Flash firmware to your aRdent ScanPad")  
+                print("2. Scan the single QR code")
+                print("3. Script will be deployed and executed automatically")
+            
+        except Exception as e:
+            print(f"❌ Error saving Lua QR sequence: {e}")
 
 
 def main():
