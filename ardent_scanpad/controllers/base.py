@@ -231,6 +231,11 @@ class Commands:
     OTA_CANCEL = 0x63             # CMD_OTA_CANCEL
     OTA_GET_PROGRESS = 0x64       # CMD_OTA_GET_PROGRESS
     
+    # Lua Script Commands (0x68-0x6F)
+    LUA_DEPLOY_SCRIPT = 0x68      # CMD_LUA_DEPLOY_SCRIPT
+    LUA_GET_SCRIPT_INFO = 0x69    # CMD_LUA_GET_SCRIPT_INFO
+    LUA_CLEAR_SCRIPT = 0x6A       # CMD_LUA_CLEAR_SCRIPT
+    
     # System Commands (0x70-0x7F)
     SYSTEM_RESTART = 0x70         # CMD_SYSTEM_RESTART
     SYSTEM_SHUTDOWN = 0x71        # CMD_SYSTEM_SHUTDOWN

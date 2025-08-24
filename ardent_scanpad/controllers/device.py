@@ -636,6 +636,47 @@ class PeripheralController(BaseController):
             pass
         return None
     
+    # Lua Script Management Methods
+    
+    async def clear_lua_script(self) -> bool:
+        """
+        Clear/delete the currently loaded Lua script
+        
+        Returns:
+            bool: True if script was cleared successfully
+        """
+        try:
+            success = await self._send_command(Commands.LUA_CLEAR_SCRIPT, bytes())
+            if success:
+                self._logger.info("✅ Lua script cleared successfully")
+            else:
+                self._logger.warning("❌ Failed to clear Lua script")
+            return success
+        except Exception as e:
+            self._logger.error(f"Error clearing Lua script: {e}")
+            return False
+    
+    async def get_lua_script_info(self) -> Optional[Dict[str, Any]]:
+        """
+        Get information about the currently loaded Lua script
+        
+        Returns:
+            Dictionary with script info or None if no script loaded
+        """
+        try:
+            response = await self._send_command_and_wait(Commands.LUA_GET_SCRIPT_INFO, bytes())
+            if response and len(response) > 4:
+                # Parse script info response (implementation depends on ESP32 response format)
+                return {
+                    "loaded": True,
+                    "size": len(response) - 4,  # Approximate
+                    "status": "active"
+                }
+        except Exception as e:
+            self._logger.debug(f"No Lua script info available: {e}")
+        
+        return None
+    
     async def set_auto_shutdown(self, enabled: bool = True, 
                                no_connection_timeout_min: int = 60, 
                                no_activity_timeout_min: int = 30) -> bool:

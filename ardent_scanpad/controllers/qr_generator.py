@@ -323,6 +323,26 @@ class QRGeneratorController:
         )
     
     # ========================================
+    # LUA SCRIPT COMMANDS
+    # ========================================
+    
+    def create_lua_clear_command(self) -> QRCommand:
+        """Create command to clear/delete currently loaded Lua script"""
+        return self._create_device_command(
+            Commands.LUA_CLEAR_SCRIPT, bytes(),
+            "Lua Script Management", "Clear Lua Script",
+            {'action': 'clear_script', 'effect': 'removes_current_script'}
+        )
+    
+    def create_lua_info_command(self) -> QRCommand:
+        """Create command to get Lua script information"""
+        return self._create_device_command(
+            Commands.LUA_GET_SCRIPT_INFO, bytes(),
+            "Lua Script Management", "Get Lua Script Info", 
+            {'action': 'get_info', 'returns': 'script_status'}
+        )
+    
+    # ========================================
     # KEY CONFIGURATION COMMANDS
     # ========================================
     
@@ -770,12 +790,20 @@ class QRGeneratorController:
             if current_available <= 0:
                 raise ValueError(f"Fragment {fragment_num}: max_qr_size too small")
             
-            # Extract fragment
-            fragment_data = b64_data[offset:offset + current_available]
-            fragments.append(fragment_data)
-            
-            offset += len(fragment_data)
-            fragment_num += 1
+            # Check if this is the last fragment
+            remaining_data = len(b64_data) - offset
+            if remaining_data <= current_available:
+                # Last fragment - take ALL remaining data (don't limit by current_available)
+                fragment_data = b64_data[offset:]
+                fragments.append(fragment_data)
+                break  # We're done
+            else:
+                # Intermediate fragment - limit by current_available
+                fragment_data = b64_data[offset:offset + current_available]
+                fragments.append(fragment_data)
+                
+                offset += len(fragment_data)
+                fragment_num += 1
             
             # Safety check to prevent infinite loop
             if fragment_num > 99:

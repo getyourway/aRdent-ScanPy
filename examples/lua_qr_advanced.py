@@ -289,7 +289,7 @@ end
 
 -- System Setup
 function setup()
-    scanner_set_passthrough(false)  -- Take full control of scanner
+    scanner_enable_lua_processing(true)  -- Take full control of scanner
     
     -- Startup sequence
     key("\\n*** INVENTORY SYSTEM READY ***\\n")
