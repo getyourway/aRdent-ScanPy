@@ -3,7 +3,7 @@
 
 function setup()
     -- Disable HID passthrough - we control transmission
-    scanner_set_passthrough(false)
+    scanner_enable_lua_processing(true)
     led_all_off()
 end
 
@@ -27,7 +27,7 @@ end
 function on_key(key_id)
     if key_id == 15 then
         -- Reset filter (re-enable passthrough)
-        scanner_set_passthrough(true)
+        scanner_enable_lua_processing(false)
         led_all_off()
     end
 end

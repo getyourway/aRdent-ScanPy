@@ -667,7 +667,12 @@ class ScanPadQRInteractive:
         except ValueError:
             delay = 0
         
-        return self.qr_generator.create_text_action(text, delay)
+        # create_text_action only accepts text, delay is fixed at 10ms
+        action = self.qr_generator.create_text_action(text)
+        # Override delay if user specified one
+        if delay != 10:
+            action['delay'] = delay
+        return action
     
     def _create_hid_action_interactive(self):
         """Create HID key action interactively"""
