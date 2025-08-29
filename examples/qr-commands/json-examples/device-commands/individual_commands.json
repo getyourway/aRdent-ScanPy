@@ -1,0 +1,36 @@
+{
+  "type": "device_batch",
+  "metadata": {
+    "name": "Commandes Individuelles",
+    "description": "Exemple de mode individuel - chaque commande = 1 QR séparé",
+    "version": "1.0",
+    "use_case": "individual_testing",
+    "created_by": "aRdent ScanPad Team"
+  },
+  "commands": [
+    {
+      "domain": "led_control",
+      "action": "led_on",
+      "parameters": {
+        "led_id": 1
+      }
+    },
+    {
+      "domain": "led_control",
+      "action": "led_on", 
+      "parameters": {
+        "led_id": 2
+      }
+    },
+    {
+      "domain": "buzzer_control",
+      "action": "play_melody",
+      "parameters": {
+        "melody": "CONFIRM"
+      }
+    }
+  ],
+  "options": {
+    "batch_format": "individual"
+  }
+}

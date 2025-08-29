@@ -1,0 +1,15 @@
+{
+  "type": "single_command",
+  "metadata": {
+    "name": "LED Simple",
+    "description": "Allumer une seule LED - commande individuelle",
+    "version": "1.0", 
+    "use_case": "simple_control",
+    "created_by": "aRdent ScanPad Team"
+  },
+  "domain": "led_control",
+  "action": "led_on",
+  "parameters": {
+    "led_id": 2
+  }
+}

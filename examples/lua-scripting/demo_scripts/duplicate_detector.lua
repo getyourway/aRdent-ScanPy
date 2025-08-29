@@ -3,12 +3,12 @@ local reference = nil
 
 function setup()
     led_all_off()  -- Start with all LEDs off
+    -- Note: scanner_enable_lua_processing stays false (default)
+    -- This allows automatic HID transmission + Lua processing
 end
 
 function on_scan(barcode)
-    -- Send barcode to HID (normal behavior)
-    key(barcode)
-    key("\n")
+    -- Barcode is automatically sent to HID (no need to call key())
     
     if reference == nil then
         -- First scan: set as reference
@@ -37,12 +37,10 @@ function on_scan(barcode)
     reference = nil
 end
 
-function on_key(key_id)
-    if key_id == 15 then
+function on_button(id)
+    if id == 15 then
         -- Clear reference and all LEDs
         reference = nil
         led_all_off()
     end
 end
-
-setup()

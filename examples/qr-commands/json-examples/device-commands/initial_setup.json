@@ -1,0 +1,46 @@
+{
+  "type": "device_batch",
+  "metadata": {
+    "name": "Configuration Initiale Device",
+    "description": "Configuration complète du device au premier démarrage",
+    "version": "1.0",
+    "use_case": "setup",
+    "created_by": "aRdent ScanPad Team"
+  },
+  "commands": [
+    {
+      "domain": "device_settings",
+      "action": "set_orientation",
+      "parameters": {
+        "orientation": 1
+      }
+    },
+    {
+      "domain": "led_control",
+      "action": "all_leds_off",
+      "parameters": {}
+    },
+    {
+      "domain": "led_control", 
+      "action": "led_on",
+      "parameters": {
+        "led_id": 1
+      }
+    },
+    {
+      "domain": "buzzer_control",
+      "action": "play_melody",
+      "parameters": {
+        "melody": "START"
+      }
+    },
+    {
+      "domain": "lua_management",
+      "action": "clear_script",
+      "parameters": {}
+    }
+  ],
+  "options": {
+    "batch_format": "sequential"
+  }
+}

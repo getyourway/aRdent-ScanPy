@@ -26,6 +26,7 @@ import json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from ardent_scanpad.controllers.qr_generator import QRGeneratorController, QRCommand
+from ardent_scanpad.qr_generators import KeyboardConfigGenerator, DeviceCommandGenerator
 from ardent_scanpad.utils.constants import (
     KeyIDs, KeyTypes, HIDKeyCodes, HIDModifiers, ConsumerCodes,
     DeviceOrientations, KeyboardLayouts, LEDs, BuzzerMelodies
@@ -46,8 +47,11 @@ class ScanPadQRInteractive:
     
     def __init__(self):
         self.qr_generator = QRGeneratorController()
+        self.kb_generator = KeyboardConfigGenerator()
+        self.dev_generator = DeviceCommandGenerator()
         self.generated_commands: List[QRCommand] = []
         self.output_dir = Path(__file__).parent / "output"
+        self.json_examples_dir = Path(__file__).parent / "json-examples"
         
     def run(self):
         """Main entry point"""
@@ -113,7 +117,7 @@ class ScanPadQRInteractive:
             print("  12. View generated commands")
             print("  13. Save all QR codes to files")
             print("  14. Clear command list")
-            print("  15. Load config from JSON")
+            print("  15. 🗂️  Load JSON configuration (Browse examples or custom file)")
             print()
             print("❌ EXIT:")
             print("  16. Exit")
@@ -1236,62 +1240,176 @@ class ScanPadQRInteractive:
             print("✅ All commands cleared")
     
     def _load_config_json(self):
-        """Load configuration from JSON file"""
+        """Load configuration from JSON file using new hybrid generators"""
         print("\n📄 LOAD CONFIG FROM JSON")
-        print("="*30)
+        print("="*50)
+        print("Choose JSON source:")
+        print("  1. Browse JSON examples directory")
+        print("  2. Enter custom JSON file path")
+        print()
         
-        filename = input("Enter JSON filename: ").strip()
+        choice = input("Select option (1-2): ").strip()
+        
+        if choice == "1":
+            self._browse_json_examples()
+        elif choice == "2":
+            self._load_custom_json()
+        else:
+            print("❌ Invalid choice")
+    
+    def _browse_json_examples(self):
+        """Browse and select from JSON examples directory"""
+        if not self.json_examples_dir.exists():
+            print(f"❌ JSON examples directory not found: {self.json_examples_dir}")
+            print("💡 Make sure you have the json-examples folder in qr-commands/")
+            return
+        
+        print(f"\n📂 Browsing JSON examples in: {self.json_examples_dir}")
+        print("="*60)
+        
+        # Find all JSON files
+        keyboard_files = list((self.json_examples_dir / "keyboard-configs").glob("*.json"))
+        device_files = list((self.json_examples_dir / "device-commands").glob("*.json"))
+        
+        if not keyboard_files and not device_files:
+            print("❌ No JSON examples found")
+            return
+        
+        all_files = []
+        
+        # Display keyboard configs
+        if keyboard_files:
+            print("\n⌨️  KEYBOARD CONFIGURATIONS:")
+            for i, json_file in enumerate(keyboard_files):
+                print(f"  {len(all_files) + 1}. {json_file.stem}")
+                all_files.append(('keyboard', json_file))
+        
+        # Display device commands
+        if device_files:
+            print("\n⚙️  DEVICE COMMANDS:")
+            for i, json_file in enumerate(device_files):
+                print(f"  {len(all_files) + 1}. {json_file.stem}")
+                all_files.append(('device', json_file))
+        
+        print(f"\n  {len(all_files) + 1}. Cancel")
+        
+        try:
+            choice = int(input(f"\nSelect JSON file (1-{len(all_files) + 1}): ").strip())
+            
+            if choice == len(all_files) + 1:
+                return
+            
+            if 1 <= choice <= len(all_files):
+                file_type, json_file = all_files[choice - 1]
+                self._load_json_file(json_file, file_type)
+            else:
+                print("❌ Invalid choice")
+                
+        except ValueError:
+            print("❌ Please enter a valid number")
+    
+    def _load_custom_json(self):
+        """Load custom JSON file"""
+        filename = input("Enter JSON filename or path: ").strip()
         if not filename:
             return
-            
+        
+        json_path = Path(filename)
+        if not json_path.exists():
+            print(f"❌ File not found: {filename}")
+            return
+        
+        # Try to detect type from JSON content
         try:
-            with open(filename, 'r') as f:
+            with open(json_path, 'r') as f:
                 config = json.load(f)
             
-            # Simple config format expected:
-            # {"commands": [{"type": "led_on", "led_id": 1}, ...]}
+            config_type = config.get('type', '')
             
-            commands_config = config.get('commands', []) 
-            count = 0
-            
-            for cmd_config in commands_config:
-                cmd_type = cmd_config.get('type', '')
+            if config_type in ['keyboard_configuration', 'full_keyboard']:
+                file_type = 'keyboard'
+            elif config_type in ['device_batch', 'device_command', 'single_command']:
+                file_type = 'device'
+            else:
+                print("❌ Cannot detect JSON type. Expected 'keyboard_configuration' or 'device_batch'")
+                return
                 
-                try:
-                    if cmd_type == 'led_on':
-                        led_id = cmd_config['led_id']
-                        command = self.qr_generator.create_led_on_command(led_id)
-                        self.generated_commands.append(command)
-                        count += 1
-                    elif cmd_type == 'led_off':
-                        led_id = cmd_config['led_id']
-                        command = self.qr_generator.create_led_off_command(led_id)
-                        self.generated_commands.append(command)
-                        count += 1
-                    elif cmd_type == 'buzzer_melody':
-                        melody = cmd_config['melody']
-                        command = self.qr_generator.create_buzzer_melody_command(melody)
-                        self.generated_commands.append(command)
-                        count += 1
-                    elif cmd_type == 'text_key':
-                        key_id = cmd_config['key_id']
-                        text = cmd_config['text']
-                        command = self.qr_generator.create_quick_text_key(key_id, text)
-                        self.generated_commands.append(command)
-                        count += 1
-                    # Add more command types as needed
-                        
-                except Exception as e:
-                    print(f"❌ Failed to create command {cmd_type}: {e}")
+            self._load_json_file(json_path, file_type)
             
-            print(f"✅ Loaded {count} commands from {filename}")
-            
-        except FileNotFoundError:
-            print(f"❌ File not found: {filename}")
-        except json.JSONDecodeError:
-            print(f"❌ Invalid JSON in file: {filename}")
         except Exception as e:
-            print(f"❌ Error loading config: {e}")
+            print(f"❌ Error reading JSON file: {e}")
+    
+    def _load_json_file(self, json_file: Path, file_type: str):
+        """Load and process JSON file using appropriate generator"""
+        print(f"\n📄 Loading {json_file.name}...")
+        
+        try:
+            if file_type == 'keyboard':
+                # Use keyboard generator
+                qr_commands = self.kb_generator.from_json_file(json_file)
+                print(f"✅ Generated {len(qr_commands)} keyboard QR code(s)")
+                
+                for qr in qr_commands:
+                    print(f"  📱 {qr.description}")
+                    print(f"     Keys: {qr.metadata.get('keys_configured', 'N/A')}")
+                    print(f"     Actions: {qr.metadata.get('total_actions', 'N/A')}")
+                    print(f"     Size: {len(qr.command_data)} chars")
+                    
+            elif file_type == 'device':
+                # Use device generator  
+                qr_commands = self.dev_generator.from_json_file(json_file)
+                print(f"✅ Generated {len(qr_commands)} device QR code(s)")
+                
+                for qr in qr_commands:
+                    print(f"  📱 {qr.description}")
+                    
+                    if qr.metadata.get('qr_format') == 'BATCH':
+                        print(f"     Format: BATCH ({qr.metadata.get('command_count', 'N/A')} commands)")
+                        print(f"     Types: {', '.join(qr.metadata.get('commands', []))}")
+                    else:
+                        print(f"     Format: Individual command")
+                    
+                    print(f"     Size: {len(qr.command_data)} chars")
+            
+            # Add to generated commands list
+            self.generated_commands.extend(qr_commands)
+            
+            # Ask if user wants to save immediately
+            if self._confirm(f"\n💾 Save {len(qr_commands)} QR code(s) to output folder?"):
+                self._save_json_qr_codes(qr_commands, json_file.stem)
+            
+        except Exception as e:
+            print(f"❌ Error loading JSON: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def _save_json_qr_codes(self, qr_commands: List[QRCommand], name_prefix: str):
+        """Save QR codes with JSON-based naming"""
+        self.output_dir.mkdir(exist_ok=True)
+        
+        saved_files = []
+        for i, qr in enumerate(qr_commands):
+            # Generate filename
+            if len(qr_commands) == 1:
+                filename = f"json_{name_prefix}.png"
+            else:
+                filename = f"json_{name_prefix}_{i+1:02d}_of_{len(qr_commands):02d}.png"
+            
+            filepath = self.output_dir / filename
+            
+            try:
+                if qr.save(filepath, size=400, border=6):
+                    saved_files.append(str(filepath))
+                    print(f"  ✅ Saved: {filename} ({filepath.stat().st_size} bytes)")
+                else:
+                    print(f"  ❌ Failed: {filename}")
+            except Exception as e:
+                print(f"  ❌ Error saving {filename}: {e}")
+        
+        if saved_files:
+            print(f"\n✅ Successfully saved {len(saved_files)} QR code(s) to {self.output_dir}")
+        else:
+            print(f"\n❌ No QR codes were saved")
     
     def _confirm(self, message: str) -> bool:
         """Ask for user confirmation"""

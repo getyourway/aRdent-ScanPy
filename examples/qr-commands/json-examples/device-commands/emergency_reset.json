@@ -1,0 +1,46 @@
+{
+  "type": "device_batch",
+  "metadata": {
+    "name": "Reset d'Urgence",
+    "description": "Remise à zéro complète du device en cas de problème",
+    "version": "1.0",
+    "use_case": "emergency",
+    "created_by": "aRdent ScanPad Team"
+  },
+  "commands": [
+    {
+      "domain": "lua_management",
+      "action": "clear_script",
+      "parameters": {}
+    },
+    {
+      "domain": "led_control",
+      "action": "all_leds_off",
+      "parameters": {}
+    },
+    {
+      "domain": "device_settings",
+      "action": "set_orientation",
+      "parameters": {
+        "orientation": 0
+      }
+    },
+    {
+      "domain": "buzzer_control",
+      "action": "play_melody",
+      "parameters": {
+        "melody": "WARNING"
+      }
+    },
+    {
+      "domain": "led_control",
+      "action": "led_on",
+      "parameters": {
+        "led_id": 4
+      }
+    }
+  ],
+  "options": {
+    "batch_format": "sequential"
+  }
+}

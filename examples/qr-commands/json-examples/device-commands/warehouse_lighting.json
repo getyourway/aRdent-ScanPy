@@ -1,0 +1,48 @@
+{
+  "type": "device_batch",
+  "metadata": {
+    "name": "Éclairage Entrepôt",
+    "description": "Configuration des LEDs pour environnement d'entrepôt",
+    "version": "1.1",
+    "use_case": "warehouse",
+    "created_by": "aRdent ScanPad Team"
+  },
+  "commands": [
+    {
+      "domain": "led_control",
+      "action": "all_leds_off",
+      "parameters": {}
+    },
+    {
+      "domain": "led_control",
+      "action": "led_on", 
+      "parameters": {
+        "led_id": 1
+      }
+    },
+    {
+      "domain": "led_control",
+      "action": "led_on",
+      "parameters": {
+        "led_id": 2
+      }
+    },
+    {
+      "domain": "led_control", 
+      "action": "led_on",
+      "parameters": {
+        "led_id": 3
+      }
+    },
+    {
+      "domain": "buzzer_control",
+      "action": "play_melody",
+      "parameters": {
+        "melody": "CONFIRM"
+      }
+    }
+  ],
+  "options": {
+    "batch_format": "sequential"
+  }
+}

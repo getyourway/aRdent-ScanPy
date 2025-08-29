@@ -1,0 +1,62 @@
+{
+  "type": "device_batch",
+  "metadata": {
+    "name": "Séquence de Démonstration",
+    "description": "Démonstration complète des capacités du device",
+    "version": "2.0",
+    "use_case": "demonstration",
+    "created_by": "aRdent ScanPad Team"
+  },
+  "commands": [
+    {
+      "domain": "buzzer_control",
+      "action": "play_melody",
+      "parameters": {
+        "melody": "START"
+      }
+    },
+    {
+      "domain": "led_control",
+      "action": "all_leds_off",
+      "parameters": {}
+    },
+    {
+      "domain": "led_control",
+      "action": "led_on",
+      "parameters": {
+        "led_id": 1
+      }
+    },
+    {
+      "domain": "led_control",
+      "action": "led_on",
+      "parameters": {
+        "led_id": 4
+      }
+    },
+    {
+      "domain": "led_control",
+      "action": "led_on",
+      "parameters": {
+        "led_id": 5
+      }
+    },
+    {
+      "domain": "device_settings",
+      "action": "set_orientation",
+      "parameters": {
+        "orientation": 0
+      }
+    },
+    {
+      "domain": "buzzer_control",
+      "action": "play_melody",
+      "parameters": {
+        "melody": "SUCCESS"
+      }
+    }
+  ],
+  "options": {
+    "batch_format": "sequential"
+  }
+}

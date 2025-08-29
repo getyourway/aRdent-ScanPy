@@ -24,12 +24,10 @@ function on_scan(barcode)
     end
 end
 
-function on_key(key_id)
-    if key_id == 15 then
+function on_button(id)
+    if id == 15 then
         -- Reset filter (re-enable passthrough)
         scanner_enable_lua_processing(false)
         led_all_off()
     end
 end
-
-setup()
