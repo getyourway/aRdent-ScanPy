@@ -1448,7 +1448,7 @@ class ScanPadInteractive:
         
         if input(f"\nClear configuration for {key_name}? (y/n): ").lower() == 'y':
             try:
-                success = await self.scanpad.keys.clear_key_config(key_id)
+                success = await self.scanpad.keys.clear_key(key_id)
                 if success:
                     print(f"✅ {key_name} cleared")
                 else:

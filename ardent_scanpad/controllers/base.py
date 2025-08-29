@@ -134,34 +134,31 @@ class BaseController:
     # ========================================
     
     def _parse_uint8_response(self, response: bytes) -> int:
-        """Parse UINT8 response using centralized protocol utils"""
-        from ..utils.binary_protocol import BinaryProtocol
-        
+        """Parse UINT8 response"""
         if not response or len(response) < 5:
             raise ConfigurationError("Invalid response length")
-        BinaryProtocol.parse_status_response(response)
+        if response[0] != 0:
+            raise ConfigurationError(f"Command failed with status 0x{response[0]:02X}")
         if response[2] != 0x01:  # UINT8 type
             raise ConfigurationError("Expected UINT8 response")
         return response[4]
     
     def _parse_struct_response(self, response: bytes, expected_count: int) -> List[int]:
-        """Parse STRUCT response using centralized protocol utils"""
-        from ..utils.binary_protocol import BinaryProtocol
-        
+        """Parse STRUCT response"""
         if not response or len(response) < 4:
             raise ConfigurationError("Invalid response length")
-        BinaryProtocol.parse_status_response(response)
+        if response[0] != 0:
+            raise ConfigurationError(f"Command failed with status 0x{response[0]:02X}")
         if response[3] != expected_count:
             raise ConfigurationError(f"Expected {expected_count} elements, got {response[3]}")
         return list(response[4:])
     
     def _parse_empty_response(self, response: bytes) -> None:
-        """Parse EMPTY response using centralized protocol utils"""
-        from ..utils.binary_protocol import BinaryProtocol
-        
+        """Parse EMPTY response"""
         if not response or len(response) < 4:
             raise ConfigurationError("Invalid response length")
-        BinaryProtocol.parse_status_response(response)
+        if response[0] != 0:
+            raise ConfigurationError(f"Command failed with status 0x{response[0]:02X}")
 
 
 # COMPLETE Command IDs - Device command definitions
