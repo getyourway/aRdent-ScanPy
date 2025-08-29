@@ -1,0 +1,15 @@
+{
+  "type": "device_batch",
+  "metadata": {
+    "name": "Simple Device Setup",
+    "description": "KISS: basic device configuration",
+    "version": "1.0",
+    "use_case": "setup"
+  },
+  "commands": {
+    "orientation_landscape_right": {"value": 1},
+    "language_french": {"value": "0x040C"},
+    "led_1_on": {},
+    "buzzer_success": {}
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "_documentation": {
+    "_description": "KISS Template for aRdent ScanPad keyboard configuration JSON",
+    "_version": "2.0 KISS",
+    "_notes": [
+      "KISS format: Unified 'keys' structure for ALL keys (0-19)",
+      "Remove underscore (_) prefixed fields in production JSON files",
+      "Key IDs 0-15 = matrix keys, 16-19 = external buttons",
+      "Each key can have up to 10 actions that execute sequentially",
+      "MUCH simpler for GUI applications: just loop through 0-19!"
+    ]
+  },
+  
+  "type": "keyboard_configuration",
+  
+  "metadata": {
+    "name": "Your KISS Configuration Name",
+    "description": "Simple unified key configuration",
+    "version": "1.0",
+    "use_case": "general",
+    "_use_case_options": ["general", "warehouse", "retail", "pos", "gaming", "custom"],
+    "created_by": "Your Name/Company"
+  },
+  
+  "keys": {
+    "_keys_help": "Unified configuration for ALL keys (0-19)",
+    "_key_layout": {
+      "matrix_keys_0_15": [
+        "[0]  [1]  [2]  [3]",
+        "[4]  [5]  [6]  [7]", 
+        "[8]  [9]  [10] [11]",
+        "[12] [13] [14] [15]"
+      ],
+      "external_buttons_16_19": {
+        "16": "Scan Trigger Double Press (GPIO13)",
+        "17": "Scan Trigger Long Press (GPIO13, 1.5s)",
+        "18": "Power Button Single Press (GPIO6)",
+        "19": "Power Button Double Press (GPIO6, shutdown)"
+      }
+    },
+    
+    "0": [
+      {
+        "_comment": "Matrix key 0 (top-left corner)",
+        "type": "text",
+        "value": "1",
+        "delay": 10
+      }
+    ],
+    
+    "1": [{"type": "text", "value": "2", "delay": 10}],
+    "2": [{"type": "text", "value": "3", "delay": 10}],
+    "3": [{"type": "hid", "keycode": 43, "modifier": 0, "delay": 20}],
+    
+    "_keys_4_to_14": "Define matrix keys 4-14 similarly...",
+    
+    "15": [
+      {
+        "_comment": "Matrix key 15 (bottom-right corner)",
+        "type": "hid",
+        "keycode": 40,
+        "_keycode_note": "ENTER key",
+        "modifier": 0,
+        "delay": 20
+      }
+    ],
+    
+    "16": [
+      {
+        "_comment": "Scan Trigger Double Press (GPIO13)",
+        "type": "text",
+        "value": "SCAN: ",
+        "delay": 20
+      }
+    ],
+    
+    "17": [
+      {
+        "_comment": "Scan Trigger Long Press (GPIO13, 1.5s)",
+        "type": "text",
+        "value": "SCAN_MODE",
+        "delay": 50
+      },
+      {
+        "_comment": "Multiple actions example",
+        "type": "hid",
+        "keycode": 40,
+        "modifier": 0,
+        "delay": 10
+      }
+    ],
+    
+    "18": [
+      {
+        "_comment": "Power Button Single Press (GPIO6)",
+        "type": "text",
+        "value": "PWR",
+        "delay": 30
+      }
+    ],
+    
+    "19": [
+      {
+        "_comment": "Power Button Double Press (GPIO6) - Usually shutdown",
+        "type": "text", 
+        "value": "SHUTDOWN",
+        "delay": 100
+      }
+    ],
+    
+    "_max_actions_per_key": 10,
+    "_max_text_bytes_per_action": 8
+  },
+  
+  "options": {
+    "qr_format": "full",
+    "compression_level": 6,
+    "validate_before_generate": true
+  },
+  
+  "_action_types": {
+    "text": {
+      "description": "Types UTF-8 text (max 8 bytes per action)",
+      "example": {"type": "text", "value": "Hello", "delay": 10}
+    },
+    "hid": {
+      "description": "Sends HID keyboard key press",
+      "example": {"type": "hid", "keycode": 40, "modifier": 2, "delay": 20},
+      "common_keycodes": {
+        "ENTER": 40, "ESC": 41, "BACKSPACE": 42, "TAB": 43, "SPACE": 44, "DELETE": 76
+      },
+      "modifiers": {
+        "NONE": 0, "CTRL": 1, "SHIFT": 2, "ALT": 4, "GUI": 8
+      }
+    },
+    "consumer": {
+      "description": "Sends consumer control codes (media keys)",
+      "example": {"type": "consumer", "consumer_code": 205, "delay": 10},
+      "common_codes": {
+        "PLAY_PAUSE": 205, "VOLUME_UP": 233, "VOLUME_DOWN": 234, "MUTE": 226
+      }
+    }
+  },
+  
+  "_gui_helpers": {
+    "key_descriptions": {
+      "0": "Matrix 0,0 (top-left)",
+      "1": "Matrix 0,1", 
+      "2": "Matrix 0,2",
+      "3": "Matrix 0,3 (top-right)",
+      "12": "Matrix 3,0 (bottom-left)",
+      "15": "Matrix 3,3 (bottom-right)",
+      "16": "Scan Trigger (Double)",
+      "17": "Scan Trigger (Long)",
+      "18": "Power Button",
+      "19": "Power Double (Shutdown)"
+    },
+    "gui_loop": "for key_id in range(20): configure_key(key_id)",
+    "validation": "0-19 valid, each key max 10 actions, each text max 8 bytes"
+  },
+  
+  "_examples": {
+    "simple_numpad": {
+      "0": [{"type": "text", "value": "1"}],
+      "1": [{"type": "text", "value": "2"}], 
+      "15": [{"type": "hid", "keycode": 40}]
+    },
+    "with_external_buttons": {
+      "0": [{"type": "text", "value": "A"}],
+      "16": [{"type": "text", "value": "SCAN"}],
+      "18": [{"type": "text", "value": "PWR"}]
+    }
+  },
+  
+  "_advantages_kiss": [
+    "✅ Single loop 0-19 for GUI applications",
+    "✅ Direct key ID = ESP32 mapping", 
+    "✅ No complex matrix/external separation",
+    "✅ Easier validation and processing",
+    "✅ Same format for QR codes and Bluetooth"
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "_documentation": {
+    "_description": "KISS Template for aRdent ScanPad device commands JSON",
+    "_version": "2.0 KISS",
+    "_notes": [
+      "KISS format: Simple command names instead of domain/action/parameters",
+      "Remove underscore (_) prefixed fields in production JSON files",
+      "Same JSON works for both QR codes and Bluetooth transmission",
+      "GUI applications: just loop through commands object keys!"
+    ]
+  },
+  
+  "type": "device_batch",
+  
+  "metadata": {
+    "name": "Your KISS Device Commands",
+    "description": "Simple unified device control commands",
+    "version": "1.0",
+    "use_case": "setup",
+    "_use_case_options": ["setup", "test", "demo", "reset", "diagnostic"],
+    "created_by": "Your Name/Company"
+  },
+  
+  "commands": {
+    "_commands_help": "Simple command names with optional parameters",
+    
+    "_led_commands": "LED Control (1-9)",
+    "led_1_on": {},
+    "led_2_on": {},
+    "led_all_off": {},
+    "led_1_blink": {"duration": 5},
+    "led_rgb_red": {},
+    "led_rgb_green": {},
+    "led_rgb_blue": {},
+    
+    "_buzzer_commands": "Buzzer Control",
+    "buzzer_success": {},
+    "buzzer_error": {},
+    "buzzer_warning": {},
+    "buzzer_beep": {"duration_ms": 200, "frequency": 1000},
+    "buzzer_volume": {"level": 50},
+    "buzzer_stop": {},
+    
+    "_device_settings": "Device Configuration",
+    "orientation_portrait": {"value": 0},
+    "orientation_landscape_right": {"value": 1},
+    "orientation_portrait_inverted": {"value": 2},
+    "orientation_landscape_left": {"value": 3},
+    
+    "language_english": {"value": "0x0409"},
+    "language_french": {"value": "0x040C"},
+    "language_german": {"value": "0x0407"},
+    "language_spanish": {"value": "0x040A"},
+    
+    "auto_shutdown_enable": {
+      "no_connection_timeout_min": 30,
+      "no_activity_timeout_min": 60
+    },
+    "auto_shutdown_disable": {},
+    
+    "_lua_management": "Lua Scripts",
+    "lua_clear": {},
+    "lua_deploy": {"script": "base64_encoded_compressed_lua_script"},
+    "lua_info": {},
+    
+    "_power_management": "Battery & Power",
+    "battery_level": {},
+    "low_power_enable": {},
+    "low_power_disable": {},
+    "device_info": {},
+    "factory_reset": {}
+  },
+  
+  "options": {
+    "execute_sequentially": true,
+    "continue_on_error": true,
+    "led_feedback": true,
+    "buzzer_feedback": true
+  },
+  
+  "_command_mapping": {
+    "_help": "Internal mapping from KISS names to domain/action",
+    "led_1_on": {"domain": "led_control", "action": "led_on", "parameters": {"led_id": 1}},
+    "led_all_off": {"domain": "led_control", "action": "all_leds_off"},
+    "buzzer_success": {"domain": "buzzer_control", "action": "play_melody", "parameters": {"melody": "SUCCESS"}},
+    "orientation_landscape_right": {"domain": "device_settings", "action": "set_orientation", "parameters": {"orientation": 1}},
+    "language_french": {"domain": "device_settings", "action": "set_language", "parameters": {"language": "0x040C"}},
+    "lua_clear": {"domain": "lua_management", "action": "clear_script"},
+    "battery_level": {"domain": "power_management", "action": "get_battery_level"}
+  },
+  
+  "_examples": {
+    "simple_setup": {
+      "orientation_landscape_right": {"value": 1},
+      "language_french": {"value": "0x040C"},
+      "led_1_on": {},
+      "buzzer_success": {}
+    },
+    
+    "test_sequence": {
+      "led_1_on": {},
+      "buzzer_beep": {"duration_ms": 100},
+      "led_1_off": {}
+    },
+    
+    "emergency_reset": {
+      "lua_clear": {},
+      "factory_reset": {},
+      "buzzer_warning": {}
+    }
+  },
+  
+  "_gui_helpers": {
+    "command_categories": {
+      "led": ["led_1_on", "led_2_on", "led_all_off", "led_rgb_red"],
+      "buzzer": ["buzzer_success", "buzzer_error", "buzzer_beep"],
+      "settings": ["orientation_portrait", "language_english", "auto_shutdown_enable"],
+      "lua": ["lua_clear", "lua_deploy", "lua_info"],
+      "power": ["battery_level", "low_power_enable"]
+    },
+    
+    "gui_loop": "for cmd_name in commands.keys(): execute_command(cmd_name)",
+    "validation": "Simple key validation, no complex domain/action parsing"
+  },
+  
+  "_advantages_kiss": [
+    "✅ Single loop for GUI: for cmd in commands.keys()",
+    "✅ Self-documenting command names: led_1_on vs domain/action",
+    "✅ No complex nesting or domain routing logic",
+    "✅ Same JSON for QR codes and Bluetooth",
+    "✅ Easy validation and autocomplete in IDEs"
+  ]
+}

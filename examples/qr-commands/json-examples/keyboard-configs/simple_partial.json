@@ -1,0 +1,15 @@
+{
+  "type": "keyboard_configuration",
+  "metadata": {
+    "name": "Simple Partial Configuration",
+    "description": "KISS robustness: configure only some keys",
+    "version": "1.0",
+    "use_case": "partial"
+  },
+  "keys": {
+    "0": [{"type": "text", "value": "START"}],
+    "5": [{"type": "text", "value": "MID"}],
+    "15": [{"type": "hid", "keycode": 40, "modifier": 0}],
+    "18": [{"type": "text", "value": "PWR"}]
+  }
+}

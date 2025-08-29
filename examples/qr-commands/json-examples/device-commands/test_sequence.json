@@ -1,0 +1,18 @@
+{
+  "type": "device_batch",
+  "metadata": {
+    "name": "Test Sequence",
+    "description": "KISS: simple hardware test",
+    "version": "1.0", 
+    "use_case": "test"
+  },
+  "commands": {
+    "led_1_on": {},
+    "buzzer_beep": {"duration_ms": 200},
+    "led_1_off": {},
+    "led_2_on": {},
+    "buzzer_beep": {"duration_ms": 200},
+    "led_2_off": {},
+    "buzzer_success": {}
+  }
+}

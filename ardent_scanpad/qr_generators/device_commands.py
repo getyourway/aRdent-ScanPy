@@ -45,6 +45,8 @@ class DeviceCommandGenerator:
         """
         Generate QR codes from JSON device commands
         
+        Format: {"commands": {"led_1_on": {}, "buzzer_success": {}}}
+        
         Args:
             json_data: JSON device command dict
             
@@ -54,32 +56,19 @@ class DeviceCommandGenerator:
         # Validate JSON structure
         JSONValidator.validate_device_json(json_data)
         
-        # Handle single command
-        if json_data.get('type') == 'single_command':
-            qr_command = self._process_single_command(json_data)
-            if qr_command:
-                return [qr_command]
-            return []
-        
-        # Handle batch commands - PLUSIEURS COMMANDES = 1 QR CODE
-        elif 'commands' in json_data:
-            batch_format = json_data.get('options', {}).get('batch_format', 'sequential')
+        # Handle device commands
+        if 'commands' in json_data:
+            commands_data = json_data['commands']
             
-            if batch_format == 'individual':
-                # Mode individuel : 1 QR par commande
-                commands = []
-                for cmd_json in json_data['commands']:
-                    qr_command = self._process_single_command(cmd_json)
-                    if qr_command:
-                        commands.append(qr_command)
-                return commands
+            if not isinstance(commands_data, dict):
+                raise ValueError("Commands must be an object. List format is not supported.")
             
-            else:
-                # Mode batch (défaut) : TOUTES les commandes = 1 SEUL QR CODE
-                return self._create_batch_qr_command(json_data)
+            self._logger.info("📱 Processing device commands")
+            return self._create_batch_qr_command(json_data)
         
         return []
     
+
     def _build_binary_command(self, cmd_data: Dict[str, Any]) -> bytes:
         """
         Build binary command from JSON command data
@@ -140,19 +129,19 @@ class DeviceCommandGenerator:
         commands_data = json_data['commands']
         metadata = json_data.get('metadata', {})
         
-        # Build binary commands using existing command builders
-        binary_commands = []
-        for cmd_data in commands_data:
-            try:
-                # Map JSON command to binary command using existing builders
-                binary_cmd = self._build_binary_command(cmd_data)
-                if binary_cmd:
-                    binary_commands.append(binary_cmd)
-                else:
-                    self._logger.warning(f"Failed to build binary command for {cmd_data}")
-            except Exception as e:
-                self._logger.error(f"Error building command {cmd_data}: {e}")
-                return []
+        # Use shared command parser utility
+        from ..utils.command_parser import CommandParser
+        
+        try:
+            # Parse JSON to binary commands using shared utility
+            commands = CommandParser.parse_json_commands(json_data)
+            # Convert to old format for compatibility with batch creation
+            binary_commands = []
+            for command_id, payload in commands:
+                binary_commands.append(bytes([command_id]) + payload)
+        except Exception as e:
+            self._logger.error(f"Error parsing commands: {e}")
+            return []
         
         if not binary_commands:
             self._logger.error("No valid commands to batch")

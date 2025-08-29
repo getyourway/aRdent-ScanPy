@@ -294,11 +294,392 @@ class KeyConfigurationController(BaseController):
             'delay': delay
         }
     
-    # BACKWARD COMPATIBILITY (minimal set)
+    async def apply_json_configuration(self, json_config: dict) -> bool:
+        """
+        Apply complete keyboard configuration from JSON
+        
+        Supports unified format with keys 0-19.
+        Configures all keys (0-19) with direct ID mapping to ESP32.
+        
+        Args:
+            json_config: JSON configuration dictionary:
+                {
+                    "type": "keyboard_configuration",
+                    "keys": {
+                        "0": [actions...],   # Matrix key 0 (position 0,0)
+                        "15": [actions...],  # Matrix key 15 (position 3,3)
+                        "16": [actions...],  # Scan Trigger Double (GPIO13)
+                        "17": [actions...],  # Scan Trigger Long (GPIO13)
+                        "18": [actions...],  # Power Button (GPIO6)
+                        "19": [actions...]   # Power Double (GPIO6)
+                    }
+                }
+                
+                Legacy format also supported:
+                {
+                    "matrix_keys": {"0": [...], ...},
+                    "external_buttons": {"scan_trigger_double": [...], ...}
+                }
+                
+        Key mapping:
+        - 0-15: Matrix keys (4x4 grid, left-to-right, top-to-bottom)
+        - 16: Scan Trigger Double Press (GPIO13 double press)
+        - 17: Scan Trigger Long Press (GPIO13 long press 1.5s)  
+        - 18: Power Button Single Press (GPIO6 single press)
+        - 19: Power Button Double Press (GPIO6 double press, usually shutdown)
+        
+        Returns:
+            bool: True if all configurations applied successfully
+        """
+        logger.info("🔧 Applying JSON keyboard configuration")
+        
+        try:
+            # Validate JSON structure
+            if not isinstance(json_config, dict):
+                logger.error("JSON config must be a dictionary")
+                return False
+            
+            config_type = json_config.get('type')
+            if config_type not in ['keyboard_configuration', 'device_batch']:
+                logger.error(f"Unsupported config type: {config_type}")
+                return False
+            
+            success_count = 0
+            total_count = 0
+            
+            # Unified format with keys 0-19
+            if 'keys' in json_config:
+                logger.info("📱 Using unified format")
+                keys_config = json_config['keys']
+                
+                for key_str, actions in keys_config.items():
+                    try:
+                        key_id = int(key_str)
+                        if not (0 <= key_id <= 19):
+                            logger.warning(f"Invalid key ID: {key_id} (must be 0-19)")
+                            continue
+                        
+                        # Convert JSON actions to internal format
+                        formatted_actions = self._convert_json_actions_to_internal(actions)
+                        
+                        # Apply configuration
+                        total_count += 1
+                        if await self.set_key_config(key_id, formatted_actions):
+                            success_count += 1
+                            key_type = "Matrix" if key_id <= 15 else "External"
+                            logger.debug(f"✅ {key_type} key {key_id} configured ({len(actions)} actions)")
+                        else:
+                            logger.error(f"❌ Key {key_id} configuration failed")
+                            
+                    except (ValueError, TypeError) as e:
+                        logger.error(f"Invalid key ID format '{key_str}': {e}")
+                        continue
+                        
+            else:
+                # Legacy format: matrix_keys + external_buttons
+                logger.info("🔄 Using legacy matrix/external format")
+                
+                # Process matrix keys (0-15)
+                matrix_keys = json_config.get('matrix_keys', {})
+                for key_str, actions in matrix_keys.items():
+                    try:
+                        key_id = int(key_str)
+                        if not (0 <= key_id <= 15):
+                            logger.warning(f"Invalid matrix key ID: {key_id} (must be 0-15)")
+                            continue
+                        
+                        # Convert JSON actions to internal format
+                        formatted_actions = self._convert_json_actions_to_internal(actions)
+                        
+                        # Apply configuration
+                        total_count += 1
+                        if await self.set_key_config(key_id, formatted_actions):
+                            success_count += 1
+                            logger.debug(f"✅ Matrix key {key_id} configured ({len(actions)} actions)")
+                        else:
+                            logger.error(f"❌ Matrix key {key_id} configuration failed")
+                            
+                    except (ValueError, TypeError) as e:
+                        logger.error(f"Invalid key ID format '{key_str}': {e}")
+                        continue
+                
+                # Process external buttons (16-19)
+                external_buttons = json_config.get('external_buttons', {})
+                button_mapping = {
+                    'scan_trigger_double': 16,  # GPIO13 double press
+                    'scan_trigger_long': 17,    # GPIO13 long press 1.5s
+                    'power_button': 18,         # GPIO6 single press
+                    'power_button_double': 19   # GPIO6 double press (usually shutdown)
+                }
+                
+                for button_name, actions in external_buttons.items():
+                    if button_name not in button_mapping:
+                        logger.warning(f"Unknown external button: {button_name}")
+                        continue
+                    
+                    key_id = button_mapping[button_name]
+                    
+                    # Convert JSON actions to internal format
+                    formatted_actions = self._convert_json_actions_to_internal(actions)
+                    
+                    # Apply configuration
+                    total_count += 1
+                    if await self.set_key_config(key_id, formatted_actions):
+                        success_count += 1
+                        logger.debug(f"✅ External button {button_name} (ID {key_id}) configured ({len(actions)} actions)")
+                    else:
+                        logger.error(f"❌ External button {button_name} (ID {key_id}) configuration failed")
+            
+            # Final result
+            if success_count == total_count and total_count > 0:
+                logger.info(f"🎯 JSON configuration applied successfully: {success_count}/{total_count} keys configured")
+                return True
+            elif success_count > 0:
+                logger.warning(f"⚠️ Partial success: {success_count}/{total_count} keys configured")
+                return False
+            else:
+                logger.error("❌ No keys were configured successfully")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Exception during JSON configuration: {e}")
+            return False
     
-    async def clear_key_config(self, key_id: int) -> bool:
-        """Alias for clear_key"""
-        return await self.clear_key(key_id)
+    def _convert_json_actions_to_internal(self, json_actions: list) -> List[Dict[str, Any]]:
+        """
+        Convert JSON action format to internal action format
+        
+        JSON format: [{"type": "text", "value": "Hello", "delay": 10}]
+        Internal format: [{"type": "utf8", "text": "Hello", "delay": 10}]
+        
+        Args:
+            json_actions: List of actions in JSON format
+            
+        Returns:
+            List of actions in internal format
+        """
+        internal_actions = []
+        
+        for json_action in json_actions:
+            if not isinstance(json_action, dict):
+                logger.warning(f"Skipping invalid action: {json_action}")
+                continue
+            
+            action_type = json_action.get('type', '').lower()
+            delay = json_action.get('delay', 0)
+            
+            if action_type == 'text':
+                # Text action: {"type": "text", "value": "Hello", "delay": 10}
+                text_value = json_action.get('value', '')
+                if text_value:
+                    internal_actions.append(self.create_text_action(text_value, delay))
+                    
+            elif action_type == 'hid':
+                # HID action: {"type": "hid", "keycode": 40, "modifier": 2, "delay": 20}
+                keycode = json_action.get('keycode', 0)
+                modifier = json_action.get('modifier', 0)
+                if keycode > 0:
+                    internal_actions.append(self.create_hid_action(keycode, modifier, delay))
+                    
+            elif action_type == 'consumer':
+                # Consumer action: {"type": "consumer", "consumer_code": 205, "delay": 10}
+                consumer_code = json_action.get('consumer_code', 0)
+                if consumer_code > 0:
+                    internal_actions.append(self.create_consumer_action(consumer_code, delay))
+                    
+            else:
+                logger.warning(f"Unknown action type: {action_type}")
+                continue
+        
+        return internal_actions
+    
+    # GUI HELPER METHODS
+    
+    @staticmethod
+    def get_all_key_info() -> Dict[int, Dict[str, Any]]:
+        """
+        Get information about all configurable keys for GUI applications
+        
+        Returns:
+            dict: Key information for GUI display
+                {
+                    0: {"type": "matrix", "description": "Matrix 0,0 (top-left)", "position": (0,0)},
+                    16: {"type": "external", "description": "Scan Trigger Double", "gpio": 13},
+                    ...
+                }
+        """
+        key_info = {}
+        
+        # Matrix keys (0-15)
+        for key_id in range(16):
+            row = key_id // 4
+            col = key_id % 4
+            key_info[key_id] = {
+                "type": "matrix",
+                "description": f"Matrix {row},{col}",
+                "position": (row, col),
+                "gpio": None,
+                "display_name": f"Key {key_id} ({row},{col})"
+            }
+        
+        # External buttons (16-19)
+        external_buttons = {
+            16: {"description": "Scan Trigger Double", "gpio": 13, "press_type": "double", "timeout": "500ms"},
+            17: {"description": "Scan Trigger Long", "gpio": 13, "press_type": "long", "timeout": "1500ms"},
+            18: {"description": "Power Button", "gpio": 6, "press_type": "single", "timeout": None},
+            19: {"description": "Power Double (Shutdown)", "gpio": 6, "press_type": "double", "timeout": "250ms"}
+        }
+        
+        for key_id, info in external_buttons.items():
+            key_info[key_id] = {
+                "type": "external",
+                "description": info["description"],
+                "gpio": info["gpio"],
+                "press_type": info["press_type"],
+                "timeout": info["timeout"],
+                "display_name": info["description"]
+            }
+        
+        return key_info
+    
+    @staticmethod
+    def get_key_description(key_id: int) -> str:
+        """
+        Get human-readable description for a key ID
+        
+        Args:
+            key_id: Key ID (0-19)
+            
+        Returns:
+            str: Human-readable description
+        """
+        if not (0 <= key_id <= 19):
+            return f"Invalid Key {key_id}"
+        
+        key_info = KeyConfigurationController.get_all_key_info()
+        return key_info.get(key_id, {}).get("description", f"Key {key_id}")
+    
+    @staticmethod
+    def is_valid_key_id(key_id: int) -> bool:
+        """
+        Check if key ID is valid for configuration
+        
+        Args:
+            key_id: Key ID to validate
+            
+        Returns:
+            bool: True if valid (0-19)
+        """
+        return 0 <= key_id <= 19
+    
+    @staticmethod
+    def get_matrix_position(key_id: int) -> Optional[tuple]:
+        """
+        Get matrix position for matrix key IDs
+        
+        Args:
+            key_id: Key ID (0-15 for matrix keys)
+            
+        Returns:
+            tuple: (row, col) or None if not a matrix key
+        """
+        if 0 <= key_id <= 15:
+            return (key_id // 4, key_id % 4)
+        return None
+    
+    @staticmethod
+    def validate_json_config(json_config: dict) -> Dict[str, Any]:
+        """
+        Validate JSON configuration
+        
+        Args:
+            json_config: JSON configuration to validate
+            
+        Returns:
+            dict: Validation result with errors/warnings
+        """
+        result = {
+            "valid": True,
+            "errors": [],
+            "warnings": [],
+            "key_count": 0
+        }
+        
+        # Check basic structure
+        if not isinstance(json_config, dict):
+            result["errors"].append("Configuration must be a dictionary")
+            result["valid"] = False
+            return result
+        
+        # Check type
+        if json_config.get("type") != "keyboard_configuration":
+            result["errors"].append("Type must be 'keyboard_configuration'")
+            result["valid"] = False
+        
+        # Check keys section
+        keys_section = json_config.get("keys", {})
+        if not isinstance(keys_section, dict):
+            result["errors"].append("'keys' section must be a dictionary")
+            result["valid"] = False
+            return result
+        
+        # Validate each key
+        for key_str, actions in keys_section.items():
+            try:
+                key_id = int(key_str)
+                if not KeyConfigurationController.is_valid_key_id(key_id):
+                    result["errors"].append(f"Invalid key ID: {key_id} (must be 0-19)")
+                    result["valid"] = False
+                    continue
+                
+                # Validate actions
+                if not isinstance(actions, list):
+                    result["errors"].append(f"Key {key_id} actions must be a list")
+                    result["valid"] = False
+                    continue
+                
+                if len(actions) > 10:
+                    result["errors"].append(f"Key {key_id} has too many actions: {len(actions)} (max 10)")
+                    result["valid"] = False
+                
+                # Validate each action
+                for i, action in enumerate(actions):
+                    if not isinstance(action, dict):
+                        result["errors"].append(f"Key {key_id} action {i} must be a dictionary")
+                        result["valid"] = False
+                        continue
+                    
+                    action_type = action.get("type", "").lower()
+                    if action_type not in ["text", "hid", "consumer"]:
+                        result["errors"].append(f"Key {key_id} action {i} has invalid type: {action_type}")
+                        result["valid"] = False
+                    
+                    # Validate text length
+                    if action_type == "text":
+                        text_value = action.get("value", "")
+                        if len(text_value.encode('utf-8')) > 8:
+                            result["errors"].append(f"Key {key_id} action {i} text too long: {len(text_value.encode('utf-8'))} bytes (max 8)")
+                            result["valid"] = False
+                
+                result["key_count"] += 1
+                
+            except ValueError:
+                result["errors"].append(f"Invalid key ID format: '{key_str}' (must be integer)")
+                result["valid"] = False
+        
+        # Warnings
+        if result["key_count"] == 0:
+            result["warnings"].append("No keys configured")
+        
+        matrix_keys = [int(k) for k in keys_section.keys() if k.isdigit() and 0 <= int(k) <= 15]
+        external_keys = [int(k) for k in keys_section.keys() if k.isdigit() and 16 <= int(k) <= 19]
+        
+        if len(matrix_keys) == 0:
+            result["warnings"].append("No matrix keys configured (0-15)")
+        if len(external_keys) == 0:
+            result["warnings"].append("No external buttons configured (16-19)")
+        
+        return result
     
     
     # INTERNAL METHODS

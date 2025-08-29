@@ -759,6 +759,35 @@ class PeripheralController(BaseController):
         return device_info
     
     # ========================================
+    # JSON BATCH COMMANDS
+    # ========================================
+    
+    async def execute_commands_from_json(self, json_config: dict) -> Dict[str, Any]:
+        """Execute device commands from JSON using shared parser"""
+        from ..utils.command_parser import CommandParser
+        
+        results = {"success": True, "executed": 0, "errors": []}
+        
+        try:
+            # Parse JSON to binary commands using shared utility
+            commands = CommandParser.parse_json_commands(json_config)
+            
+            # Execute each command via Bluetooth
+            for command_id, payload in commands:
+                try:
+                    await self._send_command(command_id, payload)
+                    results["executed"] += 1
+                except Exception as e:
+                    results["errors"].append(f"Command {command_id}: {str(e)}")
+                    results["success"] = False
+                    
+        except Exception as e:
+            results["errors"].append(f"Parse error: {str(e)}")
+            results["success"] = False
+        
+        return results
+    
+    # ========================================
     # CONFIGURATOR SUPPORT METHODS  
     # ========================================
     
