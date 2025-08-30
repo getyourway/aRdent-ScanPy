@@ -2,7 +2,7 @@
   "type": "keyboard_configuration",
   "metadata": {
     "name": "Function Keys Layout",
-    "description": "KISS format: Function keys F1-F12 + controls (unified keys 0-19)",
+    "description": "Function keys F1-F12 + controls (unified keys 0-19)",
     "version": "1.0",
     "use_case": "development",
     "created_by": "aRdent ScanPad Team"

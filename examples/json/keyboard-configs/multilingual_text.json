@@ -2,7 +2,7 @@
   "type": "keyboard_configuration",
   "metadata": {
     "name": "Configuration Multilingue",
-    "description": "KISS format: UTF-8 international characters support (unified keys 0-19)",
+    "description": "UTF-8 international characters support (unified keys 0-19)",
     "version": "1.2",
     "use_case": "international",
     "created_by": "aRdent ScanPad Team"

@@ -2,7 +2,7 @@
   "type": "keyboard_configuration",
   "metadata": {
     "name": "Simple Partial Configuration",
-    "description": "KISS robustness: configure only some keys",
+    "description": "Configure only some keys (partial configuration)",
     "version": "1.0",
     "use_case": "partial"
   },

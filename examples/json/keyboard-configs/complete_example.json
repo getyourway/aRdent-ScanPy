@@ -2,7 +2,7 @@
   "type": "keyboard_configuration",
   "metadata": {
     "name": "Complete KISS Configuration",
-    "description": "KISS format: unified keys 0-19 (matrix + external buttons)",
+    "description": "Unified keys 0-19 (matrix + external buttons)",
     "version": "2.0",
     "use_case": "calculator",
     "created_by": "aRdent ScanPad KISS Template"
