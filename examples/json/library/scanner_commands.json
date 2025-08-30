@@ -1,0 +1,5729 @@
+{
+  "categories": {
+    "Default Settings": {
+      "parameters": {
+        "Default Settings": {
+          "functions": [
+            {
+              "function": "Restore All Factory Defaults",
+              "command": "FACDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Restore All Custom Defaults",
+              "command": "CUSDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Save as Custom Defaults",
+              "command": "CUSSAV",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Delete Custom Defaults",
+              "command": "CUSDEL",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Gestion des paramètres par défaut : restauration usine, sauvegarde et suppression des configurations personnalisées"
+        }
+      }
+    },
+    "Communication Interface": {
+      "parameters": {
+        "Interface": {
+          "functions": [
+            {
+              "function": "USB HID Keyboard",
+              "command": "INTERF0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "PS/2 Keyboard",
+              "command": "INTERF3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "HID POS (POS HID Bar Code Scanner)",
+              "command": "INTERF4",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "IBM SurePOS (Table-Top)",
+              "command": "INTERF5",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "IBM SurePOS (Hand-Held)",
+              "command": "INTERF6",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "USB CDC COM Port",
+              "command": "INTERF7",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "USB HID Keyboard",
+              "command": "INTERF8",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Sélection du type d'interface de communication (USB HID, PS/2, POS HID, RS232, etc.)"
+        },
+        "Baud Rate": {
+          "functions": [
+            {
+              "function": "1200",
+              "command": "232BAD0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "2400",
+              "command": "232BAD1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "4800",
+              "command": "232BAD2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "9600",
+              "command": "232BAD3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "14400",
+              "command": "232BAD4",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "19200",
+              "command": "232BAD5",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "38400",
+              "command": "232BAD6",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "57600",
+              "command": "232BAD7",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "115200",
+              "command": "232BAD8",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration de la vitesse de transmission des données en bauds (1200 à 115200)"
+        },
+        "Parity Check": {
+          "functions": [
+            {
+              "function": "Even Parity",
+              "command": "232PAR1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Odd Parity",
+              "command": "232PAR2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Type de contrôle de parité pour la vérification d'erreur de transmission"
+        },
+        "Stop Bits": {
+          "functions": [
+            {
+              "function": "1 Stop Bit",
+              "command": "232STP0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "2 Stop Bits",
+              "command": "232STP1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Nombre de bits d'arrêt pour délimiter les caractères transmis"
+        },
+        "RS232 Data Bits": {
+          "functions": [
+            {
+              "function": "7 Data Bits",
+              "command": "232DAT1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "8 Data Bits",
+              "command": "232DAT0",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour RS232 Data Bits"
+        },
+        "RS232 Hardware Flow Control": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "232AFL0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "232AFL1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour RS232 Hardware Flow Control"
+        },
+        "Flow Control": {
+          "functions": [
+            {
+              "function": "No Flow Control",
+              "command": "232FLW0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "RTS Flow Control",
+              "command": "232FLW1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "CTS Flow Control",
+              "command": "232FLW2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "RTS And CTS Flow Control",
+              "command": "232FLW3",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Contrôle de flux pour gérer la vitesse de transmission des données"
+        },
+        "Keyboard Country Layout": {
+          "functions": [
+            {
+              "function": "Keyboard Country Layout",
+              "command": "KBWCTY$",
+              "remark": "$ means data",
+              "requires_data": true
+            },
+            {
+              "function": "United States",
+              "command": "KBWCTY0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Belgium",
+              "command": "KBWCTY1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Brazil",
+              "command": "KBWCTY2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Canada (French)",
+              "command": "KBWCTY3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Czechoslovakia",
+              "command": "KBWCTY4",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Denmark",
+              "command": "KBWCTY5",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Finland (Swedish)",
+              "command": "KBWCTY6",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "France",
+              "command": "KBWCTY7",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Germany/Austria",
+              "command": "KBWCTY8",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Greece",
+              "command": "KBWCTY9",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Hungary",
+              "command": "KBWCTY10",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Israel (Hebrew)",
+              "command": "KBWCTY11",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Italy",
+              "command": "KBWCTY12",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Latin America",
+              "command": "KBWCTY13",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Netherlands (Dutch)",
+              "command": "KBWCTY14",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Norway",
+              "command": "KBWCTY15",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Poland",
+              "command": "KBWCTY16",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Portugal",
+              "command": "KBWCTY17",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Romania",
+              "command": "KBWCTY18",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Russia",
+              "command": "KBWCTY19",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Slovakia",
+              "command": "KBWCTY21",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Spain",
+              "command": "KBWCTY22",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Sweden",
+              "command": "KBWCTY23",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Switzerland (German)",
+              "command": "KBWCTY24",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Turkey F",
+              "command": "KBWCTY25",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Turkey Q",
+              "command": "KBWCTY26",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "United Kindom",
+              "command": "KBWCTY27",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Japan",
+              "command": "KBWCTY28",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Poland(Programmers)",
+              "command": "KBWCTY29",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Czech (Programmers)",
+              "command": "KBWCTY30",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Germany(No Dead Key)",
+              "command": "KBWCTY31",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration de la disposition clavier selon le pays (AZERTY, QWERTY, etc.)"
+        },
+        "Beep on Unknown Character": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "KBWBUC0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "KBWBUC1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Beep on Unknown Character"
+        },
+        "Emulate ALT+Keypad": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "KBWALT0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "KBWALT1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 1252 (Latin, Western European)",
+              "command": "KBWCPG0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 1251 (Cyrillic)",
+              "command": "KBWCPG1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 1250 (Central European)",
+              "command": "KBWCPG2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 1253 (Greek)",
+              "command": "KBWCPG3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 1254 (Turkish)",
+              "command": "KBWCPG4",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 1255 (Hebrew)",
+              "command": "KBWCPG5",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 1256 (Arabic)",
+              "command": "KBWCPG6",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 1257 (Baltic)",
+              "command": "KBWCPG7",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 1258 (Vietnamese)",
+              "command": "KBWCPG8",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 936 (Simplified Chinese,\nGB2312, GBK)",
+              "command": "KBWCPG9",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 950 (Traditional Chinese, Big5)",
+              "command": "KBWCPG10",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 874 (Thai)",
+              "command": "KBWCPG11",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 932 (Japanese, Shift-JIS)",
+              "command": "KBWCPG12",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code Page 949 (Korean, Unified Hangul Code)",
+              "command": "KBWCPG13",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "KBWCPU0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "KBWCPU1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "KBWALZ0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "KBWALZ1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Emulate ALT+Keypad"
+        },
+        "Control Characters Output": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "KBWFKM0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Control+ASCII Mode",
+              "command": "KBWFKM1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Alt+Keypad Mode",
+              "command": "KBWFKM2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Control Characters Output"
+        },
+        "Inter-Keystroke Delay": {
+          "functions": [
+            {
+              "function": "No Delay",
+              "command": "KBWDLY0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Short Delay (20ms)",
+              "command": "KBWDLY20",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Long Delay (40ms)",
+              "command": "KBWDLY40",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Custom",
+              "command": "KBWDLY$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Inter-Keystroke Delay"
+        },
+        "Caps Lock": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "KBWCAP0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "KBWCAP1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Mode 2 - Off",
+              "command": "KBWCAP2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Mode 2 - On",
+              "command": "KBWCAP3",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Gestion de la touche Verrouillage Majuscules lors de la saisie"
+        },
+        "Convert Case": {
+          "functions": [
+            {
+              "function": "No Case Conversion",
+              "command": "KBWCAS0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Convert All to Upper Case",
+              "command": "KBWCAS1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Convert All to Lower Case",
+              "command": "KBWCAS2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Conversion automatique des caractères en majuscules ou minuscules"
+        },
+        "Emulate Numeric Keypad": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "KBWNUM0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "KBWNUM1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "KBWNCH0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "KBWNCH1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Emulate Numeric Keypad"
+        },
+        "Fast Mode": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "KBWFAS0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "KBWFAS1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Fast Mode"
+        },
+        "USB Polling Rate": {
+          "functions": [
+            {
+              "function": "1ms",
+              "command": "KBWPOR0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "2ms",
+              "command": "KBWPOR1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "3ms",
+              "command": "KBWPOR2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "4ms",
+              "command": "KBWPOR3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "5ms",
+              "command": "KBWPOR4",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "6ms",
+              "command": "KBWPOR5",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "7ms",
+              "command": "KBWPOR6",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "8ms",
+              "command": "KBWPOR7",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "9ms",
+              "command": "KBWPOR8",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "10ms",
+              "command": "KBWPOR9",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Fréquence de polling USB pour la réactivité de la communication (1ms à 10ms)"
+        },
+        "PS/2": {
+          "functions": [
+            {
+              "function": "External Keyboard Not Connected",
+              "command": "PS2SLV0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "External Keyboard Connected",
+              "command": "PS2SLV1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour PS/2"
+        }
+      }
+    },
+    "System Settings": {
+      "parameters": {
+        "Barcode Programming": {
+          "functions": [
+            {
+              "function": "Exit Setup",
+              "command": "SETUPE0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enter Setup",
+              "command": "SETUPE1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "SETUPT0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "SETUPT1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Barcode Programming"
+        },
+        "Power On Beep": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "PWBENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "PWBENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Power On Beep"
+        },
+        "Good Read Beep": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "GRBENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "GRBENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Good Read Beep"
+        },
+        "Good Read Beep Volume": {
+          "functions": [
+            {
+              "function": "Loud",
+              "command": "GRBVOL0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Medium",
+              "command": "GRBVOL1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Low",
+              "command": "GRBVOL2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Good Read Beep Volume"
+        },
+        "Good Read Beep Duration": {
+          "functions": [
+            {
+              "function": "Medium",
+              "command": "GRBDUR80",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Short",
+              "command": "GRBDUR40",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Long",
+              "command": "GRBDUR12\n0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Custom",
+              "command": "GRBDUR$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Good Read Beep Duration"
+        },
+        "Good Read Beep Frequency": {
+          "functions": [
+            {
+              "function": "Lowest",
+              "command": "GRBFRQ80\n0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Low",
+              "command": "GRBFRQ16\n00",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Medium",
+              "command": "GRBFRQ27\n30",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "High",
+              "command": "GRBFRQ42\n00",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Custom",
+              "command": "GRBFRQ$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Good Read Beep Frequency"
+        },
+        "Good Read Beep Interval Time": {
+          "functions": [
+            {
+              "function": "Short",
+              "command": "GRBITV0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Medium",
+              "command": "GRBITV1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Good Read Beep Interval Time"
+        },
+        "Bad Read Beep": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "BRBENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "BRBENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Bad Read Beep"
+        },
+        "Bad Read Beep Volume": {
+          "functions": [
+            {
+              "function": "Loud",
+              "command": "BRBVOL0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Medium",
+              "command": "BRBVOL1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Low",
+              "command": "BRBVOL2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Bad Read Beep Volume"
+        },
+        "Bad Read Beep Duration": {
+          "functions": [
+            {
+              "function": "Medium",
+              "command": "BRBDUR80",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Short",
+              "command": "BRBDUR40",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Custom",
+              "command": "BRBDUR$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Bad Read Beep Duration"
+        },
+        "Bad Read Beep Frequency": {
+          "functions": [
+            {
+              "function": "Lowest",
+              "command": "BRBFRQ800",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Low",
+              "command": "BRBFRQ160 0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Medium",
+              "command": "BRBFRQ273\n0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "High",
+              "command": "BRBFRQ420\n0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Custom",
+              "command": "BRBFRQ$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Bad Read Beep Frequency"
+        },
+        "Bad Read Beep Interval Time": {
+          "functions": [
+            {
+              "function": "Short",
+              "command": "BRBITV0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Medium",
+              "command": "BRBITV1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Bad Read Beep Interval Time"
+        },
+        "Good Read LED": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "GRLENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "GRLENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Good Read LED"
+        },
+        "Good Read LED Duration": {
+          "functions": [
+            {
+              "function": "Short (20ms)",
+              "command": "GRLDUR20",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Medium (120ms)",
+              "command": "GRLDUR120",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Long (220ms)",
+              "command": "GRLDUR220",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Prolonged (320ms)",
+              "command": "GRLDUR320",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Custom",
+              "command": "GRLDUR$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Good Read LED Duration"
+        },
+        "Good Read Vibration": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "GRVENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "GRVENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Good Read Vibration"
+        },
+        "Vibration Duration": {
+          "functions": [
+            {
+              "function": "Vibration Duration",
+              "command": "GRVDUR$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Vibration Duration"
+        },
+        "Good Read Indicator Timing": {
+          "functions": [
+            {
+              "function": "Good Read = Indicate before data transmission",
+              "command": "GRBTIM0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Good Read = Indicate after data transmission",
+              "command": "GRBTIM1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Good Read Indicator Timing"
+        },
+        "Power On LED": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "POLENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "POLENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Power On LED"
+        },
+        "Illumination": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "ILLSCN0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "ILLSCN1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Always On",
+              "command": "ILLSCN2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Fade Up",
+              "command": "ILLSCN3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Red LED",
+              "command": "ILLCLR0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "White LED",
+              "command": "ILLCLR1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Both",
+              "command": "ILLCLR2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Contrôle de l'éclairage LED pour améliorer la lecture"
+        },
+        "Aiming": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "AMLENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "AMLENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Always On",
+              "command": "AMLENA2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration du viseur laser pour le pointage précis"
+        },
+        "Scan Mode": {
+          "functions": [
+            {
+              "function": "Level Trigger Mode",
+              "command": "SCNMOD0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Trigger Mode",
+              "command": "SCNMOD1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Sense Mode",
+              "command": "SCNMOD2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Continuous Mode",
+              "command": "SCNMOD3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Pulse Mode",
+              "command": "SCNMOD4",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Aiming Mode",
+              "command": "SCNMOD5",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Flashing Mode",
+              "command": "SCNMOD6",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Batch Mode",
+              "command": "SCNMOD7",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Auto Mode",
+              "command": "SCNMOD8",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Mode de déclenchement du scan (niveau, auto-sense, présentation, etc.)"
+        },
+        "Serial Port Trigger Instructions": {
+          "functions": [
+            {
+              "function": "Disable",
+              "command": "SCNTCE0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "SCNTCE1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Edit Start Scanning Instruction",
+              "command": "SCNTCT$",
+              "remark": "$ means data",
+              "requires_data": true
+            },
+            {
+              "function": "Edit Stop Scanning Instruction",
+              "command": "SCNTCP$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Serial Port Trigger Instructions"
+        },
+        "Command Trigger Mode": {
+          "functions": [
+            {
+              "function": "Start Trigger Simulation",
+              "command": "SCNCTM1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Stop Trigger Simulation",
+              "command": "SCNCTM0",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Command Trigger Mode"
+        },
+        "Reading Interval": {
+          "functions": [
+            {
+              "function": "Reading Interval",
+              "command": "SCNINV$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Reading Interval"
+        },
+        "After A Good Read (Sense Mode)": {
+          "functions": [
+            {
+              "function": "Go into Sensing Status",
+              "command": "SENAGR0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Go into Scan Status",
+              "command": "SENAGR1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour After A Good Read (Sense Mode)"
+        },
+        "Image Stabilization Timeout (Sense Mode)": {
+          "functions": [
+            {
+              "function": "Image Stabilization Timeout (Sense\nMode)",
+              "command": "SENIST$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Image Stabilization Timeout (Sense Mode)"
+        },
+        "One Reading Timeout": {
+          "functions": [
+            {
+              "function": "One Reading Timeout",
+              "command": "ORTSET$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour One Reading Timeout"
+        },
+        "Delay": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "RRDENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "RRDENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Reread Delay time",
+              "command": "RRDDUR$",
+              "remark": "$ means data",
+              "requires_data": true
+            },
+            {
+              "function": "Off",
+              "command": "GRDENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "GRDENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Good Read Delay Time",
+              "command": "GRDDUR$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Delay"
+        },
+        "Flash On/Flash Off Time（Flashing Mode）": {
+          "functions": [
+            {
+              "function": "Flash On Time",
+              "command": "FONDUR$",
+              "remark": "$ means data",
+              "requires_data": true
+            },
+            {
+              "function": "Flash Off Time",
+              "command": "FOFDUR$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Flash On/Flash Off Time（Flashing Mode）"
+        },
+        "Sensing Trigger Conditions (Sense Mode)": {
+          "functions": [
+            {
+              "function": "Image Change Trigger",
+              "command": "SENTRG0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Infrared Proximity Trigger",
+              "command": "SENTRG1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Both",
+              "command": "SENTRG2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Sensing Trigger Conditions (Sense Mode)"
+        },
+        "Sensitivity（Sense Mode）": {
+          "functions": [
+            {
+              "function": "Low",
+              "command": "SENLVL14",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Medium",
+              "command": "SENLVL11",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "High",
+              "command": "SENLVL8",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enhanced",
+              "command": "SENLVL5",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Custom",
+              "command": "SENLVL$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Sensitivity（Sense Mode）"
+        },
+        "Scanning Preferences": {
+          "functions": [
+            {
+              "function": "Normal",
+              "command": "EXPLVL0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Reflections Eliminating",
+              "command": "EXPLVL1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Mobile Mode",
+              "command": "EXPLVL2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Normal Motion Tolerance",
+              "command": "EXPLVL3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "High Motion Tolerance",
+              "command": "EXPLVL4",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Mobile Mode 2",
+              "command": "EXPLVL5",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable The Switch",
+              "command": "BECENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable The Switch",
+              "command": "BECENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Scanning Preferences"
+        },
+        "Read Barcode On/Off Command only, volatile": {
+          "functions": [
+            {
+              "function": "Read Barcode Off",
+              "command": "SCNENA0",
+              "remark": "Volatile",
+              "requires_data": false
+            },
+            {
+              "function": "Read Barcode On",
+              "command": "SCNENA1",
+              "remark": "Volatile",
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Read Barcode On/Off Command only, volatile"
+        },
+        "Smart Stand Mode": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "SMTENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "SMTENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Smart Stand Mode"
+        },
+        "Decode Central Area": {
+          "functions": [
+            {
+              "function": "Whole Area Decoding",
+              "command": "CADENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Specify Central Area Decoding",
+              "command": "CADENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Aiming Bar Code Decoding",
+              "command": "CADENA2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Top of Central Area",
+              "command": "CADTOP$",
+              "remark": "$ means data",
+              "requires_data": true
+            },
+            {
+              "function": "Bottom of Central Area",
+              "command": "CADBOT$",
+              "remark": "$ means data",
+              "requires_data": true
+            },
+            {
+              "function": "Left of Central Area",
+              "command": "CADLEF$",
+              "remark": "$ means data",
+              "requires_data": true
+            },
+            {
+              "function": "Right of Central Area",
+              "command": "CADRIG$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Decode Central Area"
+        },
+        "Output Interval (1D)": {
+          "functions": [
+            {
+              "function": "Set Output Interval to 0ms",
+              "command": "CDAINV0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set Output Interval to 50ms",
+              "command": "CDAINV1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set Output Interval to 100ms",
+              "command": "CDAINV2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set Output Interval to 150ms",
+              "command": "CDAINV3",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Output Interval (1D)"
+        },
+        "Transmit Not Good Read Message": {
+          "functions": [
+            {
+              "function": "Disable",
+              "command": "NGRENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "NGRENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Edit NGR Message",
+              "command": "NGRSET$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Transmit Not Good Read Message"
+        },
+        "Image Mirror(OEM Only)": {
+          "functions": [
+            {
+              "function": "Normal",
+              "command": "MIRROR0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Horizontal Mirror",
+              "command": "MIRROR1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Vertical Flip",
+              "command": "MIRROR2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Horizontal Mirror and Vertical Flip",
+              "command": "MIRROR3",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Image Mirror(OEM Only)"
+        },
+        "Operating Modes": {
+          "functions": [
+            {
+              "function": "Power Off",
+              "command": "PWROFF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Idle",
+              "command": "PWRIDL",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Sleep Mode",
+              "command": "PWRSLP",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Deep Sleep Mode",
+              "command": "PWRDSP",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Auto Idle",
+              "command": "ATIDLE1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Auto Idle",
+              "command": "ATIDLE0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Time Period from Idle to Sleep",
+              "command": "ATIDUR",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Operating Modes"
+        },
+        "Security Level (1D)": {
+          "functions": [
+            {
+              "function": "1",
+              "command": "SAFLVL0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "2",
+              "command": "SAFLVL1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "3",
+              "command": "SAFLVL2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "4",
+              "command": "SAFLVL3",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Security Level (1D)"
+        },
+        "Febrabn Barcode Transmit Delay": {
+          "functions": [
+            {
+              "function": "Off",
+              "command": "FEBSEN0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "FEBSEN1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "FEBMEN0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "FEBMEN1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "0ms",
+              "command": "FEBMDT0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "300ms",
+              "command": "FEBMDT1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "400ms",
+              "command": "FEBMDT2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "500ms",
+              "command": "FEBMDT3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "600ms",
+              "command": "FEBMDT4",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "700ms",
+              "command": "FEBMDT5",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "800ms",
+              "command": "FEBMDT6",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "900ms",
+              "command": "FEBMDT7",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Febrabn Barcode Transmit Delay"
+        },
+        "USB Suspend": {
+          "functions": [
+            {
+              "function": "Disable USB Suspend",
+              "command": "USPENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable USB Suspend",
+              "command": "USPENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour USB Suspend"
+        },
+        "Inquire Product Information": {
+          "functions": [
+            {
+              "function": "Inquire Product Information",
+              "command": "QRYSYS",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Inquire Firmware Version",
+              "command": "QRYFWV",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Inquire Decoder Version",
+              "command": "QRYDCV",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Inquire Hardware Information",
+              "command": "QRYHWV",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Inquire Product Name",
+              "command": "QRYPDN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Inquire Product Serial Number",
+              "command": "QRYPSN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Inquire Manufacturing Date",
+              "command": "QRYDAT",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Inquire Product OEM Serial Number (ESN）",
+              "command": "QRYESN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Inquire Data Formatting Version",
+              "command": "QRYDFM",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Inquire Product Information"
+        }
+      }
+    },
+    "1D Code": {
+      "parameters": {
+        "Global Settings": {
+          "functions": [
+            {
+              "function": "Disable All Symbologies",
+              "command": "ALLENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable All Symbologies",
+              "command": "ALLENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 1D Symbologies",
+              "command": "ALL1DC0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 1D Symbologies",
+              "command": "ALL1DC1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 2D Symbologies",
+              "command": "ALL2DC0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 2D Symbologies",
+              "command": "ALL2DC1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable All Postal Symbologies",
+              "command": "ALLPST0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable All Postal Symbologies",
+              "command": "ALLPST1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Video Reverse Off",
+              "command": "ALLINV0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Video Reverse On",
+              "command": "ALLINV1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enhance Poor Quality 1D Barcode Decoding (Off)",
+              "command": "ALL1DE0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enhance Poor Quality 1D Barcode Decoding\n(On)",
+              "command": "ALL1DE1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Read UPC/EAN With Additional Codes",
+              "command": "ALLADD0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Read UPC/EAN With Additional Codes",
+              "command": "ALLADD1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Must Read UPC/EAN With Additional Codes",
+              "command": "ALLADD2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Activation ou désactivation globale de tous les codes-barres 1D"
+        },
+        "Code 128": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Code 128",
+              "command": "128DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Code 128",
+              "command": "128ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Code 128",
+              "command": "128ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "128MIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "128MAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "128CHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "128CHK2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "128FNC1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "128FNC0",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration du standard Code 128 : activation, longueurs min/max"
+        },
+        "EAN-8": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of EAN-8",
+              "command": "EA8DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable EAN-8",
+              "command": "EA8ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable EAN-8",
+              "command": "EA8ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "EA8CHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "EA8CHK2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 2-Digit Add-On Code",
+              "command": "EA8AD20",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 2-Digit Add-On Code",
+              "command": "EA8AD21",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 5-Digit Add-On Code",
+              "command": "EA8AD50",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 5-Digit Add-On Code",
+              "command": "EA8AD51",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Not Required",
+              "command": "EA8REQ0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Required",
+              "command": "EA8REQ1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "EA8SEP0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "EA8SEP1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable EAN-8 Zero Extend",
+              "command": "EA8EXP0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Convert EAN-8 to EAN-13",
+              "command": "EA8EXP1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code européen article 8 chiffres"
+        },
+        "EAN-13": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of EAN-13",
+              "command": "E13DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable EAN-13",
+              "command": "E13ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable EAN-13",
+              "command": "E13ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "E13CHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "E13CHK2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 2-Digit Add-On Code",
+              "command": "E13AD20",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 2-Digit Add-On Code",
+              "command": "E13AD21",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 5-Digit Add-On Code",
+              "command": "E13AD50",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 5-Digit Add-On Code",
+              "command": "E13AD51",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Not Required",
+              "command": "E13REQ0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Required",
+              "command": "E13REQ1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "E13SEP0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "E13SEP1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Don't Require",
+              "command": "E132900",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Require",
+              "command": "E132901",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Don't Require",
+              "command": "E133780",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Require",
+              "command": "E133781",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Don't Require",
+              "command": "E134140",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Require",
+              "command": "E134141",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Don't Require",
+              "command": "E134340",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Require",
+              "command": "E134341",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Don't Require",
+              "command": "E139770",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Require",
+              "command": "E139771",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Don't Require",
+              "command": "E139780",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Require",
+              "command": "E139781",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Don't Require",
+              "command": "E139790",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Require",
+              "command": "E139791",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code européen article 13 chiffres (standard international)"
+        },
+        "UPC-E": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of UPC-E",
+              "command": "UPEDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable UPC-E",
+              "command": "UPEENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable UPC-E",
+              "command": "UPEENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable UPC-E0",
+              "command": "UPEEN00",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable UPC-E0",
+              "command": "UPEEN01",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable UPC-E1",
+              "command": "UPEEN10",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable UPC-E1",
+              "command": "UPEEN11",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "UPECHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit Check",
+              "command": "UPECHK2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 2-Digit Add-On Code",
+              "command": "UPEAD20",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 2-Digit Add-On Code",
+              "command": "UPEAD21",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 5-Digit Add-On Code",
+              "command": "UPEAD50",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 5-Digit Add-On Code",
+              "command": "UPEAD51",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Not Required",
+              "command": "UPEREQ0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Required",
+              "command": "UPEREQ1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "UPESEP0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "UPESEP1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "No Preamble (<DATA>)",
+              "command": "UPEPRE0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "System Character (<SYSTEM CHARACTER><DATA)",
+              "command": "UPEPRE1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Country Code & System Character (<COUNTRY CODE><SYSTEM CHARACTER><DATA>)",
+              "command": "UPEPRE2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable UPC-E Extend",
+              "command": "UPEEXP0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Convert UPC-E to UPC-A",
+              "command": "UPEEXP1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code universel produit format E (8 chiffres, version compacte)"
+        },
+        "UPC-A": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of UPC-A",
+              "command": "UPADEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable UPC-A",
+              "command": "UPAENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable UPC-A",
+              "command": "UPAENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "UPACHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "UPACHK2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 2-Digit Add-On Code",
+              "command": "UPAAD20",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 2-Digit Add-On Code",
+              "command": "UPAAD21",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 5-Digit Add-On Code",
+              "command": "UPAAD50",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 5-Digit Add-On Code",
+              "command": "UPAAD51",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Not Required",
+              "command": "UPAREQ0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Required",
+              "command": "UPAREQ1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "UPASEP0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "UPASEP1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "No Preamble (<DATA>)",
+              "command": "UPAPRE0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "System Character (<SYSTEM CHARACTER><DATA>)",
+              "command": "UPAPRE1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Country Code & System Character (< COUNTRY CODE><SYSTEM CHARACTER><DATA>)",
+              "command": "UPAPRE2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code universel produit format A (12 chiffres)"
+        },
+        "Coupon": {
+          "functions": [
+            {
+              "function": "0ff",
+              "command": "CPNENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Allow Concatenation",
+              "command": "CPNENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Require Concatenation",
+              "command": "CPNENA2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "CPNGS10",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "CPNGS11",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Coupon"
+        },
+        "Interleaved 2 of 5": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Interleaved 2 of 5",
+              "command": "I25DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Interleaved 2 of 5",
+              "command": "I25ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Interleaved 2 of 5",
+              "command": "I25ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "I25MIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum",
+              "command": "I25MAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "I25CHK0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable But Do Not Transmit Check Character",
+              "command": "I25CHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable And Transmit Check Character",
+              "command": "I25CHK2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Febraban",
+              "command": "I25FBB0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Febraban, Do Not Expand",
+              "command": "I25FBB1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Febraban, Expand",
+              "command": "I25FBB2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code entrelacé 2 parmi 5 pour applications industrielles"
+        },
+        "ITF-14": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of ITF-14",
+              "command": "I14DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "I14ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable But Do Not Transmit Check Character",
+              "command": "I14ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable And Transmit Check Character",
+              "command": "I14ENA2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour ITF-14"
+        },
+        "ITF-6": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of ITF-6",
+              "command": "IT6DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "IT6ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable But Do Not Transmit Check Character",
+              "command": "IT6ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable And Transmit Check Character",
+              "command": "IT6ENA2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour ITF-6"
+        },
+        "Matrix 2 of 5": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Matrix 2 of 5",
+              "command": "M25DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Matrix 2 of 5",
+              "command": "M25ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Matrix 2 of 5",
+              "command": "M25ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "M25MIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "M25MAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "M25CHK0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable But Do Not Transmit Check Character",
+              "command": "M25CHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable And Transmit Check Character",
+              "command": "M25CHK2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Variante du code 2 of 5 en matrice"
+        },
+        "Code 39": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Code 39",
+              "command": "C39DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Code 39",
+              "command": "C39ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Code 39",
+              "command": "C39ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "C39MIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "C39MAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "C39CHK0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable But Do Not Transmit Check Character",
+              "command": "C39CHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable And Transmit Check Character",
+              "command": "C39CHK2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "C39TSC0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "C39TSC1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Code 39 Full ASCII",
+              "command": "C39ASC0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Code 39 Full ASCII",
+              "command": "C39ASC1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "C39E320",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "C39E321",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "C39S320",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "C39S321",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "C39T320",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "C39T321",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "C39C320",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "C39C321",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration du Code 39 standard : activation, caractères de contrôle"
+        },
+        "Codabar": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Codabar",
+              "command": "CBADEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Codabar",
+              "command": "CBAENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Codabar",
+              "command": "CBAENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "CBAMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "CBAMAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "CBACHK0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable But Do Not Transmit Check Character",
+              "command": "CBACHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable And Transmit Check Character",
+              "command": "CBACHK2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "CBATSC0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "CBATSC1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "ABCD/ABCD",
+              "command": "CBASCF0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "ABCD/TN*E",
+              "command": "CBASCF1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "abcd/abcd",
+              "command": "CBASCF2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "abcd/tn*e",
+              "command": "CBASCF3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "CBACLS0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "CBACLS1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration du Codabar (NW-7) : caractères de début/fin"
+        },
+        "Code 93": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Code 93",
+              "command": "C93DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Code 93",
+              "command": "C93ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Code 93",
+              "command": "C93ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "C93MIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "C93MAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "C93CHK0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable But Do Not Transmit Check Character",
+              "command": "C93CHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable And Transmit Check Character",
+              "command": "C93CHK2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration du Code 93 : activation et paramètres de longueur"
+        },
+        "GS1- 128(UCC/EAN-128)": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of GS1-128",
+              "command": "GS1DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable GS1-128",
+              "command": "GS1ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable GS1-128",
+              "command": "GS1ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "GS1MIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "GS1MAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Don't Transmit",
+              "command": "GS1CHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "GS1CHK2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "GS1FNC1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "GS1FNC0",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour GS1- 128(UCC/EAN-128)"
+        },
+        "GS1 DataBar(RSS)": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of GS1-Databar",
+              "command": "RSSDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable GS1-DataBar",
+              "command": "RSSENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable GS1-DataBar",
+              "command": "RSSENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "RSSTAI0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "RSSTAI1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "RSSE140",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "RSSE141",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "RSSENL0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "RSSENL1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "RSSENE0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "RSSENE1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour GS1 DataBar(RSS)"
+        },
+        "GS1 Composite": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of GS1 Composite",
+              "command": "CPTDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable GS1 Composite",
+              "command": "CPTENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable GS1 Composite",
+              "command": "CPTENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "CPTUPC0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "CPTUPC1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour GS1 Composite"
+        },
+        "Code 11": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Code 11",
+              "command": "C11DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Code 11",
+              "command": "C11ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Code 11",
+              "command": "C11ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "C11MIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "C11MAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "C11CHK0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "One Check Character, MOD11",
+              "command": "C11CHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Two Check Characters, MOD11/MOD11",
+              "command": "C11CHK2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Two Check Characters, MOD11/MOD9",
+              "command": "C11CHK3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "One Check Character, MOD11 (Len<=10), Two Check Characters, MOD11/MOD11 (Len>10)",
+              "command": "C11CHK4",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "One Check Character, MOD11 (Len<=10), Two Check Characters, MOD11/MOD9 (Len>10)",
+              "command": "C11CHK5",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "C11TCK0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "C11TCK1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code 11 pour applications télécom et étiquetage"
+        },
+        "ISBN": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of ISBN",
+              "command": "ISBDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable ISBN data formatting",
+              "command": "ISBENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable ISBN data forrmatting",
+              "command": "ISBENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "ISBN-13",
+              "command": "ISBT100",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "ISBN-10",
+              "command": "ISBT101",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 2-Digit Add-On Code",
+              "command": "ISBAD20",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 2-Digit Add-On Code",
+              "command": "ISBAD21",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 5-Digit Add-On Code",
+              "command": "ISBAD50",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 5-Digit Add-On Code",
+              "command": "ISBAD51",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Not Required",
+              "command": "ISBREQ0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Required",
+              "command": "ISBREQ1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "ISBSEP0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "ISBSEP1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour ISBN"
+        },
+        "Industrial 25": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Industrial 2 of 5",
+              "command": "L25DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Industrial 2 of 5",
+              "command": "L25ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Industrial 2 of 5",
+              "command": "L25ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "L25MIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "L25MAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "L25CHK0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable But Do Not Transmit Check Character",
+              "command": "L25CHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable And Transmit Check Character",
+              "command": "L25CHK2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Industrial 25"
+        },
+        "Standard 25": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Standard 25",
+              "command": "S25DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Standard 25",
+              "command": "S25ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Standard 25",
+              "command": "S25ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "S25MIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "S25MAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "S25CHK0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable But Do Not Transmit Check Character",
+              "command": "S25CHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable And Transmit Check Character",
+              "command": "S25CHK2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Standard 25"
+        },
+        "Plessey": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Plessey",
+              "command": "PLYDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Plessey",
+              "command": "PLYENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Plessey",
+              "command": "PLYENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "PLYMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "PLYMAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "PLYCHK0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable But Do Not Transmit Check Character",
+              "command": "PLYCHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable And Transmit Check Character",
+              "command": "PLYCHK2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Plessey"
+        },
+        "MSI Plessey": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of MSI-Plessey",
+              "command": "MSIDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable MSI-Plessey",
+              "command": "MSIENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable MSI-Plessey",
+              "command": "MSIENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "MSIMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "MSIMAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "MSICHK0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "One Check Character, MOD10",
+              "command": "MSICHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Two Check Characters, MOD10/MOD10",
+              "command": "MSICHK2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Two Check Characters, MOD10/MOD11",
+              "command": "MSICHK3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "MSITCK0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "MSITCK1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code MSI avec checksum Plessey pour applications retail"
+        },
+        "ISSN": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of ISSN",
+              "command": "ISSDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable ISSN data format processing",
+              "command": "ISSENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable ISSN data format processing",
+              "command": "ISSENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 2-Digit Add-On Code",
+              "command": "ISSAD20",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 2-Digit Add-On Code",
+              "command": "ISSAD21",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable 5-Digit Add-On Code",
+              "command": "ISSAD50",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable 5-Digit Add-On Code",
+              "command": "ISSAD51",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Not Required",
+              "command": "ISSREQ0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Required",
+              "command": "ISSREQ1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "ISSSEP0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "ISSSEP1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour ISSN"
+        },
+        "China Post 25": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of China Post 25",
+              "command": "CHPDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "China Post 25 Decoding Off",
+              "command": "CHPENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "China Post 25 Decoding On",
+              "command": "CHPENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Minimum Length",
+              "command": "CHPMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Maximum Length",
+              "command": "CHPMAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "CHPCHK0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable But Do Not Transmit Check Character",
+              "command": "CHPCHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable And Transmit Check Character",
+              "command": "CHPCHK2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour China Post 25"
+        },
+        "AIM 128": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of AIM-128",
+              "command": "AIMDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable AIM-128",
+              "command": "AIMENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable AIM-128",
+              "command": "AIMENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "AIMMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "AIMMAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit Check Character(s)",
+              "command": "AIMCHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit Check Character(s)",
+              "command": "AIMCHK2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "AIMFNC1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "AIMFNC0",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour AIM 128"
+        },
+        "ISBT 128": {
+          "functions": [
+            {
+              "function": "Restore the Default Settings of ISBT 128",
+              "command": "IBTDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "ISBT 128 Decoding Off",
+              "command": "IBTENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "ISBT 128 Decoding On",
+              "command": "IBTENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code 128 pour l'identification des produits sanguins"
+        },
+        "Code 49": {
+          "functions": [
+            {
+              "function": "Restore the Default Settings of Code 49",
+              "command": "C49DEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Code 49",
+              "command": "C49ENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Code 49",
+              "command": "C49ENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "C49MIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "C49MAX",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Code 49"
+        },
+        "Code 16K": {
+          "functions": [
+            {
+              "function": "Restore the Default Settings of Code 16K",
+              "command": "16KDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Code 16K",
+              "command": "16KENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Code 16K",
+              "command": "16KENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "16KMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "16KMAX",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Code 16K"
+        }
+      }
+    },
+    "2D Code": {
+      "parameters": {
+        "PDF417": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of PDF 417",
+              "command": "PDFDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable PDF 417",
+              "command": "PDFENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable PDF 417",
+              "command": "PDFENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "PDFMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "PDFMAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Single PDF417 Only",
+              "command": "PDFDOU0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Twin PDF417 Only",
+              "command": "PDFDOU1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Both Single & Twin",
+              "command": "PDFDOU2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Decode Regular PDF417 Bar Codes Only",
+              "command": "PDFINV0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Decode Inverse PDF417 Bar Codes Only",
+              "command": "PDFINV1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Decode Both",
+              "command": "PDFINV2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "PDFECI0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "PDFECI1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Default",
+              "command": "PDFENC0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "UTF-8",
+              "command": "PDFENC1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code 2D haute densité : paramètres de décodage et longueurs"
+        },
+        "QR": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of QR Code",
+              "command": "QRCDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable QR Code",
+              "command": "QRCENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable QR Code",
+              "command": "QRCENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "QRCMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "QRCMAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Single QR Only",
+              "command": "QRCDOU0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Twin QR Only",
+              "command": "QRCDOU1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Both Single & Twin",
+              "command": "QRCDOU2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "QRCMCR1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "QRCMCR0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Decode Regular Data QR Bar Codes Only",
+              "command": "QRCINV0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Decode Inverse QR Bar Codes Only",
+              "command": "QRCINV1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Decode Both",
+              "command": "QRCINV2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "QRCECI0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "QRCECI1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Default",
+              "command": "QRCENC0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "UTF-8",
+              "command": "QRCENC1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour QR"
+        },
+        "Aztec": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Aztec Code",
+              "command": "AZTDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Aztec Code",
+              "command": "AZTENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Aztec Code",
+              "command": "AZTENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "AZTMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "AZTMAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Read One Barcode Only",
+              "command": "AZTMOD1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Read Fixed Number Of Barcodes Only",
+              "command": "AZTMOD2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Composite Reading",
+              "command": "AZTMOD3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "1",
+              "command": "AZTMUL1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "2",
+              "command": "AZTMUL2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "3",
+              "command": "AZTMUL3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "4",
+              "command": "AZTMUL4",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "5",
+              "command": "AZTMUL5",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "6",
+              "command": "AZTMUL6",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "7",
+              "command": "AZTMUL7",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "8",
+              "command": "AZTMUL8",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "AZTECI0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "AZTECI1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Default",
+              "command": "AZTENC0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "UTF-8",
+              "command": "AZTENC1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code 2D Aztec haute densité"
+        },
+        "Data Matrix": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Data Matrix",
+              "command": "DMCDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Data Matrix",
+              "command": "DMCENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Data Matrix",
+              "command": "DMCENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "DMCMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "DMCMAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Single Data Matrix Only",
+              "command": "DMCDOU0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Twin Data Matrix Only",
+              "command": "DMCDOU1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Both Single & Twin",
+              "command": "DMCDOU2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "DMCREC0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "DMCREC1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Decode Regular Data Matrix Bar Codes Only",
+              "command": "DMCINV0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Decode Inverse DataMatrix Bar Codes Only",
+              "command": "DMCINV1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Decode Both",
+              "command": "DMCINV2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable",
+              "command": "DMCECI0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "DMCECI1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Default",
+              "command": "DMCENC0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "UTF-8",
+              "command": "DMCENC1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "On",
+              "command": "DMCFNC1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "DMCFNC0",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code 2D compact : modes rectangulaire/carré, longueurs"
+        },
+        "Maxicode": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Maxicode",
+              "command": "MXCDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Maxicode",
+              "command": "MXCENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "EnableMaxicode",
+              "command": "MXCENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "MXCMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "MXCMAX",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code 2D pour applications postales UPS"
+        },
+        "汉信码": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Chinese Sensible\nCode",
+              "command": "CSCDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Chinese Sensible Code",
+              "command": "CSCENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Chinese Sensible Code",
+              "command": "CSCENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "CSCMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "CSCMAX",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Single Chinese Sensible Code Only",
+              "command": "CSCDOU0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Twin Chinese Sensible Code Only",
+              "command": "CSCDOU1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Both Single & Twin",
+              "command": "CSCDOU2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Decode Regular Chinese Sensible Bar Codes\nOnly",
+              "command": "CSCINV0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Decode Inverse Chinese Sensible Bar Codes\nOnly",
+              "command": "CSCINV1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Decode Both",
+              "command": "CSCINV2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code 2D chinois (Chinese Sensible Code)"
+        },
+        "GM": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of GM Code",
+              "command": "GMCDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable GM Code",
+              "command": "GMCENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable GM Code",
+              "command": "GMCENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "GMCMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "GMCMAX",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour GM"
+        },
+        "Micro PDF417": {
+          "functions": [
+            {
+              "function": "Restore the Default Settings of Micro PDF417",
+              "command": "MPDDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Micro PDF417",
+              "command": "MPDENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Micro PDF417",
+              "command": "MPDENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "MPDMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "MPDMAX",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Version compacte du PDF417"
+        },
+        "Micro QR": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Micro QR",
+              "command": "MQRDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Micro QR",
+              "command": "MQRENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Micro QR",
+              "command": "MQRENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "MQRMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "MQRMAX",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Micro QR"
+        },
+        "Code One": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Code One",
+              "command": "ONEDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Code One",
+              "command": "ONEENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Code One",
+              "command": "ONEENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Minimum Length",
+              "command": "ONEMIN",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Set the Maximum Length",
+              "command": "ONEMAX",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Code One"
+        }
+      }
+    },
+    "OCR": {
+      "parameters": {
+        "Specific OCR-B": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Specific OCR-B",
+              "command": "SOBDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Specific OCR-B",
+              "command": "SOBENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Specific OCR-B",
+              "command": "SOBENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Reconnaissance optique de caractères police OCR-B"
+        },
+        "Passport OCR": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Passport OCR",
+              "command": "PASDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Passport OCR",
+              "command": "PASENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Passport OCR",
+              "command": "PASENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Lecture OCR spécialisée pour passeports"
+        }
+      }
+    },
+    "Postal": {
+      "parameters": {
+        "USPS Postnet": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of USPS Postnet",
+              "command": "PNTDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable USPS Postnet",
+              "command": "PNTENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable USPS Postnet",
+              "command": "PNTENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "PNTCHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit",
+              "command": "PNTCHK2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code postal américain Postnet"
+        },
+        "USPS Intelligent Mail": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of USPS Intelligent\nMail",
+              "command": "ILGDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable USPS Intelligent Mail",
+              "command": "ILGENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable USPS Intelligent Mail",
+              "command": "ILGENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code postal intelligent américain"
+        },
+        "Royal Mail": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Royal Mail",
+              "command": "ROYDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Royal Mail",
+              "command": "ROYENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Royal Mail",
+              "command": "ROYENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code postal britannique Royal Mail"
+        },
+        "USPS Planet": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of USPS Planet",
+              "command": "PLADEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable USPS Planet",
+              "command": "PLAENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable USPS Planet",
+              "command": "PLAENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Do Not Transmit",
+              "command": "PLACHK1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Transmit Check",
+              "command": "PLACHK2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code Planet pour services postaux américains"
+        },
+        "KIX Post": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of KIX Post",
+              "command": "KIXDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable KIX Post",
+              "command": "KIXENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable KIX Post",
+              "command": "KIXENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code postal néerlandais KIX"
+        },
+        "Australian Postal": {
+          "functions": [
+            {
+              "function": "Restore the Factory Defaults of Australian Postal",
+              "command": "APLDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Disable Australian Postal",
+              "command": "APLENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Australian Postal",
+              "command": "APLENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Code postal australien"
+        }
+      }
+    },
+    "Prefixes/Suffixes": {
+      "parameters": {
+        "Global Settings All Prefixes/Suffixes": {
+          "functions": [
+            {
+              "function": "Disable",
+              "command": "APSENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "APSENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Global Settings All Prefixes/Suffixes"
+        },
+        "Prefix Sequences": {
+          "functions": [
+            {
+              "function": "Code ID+Custom Prefix+AIM ID",
+              "command": "PRESEQ0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Custom Prefix+Code ID+AIM ID",
+              "command": "PRESEQ1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Prefix Sequences"
+        },
+        "Custom Prefix": {
+          "functions": [
+            {
+              "function": "Disable",
+              "command": "CPRENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "CPRENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Modify Custom Prefix",
+              "command": "CPRSET$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Custom Prefix"
+        },
+        "AIM ID Prefix": {
+          "functions": [
+            {
+              "function": "Disable",
+              "command": "AIDENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "AIDENA1",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Préfixe d'identification AIM (Automatic Identification Manufacturers)"
+        },
+        "Code ID Prefix": {
+          "functions": [
+            {
+              "function": "Disable",
+              "command": "CIDENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "CIDENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Restore All Default Code IDs",
+              "command": "CIDDEF",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code128",
+              "command": "CID002",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "GS1-128 (UCC/EAN-128)",
+              "command": "CID003",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "EAN-8",
+              "command": "CID004",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "EAN-13",
+              "command": "CID005",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "UPC-E",
+              "command": "CID006",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "UPC-A",
+              "command": "CID007",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Interleaved 2 of 5",
+              "command": "CID008",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "ITF-14",
+              "command": "CID009",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "ITF-6",
+              "command": "CID010",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Matrix 2 of 5",
+              "command": "CID011",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code 39",
+              "command": "CID013",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Codabar",
+              "command": "CID015",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code 93",
+              "command": "CID017",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "China Post 25",
+              "command": "CID019",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "AIM 128",
+              "command": "CID020",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "ISBT 128",
+              "command": "CID021",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "COOP 25",
+              "command": "CID022",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "ISSN",
+              "command": "CID023",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "ISBN",
+              "command": "CID024",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Industrial 25",
+              "command": "CID025",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Standard 25",
+              "command": "CID026",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Plessey",
+              "command": "CID027",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code 11",
+              "command": "CID028",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "MSI Plessey",
+              "command": "CID029",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "GS1 Composite",
+              "command": "CID030",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "GS1 Databar (RSS)",
+              "command": "CID031",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Deutsche 14",
+              "command": "CID128",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Deutsche 12",
+              "command": "CID129",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Telepen",
+              "command": "CID130",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code 49",
+              "command": "CID132",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code 16K",
+              "command": "CID133",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "PDF417",
+              "command": "CID032",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "QR",
+              "command": "CID033",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Aztec",
+              "command": "CID034",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Data Matrix",
+              "command": "CID035",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "MaxiCode",
+              "command": "CID036",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Chinese Sensible Code",
+              "command": "CID039",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "GM",
+              "command": "CID041",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Micro PDF417",
+              "command": "CID042",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Micro QR",
+              "command": "CID043",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "DPM Data Matrix",
+              "command": "CID044",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Code One",
+              "command": "CID048",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "USPS Postnet",
+              "command": "CID096",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "USPS Inteligent Mail",
+              "command": "CID097",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Royal Mail",
+              "command": "CID098",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "USPS Planet",
+              "command": "CID099",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "KIX Post",
+              "command": "CID100",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Australian Postal",
+              "command": "CID101",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Préfixe d'identification du type de code-barres lu"
+        },
+        "Custom Suffix": {
+          "functions": [
+            {
+              "function": "Disable",
+              "command": "CSUENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "CSUENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Modify Custom Suffix",
+              "command": "CSUSET$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Custom Suffix"
+        },
+        "Terminating Character Suffix": {
+          "functions": [
+            {
+              "function": "Disable",
+              "command": "TSUENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable",
+              "command": "TSUENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Modify Terminating Character Suffix",
+              "command": "TSUSET$",
+              "remark": "$ means data",
+              "requires_data": true
+            },
+            {
+              "function": "Terminating Character CR (0x0D)",
+              "command": "TSUSET0D",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Terminating Character CR LF (0x0D,0x0A)",
+              "command": "TSUSET0D0A",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Terminating Character Suffix"
+        }
+      }
+    },
+    "Data Formatting": {
+      "parameters": {
+        "Terminating Character Suffix": {
+          "functions": [
+            {
+              "function": "Default Data Format",
+              "command": "DFMDEF",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Terminating Character Suffix"
+        },
+        "Data Formatter": {
+          "functions": [
+            {
+              "function": "Disable Data Formatter",
+              "command": "DFMENA0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Data Formatter, Required, Keep Prefix/Suffix:",
+              "command": "DFMENA1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Data Formatter, Required, Drop Prefix/Suffix",
+              "command": "DFMENA2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Data Formatter, Not Required, Keep Prefix/Suffix",
+              "command": "DFMENA3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Data Formatter, Not Required, Drop Prefix/Suffix",
+              "command": "DFMENA4",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Activation et configuration du formatage avancé des données"
+        },
+        "Add Data Format": {
+          "functions": [
+            {
+              "function": "Add Data Format",
+              "command": "DFMADD$",
+              "remark": "$ means data",
+              "requires_data": true
+            }
+          ],
+          "description": "Configuration des paramètres pour Add Data Format"
+        },
+        "Clear Data Format": {
+          "functions": [
+            {
+              "function": "Clear One Data Format",
+              "command": "DFMCLR$",
+              "remark": "$ means data",
+              "requires_data": true
+            },
+            {
+              "function": "Clear All Data Formats",
+              "command": "DFMCAL",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Clear Data Format"
+        },
+        "Select A Data Format": {
+          "functions": [
+            {
+              "function": "Data Format 0",
+              "command": "DFMUSE0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Data Format 1",
+              "command": "DFMUSE1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Data Format 2",
+              "command": "DFMUSE2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Data Format 3",
+              "command": "DFMUSE3",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Select A Data Format"
+        },
+        "Change Data Format for a Single Scan": {
+          "functions": [
+            {
+              "function": "Single Scan Use Format 0",
+              "command": "DFMSIN0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Single Scan Use Format 1",
+              "command": "DFMSIN1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Single Scan Use Format 2",
+              "command": "DFMSIN2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Single Scan Use Format 3",
+              "command": "DFMSIN3",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Change Data Format for a Single Scan"
+        },
+        "Non-Match Error Beep": {
+          "functions": [
+            {
+              "function": "On",
+              "command": "DFMTON1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Off",
+              "command": "DFMTON0",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Non-Match Error Beep"
+        },
+        "Query Data Formats": {
+          "functions": [
+            {
+              "function": "Query Data Formats",
+              "command": "DFMQCU",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Query Default Data Formats",
+              "command": "DFMQFA",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration des paramètres pour Query Data Formats"
+        }
+      }
+    },
+    "Data Packing": {
+      "parameters": {
+        "Data Packing": {
+          "functions": [
+            {
+              "function": "Disable Data Packing",
+              "command": "PACKAG0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Data Packing, format 1",
+              "command": "PACKAG1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Enable Data Packing, format 2",
+              "command": "PACKAG2",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Compactage des données en format 1 ou 2 pour optimiser la transmission"
+        }
+      }
+    },
+    "Batch Barcode": {
+      "parameters": {
+        "Batch Barcode": {
+          "functions": [
+            {
+              "function": "Enable Batch Barcode",
+              "command": "BATCHS",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Mode de lecture par lots avec accumulation des scans"
+        }
+      }
+    },
+    "Image": {
+      "parameters": {
+        "Image": {
+          "functions": [
+            {
+              "function": "Get Device Image Resolution",
+              "command": "IMGGWH",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Get Device Image Bit Depth",
+              "command": "IMGGBD",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Load Image",
+              "command": "IMGGET",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Load Barcode Area Image",
+              "command": "IMGBGT",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Configuration de la capture d'images : résolution, profondeur couleur"
+        }
+      }
+    },
+    "Other": {
+      "parameters": {
+        "Digit Barcodes": {
+          "functions": [
+            {
+              "function": "0",
+              "command": "DIGIT0",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "1",
+              "command": "DIGIT1",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "2",
+              "command": "DIGIT2",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "3",
+              "command": "DIGIT3",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "4",
+              "command": "DIGIT4",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "5",
+              "command": "DIGIT5",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "6",
+              "command": "DIGIT6",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "7",
+              "command": "DIGIT7",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "8",
+              "command": "DIGIT8",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "9",
+              "command": "DIGIT9",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "A",
+              "command": "DIGITA",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "B",
+              "command": "DIGITB",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "C",
+              "command": "DIGITC",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "D",
+              "command": "DIGITD",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "E",
+              "command": "DIGITE",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "F",
+              "command": "DIGITF",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Codes-barres numériques (0-9) et caractères spéciaux"
+        },
+        "Save/Cancel Barcodes": {
+          "functions": [
+            {
+              "function": "Save",
+              "command": "DIGSAV",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Delete the Last Digit",
+              "command": "DIGDEL",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Delete All Digits",
+              "command": "DIGDAL",
+              "remark": null,
+              "requires_data": false
+            },
+            {
+              "function": "Cancel",
+              "command": "DIGCAN",
+              "remark": null,
+              "requires_data": false
+            }
+          ],
+          "description": "Codes de sauvegarde et d'annulation pour saisie numérique"
+        }
+      }
+    }
+  }
+}

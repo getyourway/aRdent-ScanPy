@@ -1,0 +1,600 @@
+{
+  "categories": {
+    "LED Control": {
+      "parameters": {
+        "LED State": {
+          "functions": [
+            {
+              "function": "Turn LED 1 ON",
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {"led_id": 1},
+              "remark": "LED 1 (Green GPIO7)",
+              "requires_data": true
+            },
+            {
+              "function": "Turn LED 1 OFF",
+              "command": "led_off", 
+              "domain": "led_control",
+              "parameters": {"led_id": 1},
+              "remark": "LED 1 (Green GPIO7)",
+              "requires_data": true
+            },
+            {
+              "function": "Turn LED 2 ON",
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {"led_id": 2},
+              "remark": "LED 2 (Green GPIO15)",
+              "requires_data": true
+            },
+            {
+              "function": "Turn LED 2 OFF", 
+              "command": "led_off",
+              "domain": "led_control",
+              "parameters": {"led_id": 2},
+              "remark": "LED 2 (Green GPIO15)",
+              "requires_data": true
+            },
+            {
+              "function": "Turn LED 3 ON",
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {"led_id": 3},
+              "remark": "LED 3 (Green GPIO18)",
+              "requires_data": true
+            },
+            {
+              "function": "Turn LED 3 OFF",
+              "command": "led_off", 
+              "domain": "led_control",
+              "parameters": {"led_id": 3},
+              "remark": "LED 3 (Green GPIO18)",
+              "requires_data": true
+            },
+            {
+              "function": "Turn LED 4 ON",
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {"led_id": 4},
+              "remark": "LED 4 (Red GPIO17)",
+              "requires_data": true
+            },
+            {
+              "function": "Turn LED 4 OFF",
+              "command": "led_off",
+              "domain": "led_control", 
+              "parameters": {"led_id": 4},
+              "remark": "LED 4 (Red GPIO17)",
+              "requires_data": true
+            },
+            {
+              "function": "Turn LED 5 ON",
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {"led_id": 5},
+              "remark": "LED 5 (Blue GPIO16)",
+              "requires_data": true
+            },
+            {
+              "function": "Turn LED 5 OFF",
+              "command": "led_off",
+              "domain": "led_control",
+              "parameters": {"led_id": 5}, 
+              "remark": "LED 5 (Blue GPIO16)",
+              "requires_data": true
+            },
+            {
+              "function": "Turn All LEDs OFF",
+              "command": "all_leds_off",
+              "domain": "led_control",
+              "parameters": {},
+              "remark": "Turn off all LEDs at once",
+              "requires_data": false
+            }
+          ],
+          "description": "Contrôle individuel des 5 LEDs : 3 vertes, 1 rouge, 1 bleue"
+        },
+        "LED Blinking": {
+          "functions": [
+            {
+              "function": "Start LED 1 Blinking (2Hz)",
+              "command": "led_blink",
+              "domain": "led_control",
+              "parameters": {"led_id": 1, "frequency": 2.0},
+              "remark": "Default frequency 2Hz",
+              "requires_data": true
+            },
+            {
+              "function": "Start LED 1 Blinking (5Hz)",
+              "command": "led_blink", 
+              "domain": "led_control",
+              "parameters": {"led_id": 1, "frequency": 5.0},
+              "remark": "Fast blinking 5Hz",
+              "requires_data": true
+            },
+            {
+              "function": "Stop LED 1 Blinking",
+              "command": "led_stop_blink",
+              "domain": "led_control",
+              "parameters": {"led_id": 1},
+              "remark": "Stop blinking LED 1",
+              "requires_data": true
+            },
+            {
+              "function": "Start LED 4 Blinking (1Hz)",
+              "command": "led_blink",
+              "domain": "led_control", 
+              "parameters": {"led_id": 4, "frequency": 1.0},
+              "remark": "Red LED slow blink",
+              "requires_data": true
+            },
+            {
+              "function": "Stop LED 4 Blinking",
+              "command": "led_stop_blink",
+              "domain": "led_control",
+              "parameters": {"led_id": 4},
+              "remark": "Stop blinking Red LED",
+              "requires_data": true
+            },
+            {
+              "function": "Custom LED Blinking",
+              "command": "led_blink",
+              "domain": "led_control",
+              "parameters": {
+                "led_id": {
+                  "type": "integer",
+                  "min": 1,
+                  "max": 9,
+                  "description": "LED identifier (1-5: individual, 6-9: RGB modes)"
+                },
+                "frequency": {
+                  "type": "float",
+                  "min": 0.1,
+                  "max": 20.0,
+                  "unit": "Hz",
+                  "description": "Blink frequency"
+                }
+              },
+              "remark": "Custom LED blinking with user-defined frequency",
+              "requires_data": true,
+              "user_input": true
+            }
+          ],
+          "description": "Contrôle du clignotement des LEDs avec fréquence configurable (0.1-20Hz)"
+        },
+        "RGB Modes": {
+          "functions": [
+            {
+              "function": "RGB Red Mode",
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {"led_id": 6},
+              "remark": "LED ID 6 - RGB Red",
+              "requires_data": true
+            },
+            {
+              "function": "RGB Green Mode",
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {"led_id": 7},
+              "remark": "LED ID 7 - RGB Green",
+              "requires_data": true
+            },
+            {
+              "function": "RGB Blue Mode", 
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {"led_id": 8},
+              "remark": "LED ID 8 - RGB Blue",
+              "requires_data": true
+            },
+            {
+              "function": "RGB Yellow Mode",
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {"led_id": 9},
+              "remark": "LED ID 9 - RGB Yellow",
+              "requires_data": true
+            }
+          ],
+          "description": "Modes RGB combinés (LED IDs 6-9 pour couleurs spéciales)"
+        }
+      }
+    },
+    "Buzzer Control": {
+      "parameters": {
+        "Beep Sounds": {
+          "functions": [
+            {
+              "function": "Short Beep (100ms)",
+              "command": "beep",
+              "domain": "buzzer_control",
+              "parameters": {"duration": 100, "frequency": 1000},
+              "remark": "Quick confirmation beep",
+              "requires_data": true
+            },
+            {
+              "function": "Long Beep (500ms)",
+              "command": "beep",
+              "domain": "buzzer_control", 
+              "parameters": {"duration": 500, "frequency": 1000},
+              "remark": "Extended beep",
+              "requires_data": true
+            },
+            {
+              "function": "High Pitch Beep (2000Hz)",
+              "command": "beep",
+              "domain": "buzzer_control",
+              "parameters": {"duration": 200, "frequency": 2000},
+              "remark": "High frequency alert",
+              "requires_data": true
+            },
+            {
+              "function": "Low Pitch Beep (500Hz)",
+              "command": "beep", 
+              "domain": "buzzer_control",
+              "parameters": {"duration": 300, "frequency": 500},
+              "remark": "Low frequency warning",
+              "requires_data": true
+            },
+            {
+              "function": "Custom Beep",
+              "command": "beep",
+              "domain": "buzzer_control",
+              "parameters": {
+                "duration": {
+                  "type": "integer",
+                  "min": 50,
+                  "max": 5000,
+                  "unit": "ms",
+                  "description": "Beep duration"
+                },
+                "frequency": {
+                  "type": "integer",
+                  "min": 100,
+                  "max": 5000,
+                  "unit": "Hz",
+                  "description": "Beep frequency"
+                }
+              },
+              "remark": "Custom beep with user-defined duration and frequency",
+              "requires_data": true,
+              "user_input": true
+            }
+          ],
+          "description": "Bips personnalisés avec durée (50-5000ms) et fréquence (100-5000Hz)"
+        },
+        "Melodies": {
+          "functions": [
+            {
+              "function": "Play SUCCESS Melody",
+              "command": "play_melody",
+              "domain": "buzzer_control",
+              "parameters": {"melody": "SUCCESS"},
+              "remark": "Happy tune for success",
+              "requires_data": true
+            },
+            {
+              "function": "Play ERROR Melody", 
+              "command": "play_melody",
+              "domain": "buzzer_control",
+              "parameters": {"melody": "ERROR"},
+              "remark": "Alert tone for errors",
+              "requires_data": true
+            },
+            {
+              "function": "Play START Melody",
+              "command": "play_melody",
+              "domain": "buzzer_control",
+              "parameters": {"melody": "START"},
+              "remark": "Welcome tone on startup",
+              "requires_data": true
+            },
+            {
+              "function": "Play WARNING Melody",
+              "command": "play_melody",
+              "domain": "buzzer_control",
+              "parameters": {"melody": "WARNING"},
+              "remark": "Caution tone",
+              "requires_data": true
+            },
+            {
+              "function": "Play NOTIFICATION Melody", 
+              "command": "play_melody",
+              "domain": "buzzer_control",
+              "parameters": {"melody": "NOTIFICATION"},
+              "remark": "Info tone",
+              "requires_data": true
+            }
+          ],
+          "description": "Mélodies prédéfinies pour différents événements système"
+        },
+        "Volume Control": {
+          "functions": [
+            {
+              "function": "Set Volume 25%",
+              "command": "set_volume",
+              "domain": "buzzer_control",
+              "parameters": {"volume": 25},
+              "remark": "Low volume",
+              "requires_data": true
+            },
+            {
+              "function": "Set Volume 50%",
+              "command": "set_volume",
+              "domain": "buzzer_control",
+              "parameters": {"volume": 50},
+              "remark": "Medium volume (default)",
+              "requires_data": true
+            },
+            {
+              "function": "Set Volume 75%",
+              "command": "set_volume", 
+              "domain": "buzzer_control",
+              "parameters": {"volume": 75},
+              "remark": "High volume",
+              "requires_data": true
+            },
+            {
+              "function": "Set Volume 100%",
+              "command": "set_volume",
+              "domain": "buzzer_control",
+              "parameters": {"volume": 100},
+              "remark": "Maximum volume",
+              "requires_data": true
+            },
+            {
+              "function": "Mute Buzzer (0%)",
+              "command": "set_volume",
+              "domain": "buzzer_control",
+              "parameters": {"volume": 0},
+              "remark": "Silent mode",
+              "requires_data": true
+            },
+            {
+              "function": "Custom Volume",
+              "command": "set_volume",
+              "domain": "buzzer_control",
+              "parameters": {
+                "volume": {
+                  "type": "integer",
+                  "min": 0,
+                  "max": 100,
+                  "unit": "%",
+                  "description": "Buzzer volume level"
+                }
+              },
+              "remark": "Custom volume level (0-100%)",
+              "requires_data": true,
+              "user_input": true
+            }
+          ],
+          "description": "Contrôle du volume du buzzer (0-100%)"
+        }
+      }
+    },
+    "Device Settings": {
+      "parameters": {
+        "Screen Orientation": {
+          "functions": [
+            {
+              "function": "Portrait (0°)",
+              "command": "set_orientation",
+              "domain": "device_settings",
+              "parameters": {"orientation": 0},
+              "remark": "Standard portrait mode",
+              "requires_data": true
+            },
+            {
+              "function": "Landscape Right (90°)",
+              "command": "set_orientation",
+              "domain": "device_settings", 
+              "parameters": {"orientation": 1},
+              "remark": "Rotated 90° clockwise",
+              "requires_data": true
+            },
+            {
+              "function": "Portrait Inverted (180°)",
+              "command": "set_orientation",
+              "domain": "device_settings",
+              "parameters": {"orientation": 2},
+              "remark": "Upside down",
+              "requires_data": true
+            },
+            {
+              "function": "Landscape Left (270°)",
+              "command": "set_orientation",
+              "domain": "device_settings",
+              "parameters": {"orientation": 3},
+              "remark": "Rotated 90° counter-clockwise",
+              "requires_data": true
+            }
+          ],
+          "description": "Orientation de l'écran : portrait/paysage avec rotations (0-3)"
+        },
+        "Keyboard Language": {
+          "functions": [
+            {
+              "function": "English (US) - QWERTY",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {"language_code": "0x0409"},
+              "remark": "US English QWERTY layout",
+              "requires_data": true
+            },
+            {
+              "function": "French (France) - AZERTY",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {"language_code": "0x040C"},
+              "remark": "French AZERTY layout",
+              "requires_data": true
+            }
+          ],
+          "description": "Layout du clavier HID : QWERTY (US) ou AZERTY (FR)"
+        },
+        "Auto Shutdown": {
+          "functions": [
+            {
+              "function": "Set Auto Shutdown 15 min",
+              "command": "set_auto_shutdown",
+              "domain": "device_settings",
+              "parameters": {"ble_timeout": 15, "activity_timeout": 30},
+              "remark": "Quick shutdown timers",
+              "requires_data": true
+            },
+            {
+              "function": "Set Auto Shutdown 30 min",
+              "command": "set_auto_shutdown",
+              "domain": "device_settings",
+              "parameters": {"ble_timeout": 30, "activity_timeout": 60},
+              "remark": "Default shutdown timers",
+              "requires_data": true
+            },
+            {
+              "function": "Set Auto Shutdown 60 min", 
+              "command": "set_auto_shutdown",
+              "domain": "device_settings",
+              "parameters": {"ble_timeout": 60, "activity_timeout": 120},
+              "remark": "Extended shutdown timers",
+              "requires_data": true
+            },
+            {
+              "function": "Disable Auto Shutdown",
+              "command": "set_auto_shutdown",
+              "domain": "device_settings",
+              "parameters": {"ble_timeout": 240, "activity_timeout": 240},
+              "remark": "Maximum timeout (4h)",
+              "requires_data": true
+            },
+            {
+              "function": "Custom Auto Shutdown",
+              "command": "set_auto_shutdown",
+              "domain": "device_settings",
+              "parameters": {
+                "ble_timeout": {
+                  "type": "integer",
+                  "min": 1,
+                  "max": 1440,
+                  "unit": "minutes",
+                  "description": "BLE disconnection timeout"
+                },
+                "activity_timeout": {
+                  "type": "integer", 
+                  "min": 1,
+                  "max": 1440,
+                  "unit": "minutes",
+                  "description": "User activity timeout"
+                }
+              },
+              "remark": "Custom timeouts (1-1440 minutes)",
+              "requires_data": true,
+              "user_input": true
+            }
+          ],
+          "description": "Arrêt automatique : timeout BLE déconnexion + timeout activité utilisateur"
+        }
+      }
+    },
+    "Power Management": {
+      "parameters": {
+        "Power Control": {
+          "functions": [
+            {
+              "function": "Shutdown Device",
+              "command": "shutdown",
+              "domain": "power_management",
+              "parameters": {},
+              "remark": "Immediate device shutdown",
+              "requires_data": false
+            },
+            {
+              "function": "Restart Device",
+              "command": "restart",
+              "domain": "power_management",
+              "parameters": {},
+              "remark": "ESP32 restart",
+              "requires_data": false
+            },
+            {
+              "function": "Deep Sleep 1 Hour",
+              "command": "deep_sleep",
+              "domain": "power_management",
+              "parameters": {"duration": 3600},
+              "remark": "Low power mode for 1 hour",
+              "requires_data": true
+            },
+            {
+              "function": "Deep Sleep Indefinite",
+              "command": "deep_sleep",
+              "domain": "power_management",
+              "parameters": {"duration": 0},
+              "remark": "Sleep until button press",
+              "requires_data": true
+            },
+            {
+              "function": "Custom Deep Sleep",
+              "command": "deep_sleep",
+              "domain": "power_management",
+              "parameters": {
+                "duration": {
+                  "type": "integer",
+                  "min": 0,
+                  "max": 86400,
+                  "unit": "seconds",
+                  "description": "Sleep duration (0=indefinite)"
+                }
+              },
+              "remark": "Custom deep sleep duration (max 24 hours)",
+              "requires_data": true,
+              "user_input": true
+            }
+          ],
+          "description": "Gestion de l'alimentation : arrêt, redémarrage, veille profonde"
+        }
+      }
+    },
+    "Lua Management": {
+      "parameters": {
+        "Script Control": {
+          "functions": [
+            {
+              "function": "Clear Lua Script",
+              "command": "clear_script",
+              "domain": "lua_management",
+              "parameters": {},
+              "remark": "Remove current script, restore default",
+              "requires_data": false
+            },
+            {
+              "function": "Get Script Information",
+              "command": "get_script_info",
+              "domain": "lua_management",
+              "parameters": {},
+              "remark": "Current script status and info",
+              "requires_data": false
+            },
+            {
+              "function": "Execute Test Lua Code",
+              "command": "execute_lua",
+              "domain": "lua_management",
+              "parameters": {"code": "led_blink(1, 3); buzzer_beep(100, 1000)"},
+              "remark": "Test Lua execution",
+              "requires_data": true
+            },
+            {
+              "function": "Test LED Control Lua",
+              "command": "execute_lua",
+              "domain": "lua_management", 
+              "parameters": {"code": "led_on(4); sleep(500); led_off(4)"},
+              "remark": "Red LED flash test",
+              "requires_data": true
+            }
+          ],
+          "description": "Gestion du moteur de script Lua : nettoyage, info, exécution de test"
+        }
+      }
+    }
+  }
+}
