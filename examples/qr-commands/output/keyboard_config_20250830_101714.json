@@ -1,0 +1,126 @@
+{
+  "type": "keyboard_configuration",
+  "metadata": {
+    "name": "Keyboard Configuration",
+    "description": "Configuration with 16 keys",
+    "version": "1.0",
+    "created": "2025-08-30 10:17:14",
+    "use_case": "custom"
+  },
+  "keys": {
+    "0": [
+      {
+        "type": "text",
+        "value": "1",
+        "delay": 10
+      }
+    ],
+    "1": [
+      {
+        "type": "text",
+        "value": "2",
+        "delay": 10
+      }
+    ],
+    "2": [
+      {
+        "type": "text",
+        "value": "3",
+        "delay": 10
+      }
+    ],
+    "3": [
+      {
+        "type": "text",
+        "value": "A",
+        "delay": 10
+      }
+    ],
+    "4": [
+      {
+        "type": "text",
+        "value": "4",
+        "delay": 10
+      }
+    ],
+    "5": [
+      {
+        "type": "text",
+        "value": "5",
+        "delay": 10
+      }
+    ],
+    "6": [
+      {
+        "type": "text",
+        "value": "6",
+        "delay": 10
+      }
+    ],
+    "7": [
+      {
+        "type": "text",
+        "value": "B",
+        "delay": 10
+      }
+    ],
+    "8": [
+      {
+        "type": "text",
+        "value": "7",
+        "delay": 10
+      }
+    ],
+    "9": [
+      {
+        "type": "text",
+        "value": "8",
+        "delay": 10
+      }
+    ],
+    "10": [
+      {
+        "type": "text",
+        "value": "9",
+        "delay": 10
+      }
+    ],
+    "11": [
+      {
+        "type": "text",
+        "value": "C",
+        "delay": 10
+      }
+    ],
+    "12": [
+      {
+        "type": "hid",
+        "keycode": 80,
+        "modifier": 0,
+        "delay": 10
+      }
+    ],
+    "13": [
+      {
+        "type": "text",
+        "value": "0",
+        "delay": 10
+      }
+    ],
+    "14": [
+      {
+        "type": "hid",
+        "keycode": 79,
+        "modifier": 0,
+        "delay": 10
+      }
+    ],
+    "15": [
+      {
+        "type": "text",
+        "value": "D",
+        "delay": 10
+      }
+    ]
+  }
+}

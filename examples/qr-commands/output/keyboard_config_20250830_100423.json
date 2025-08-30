@@ -1,0 +1,36 @@
+{
+  "type": "keyboard_configuration",
+  "metadata": {
+    "name": "Keyboard Configuration",
+    "description": "Configuration with 4 keys",
+    "version": "1.0",
+    "created": "2025-08-30 10:04:23",
+    "use_case": "custom"
+  },
+  "keys": {
+    "0": [
+      {
+        "type": "text",
+        "value": "1"
+      }
+    ],
+    "1": [
+      {
+        "type": "text",
+        "value": "2"
+      }
+    ],
+    "2": [
+      {
+        "type": "text",
+        "value": "3"
+      }
+    ],
+    "3": [
+      {
+        "type": "text",
+        "value": "A"
+      }
+    ]
+  }
+}

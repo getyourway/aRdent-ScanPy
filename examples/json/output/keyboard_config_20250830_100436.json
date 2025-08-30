@@ -1,0 +1,18 @@
+{
+  "type": "keyboard_configuration",
+  "metadata": {
+    "name": "Keyboard Configuration",
+    "description": "Configuration with 1 keys",
+    "version": "1.0",
+    "created": "2025-08-30 10:04:36",
+    "use_case": "custom"
+  },
+  "keys": {
+    "0": [
+      {
+        "type": "text",
+        "value": "Test"
+      }
+    ]
+  }
+}

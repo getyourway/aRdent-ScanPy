@@ -51,30 +51,60 @@ class JSONValidator:
         if data.get('type') not in ['keyboard_configuration', 'full_keyboard']:
             raise ValueError(f"Invalid type for keyboard JSON: {data.get('type')}")
         
-        # Validate matrix_keys if present
-        if 'matrix_keys' in data:
-            matrix_keys = data['matrix_keys']
-            if not isinstance(matrix_keys, dict):
-                raise ValueError("matrix_keys must be an object")
+        # Support both modern KISS format (keys) and legacy format (matrix_keys)
+        keys_to_validate = None
+        
+        if 'keys' in data:
+            # Modern KISS format with unified keys 0-19
+            keys_to_validate = data['keys']
+        elif 'matrix_keys' in data:
+            # Legacy format
+            keys_to_validate = data['matrix_keys']
+        else:
+            raise ValueError("JSON must contain 'keys' (modern format) or 'matrix_keys' (legacy format)")
+        
+        # Validate the keys
+        if not isinstance(keys_to_validate, dict):
+            raise ValueError("keys/matrix_keys must be an object")
+        
+        for key_id_str, actions in keys_to_validate.items():
+            # Validate key ID
+            try:
+                key_id = int(key_id_str)
+                if not (0 <= key_id <= 19):
+                    raise ValueError(f"Key ID must be 0-19, got {key_id}")
+            except ValueError:
+                raise ValueError(f"Invalid key ID: {key_id_str}")
             
-            for key_id_str, actions in matrix_keys.items():
-                # Validate key ID
-                try:
-                    key_id = int(key_id_str)
-                    if not (0 <= key_id <= 19):
-                        raise ValueError(f"Key ID must be 0-19, got {key_id}")
-                except ValueError:
-                    raise ValueError(f"Invalid key ID: {key_id_str}")
+            # Validate actions
+            if not isinstance(actions, list) or not actions:
+                raise ValueError(f"Key {key_id} must have non-empty actions list")
+            
+            if len(actions) > 10:
+                raise ValueError(f"Key {key_id} has too many actions (max 10): {len(actions)}")
+            
+            for i, action in enumerate(actions):
+                JSONValidator._validate_action(action, f"Key {key_id} action {i}")
+        
+        # Validate external_buttons if present in legacy format
+        if 'external_buttons' in data:
+            external_buttons = data['external_buttons']
+            if not isinstance(external_buttons, dict):
+                raise ValueError("external_buttons must be an object")
+            
+            valid_buttons = {"scan_trigger_double", "scan_trigger_long", "power_single", "power_double"}
+            for button_name, actions in external_buttons.items():
+                if button_name not in valid_buttons:
+                    raise ValueError(f"Invalid external button name: {button_name}")
                 
-                # Validate actions
                 if not isinstance(actions, list) or not actions:
-                    raise ValueError(f"Key {key_id} must have non-empty actions list")
+                    raise ValueError(f"External button {button_name} must have non-empty actions list")
                 
                 if len(actions) > 10:
-                    raise ValueError(f"Key {key_id} has too many actions (max 10): {len(actions)}")
+                    raise ValueError(f"External button {button_name} has too many actions (max 10): {len(actions)}")
                 
                 for i, action in enumerate(actions):
-                    JSONValidator._validate_action(action, f"Key {key_id} action {i}")
+                    JSONValidator._validate_action(action, f"External button {button_name} action {i}")
     
     @staticmethod
     def validate_device_json(data: Dict[str, Any]) -> None:
@@ -171,13 +201,35 @@ class JSONConverter:
     @staticmethod
     def json_to_keyboard_config(data: Dict[str, Any]) -> Dict[int, List[Dict[str, Any]]]:
         """Convert JSON keyboard config to internal format"""
-        if 'matrix_keys' not in data:
-            raise ValueError("JSON must contain 'matrix_keys'")
+        # Support both modern KISS format (keys) and legacy format (matrix_keys)
+        keys_data = None
+        
+        if 'keys' in data:
+            # Modern KISS format with unified keys 0-19
+            keys_data = data['keys']
+        elif 'matrix_keys' in data:
+            # Legacy format - combine matrix_keys and external_buttons
+            keys_data = data['matrix_keys'].copy()
+            
+            # Add external buttons if present, mapping to key IDs 16-19
+            if 'external_buttons' in data:
+                button_map = {
+                    "scan_trigger_double": 16,
+                    "scan_trigger_long": 17, 
+                    "power_single": 18,
+                    "power_double": 19
+                }
+                
+                for button_name, actions in data['external_buttons'].items():
+                    key_id = button_map.get(button_name)
+                    if key_id is not None:
+                        keys_data[str(key_id)] = actions
+        else:
+            raise ValueError("JSON must contain 'keys' (modern format) or 'matrix_keys' (legacy format)")
         
         keyboard_config = {}
-        matrix_keys = data['matrix_keys']
         
-        for key_id_str, json_actions in matrix_keys.items():
+        for key_id_str, json_actions in keys_data.items():
             key_id = int(key_id_str)
             actions = []
             

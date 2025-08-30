@@ -25,6 +25,13 @@ import json
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# Import common utilities
+from common import (
+    InteractiveBase, JSONBrowser, KeyboardConfigBuilder,
+    confirm, get_int_input, get_text_input, get_choice_input,
+    pause_for_user, display_menu, get_menu_choice
+)
+
 from ardent_scanpad.controllers.qr_generator import QRGeneratorController, QRCommand
 from ardent_scanpad.qr_generators import KeyboardConfigGenerator, DeviceCommandGenerator
 from ardent_scanpad.utils.constants import (
@@ -42,12 +49,18 @@ except ImportError:
     QR_WARNING = "\n⚠️  QR code dependencies not available. Install with: pip install qrcode[pil]\n"
 
 
-class ScanPadQRInteractive:
+class ScanPadQRInteractive(InteractiveBase):
     """Interactive terminal application for QR code generation"""
     
     def __init__(self):
+        super().__init__(
+            "📱 aRdent ScanPad QR Code Generator",
+            "Create scannable QR codes for device configuration"
+        )
         self.qr_generator = QRGeneratorController()
         self.kb_generator = KeyboardConfigGenerator()
+        self.json_browser = JSONBrowser()  # Use centralized JSON browser
+        self.keyboard_builder = KeyboardConfigBuilder()  # Advanced keyboard builder
         self.dev_generator = DeviceCommandGenerator()
         self.generated_commands: List[QRCommand] = []
         self.output_dir = Path(__file__).parent / "output"
@@ -55,11 +68,11 @@ class ScanPadQRInteractive:
         
     def run(self):
         """Main entry point"""
-        self._print_header()
+        self.print_header()  # Use base class method
         
         if not QR_AVAILABLE:
             print(QR_WARNING)
-            if not self._confirm("Continue anyway? QR codes won't be generated, only command strings"):
+            if not confirm("Continue anyway? QR codes won't be generated, only command strings"):
                 return
         
         # Enter interactive mode
@@ -67,12 +80,6 @@ class ScanPadQRInteractive:
         
         print("\n👋 QR Generator session ended!")
     
-    def _print_header(self):
-        """Print application header"""
-        print("\n" + "="*70)
-        print("📱 aRdent ScanPad QR Code Generator")
-        print("Create scannable QR codes for device configuration")
-        print("="*70)
         
         if QR_AVAILABLE:
             print("✅ QR code generation ready")
@@ -101,26 +108,26 @@ class ScanPadQRInteractive:
             print("  7. HID key command")
             print("  8. Multi-action key")
             print("  9. 🛠️  Complete Keyboard Builder (All 16 keys + multi-actions)")
-            print("  20. Numeric keypad preset (legacy)")
+            print("  10. Numeric keypad preset (legacy)")
             print()
             print("⚙️  DEVICE SETTINGS:")
-            print("  10. Device orientation")
-            print("  11. Keyboard language")
+            print("  11. Device orientation")
+            print("  12. Keyboard language")
+            print()
+            print("📦 BATCH OPERATIONS:")
+            print("  13. View generated commands")
+            print("  14. Save all QR codes to files")
+            print("  15. Clear command list")
+            print("  16. 🗂️  Load JSON configuration (Browse examples or custom file)")
             print()
             print("🔧 LUA SCRIPT DEPLOYMENT:")
             print("  17. 🛠️  Deploy Lua script from file")
             print("  18. 📝 Deploy custom Lua script")
             print("  19. 🗑️  Clear Lua script")
-            print("  21. ℹ️  Lua script info")
-            print()
-            print("📦 BATCH OPERATIONS:")
-            print("  12. View generated commands")
-            print("  13. Save all QR codes to files")
-            print("  14. Clear command list")
-            print("  15. 🗂️  Load JSON configuration (Browse examples or custom file)")
+            print("  20. ℹ️  Lua script info")
             print()
             print("❌ EXIT:")
-            print("  16. Exit")
+            print("  21. Exit")
             
             choice = input("\nSelect option (1-21): ").strip()
             
@@ -143,30 +150,30 @@ class ScanPadQRInteractive:
                     self._multi_action_key_menu()
                 elif choice == "9":
                     self._complete_keyboard_builder()
-                elif choice == "20":
-                    self._numeric_keypad_preset()
                 elif choice == "10":
-                    self._orientation_menu()
+                    self._numeric_keypad_preset()
                 elif choice == "11":
-                    self._language_menu()
+                    self._orientation_menu()
                 elif choice == "12":
-                    self._view_commands()
+                    self._language_menu()
                 elif choice == "13":
-                    self._save_all_qr_codes()
+                    self._view_commands()
                 elif choice == "14":
-                    self._clear_commands()
+                    self._save_all_qr_codes()
                 elif choice == "15":
-                    self._load_config_json()
+                    self._clear_commands()
                 elif choice == "16":
-                    break
+                    self._load_config_json()
                 elif choice == "17":
                     self._lua_script_from_file_menu()
                 elif choice == "18":
                     self._lua_custom_script_menu()
                 elif choice == "19":
                     self._lua_clear_script()
-                elif choice == "21":
+                elif choice == "20":
                     self._lua_script_info()
+                elif choice == "21":
+                    break
                 else:
                     print("❌ Invalid choice. Please select 1-21.")
                     
@@ -448,7 +455,7 @@ class ScanPadQRInteractive:
         print("="*30)
         print("This will generate QR codes for keys 0-15 as numeric keypad")
         
-        if not self._confirm("Generate numeric keypad preset?"):
+        if not confirm("Generate numeric keypad preset?"):
             return
         
         # Generate numeric keypad layout
@@ -478,22 +485,50 @@ class ScanPadQRInteractive:
         print(f"✅ Generated {count} numeric keypad commands")
     
     def _complete_keyboard_builder(self):
-        """Complete keyboard builder with all 16 keys and multi-actions support"""
+        """Complete keyboard builder using common advanced builder"""
         print("\n🛠️  COMPLETE KEYBOARD BUILDER")
         print("="*60)
-        print("Configure all 16 matrix keys with multiple actions support")
-        print("Supports full keyboard configuration with $FULL: QR format")
+        print("Using advanced keyboard configuration builder")
+        print("Supports presets, layouts, and full keyboard configuration")
         print()
         
-        config = {}
+        # Use the common advanced keyboard builder
+        result = self.keyboard_builder.run_complete_builder()
         
-        while True:
-            # Show keyboard matrix status
-            self._display_keyboard_matrix(config)
+        if result:
             
-            print("\n📋 CONFIGURATION OPTIONS:")
-            print("1. 🔧 Configure single key (with multi-actions)")
-            print("2. 🎹 Add standard layout (1-9, A-D, arrows)")
+            # Convert result to QR commands
+            print(f"\n✅ Keyboard configured with {len(result)} keys!")
+            
+            # Create QR commands from configuration
+            config_json = {
+                "type": "keyboard_configuration",
+                "metadata": {
+                    "name": "Complete Keyboard Config",
+                    "description": "Generated by Complete Keyboard Builder",
+                    "version": "1.0"
+                },
+                "keys": result
+            }
+            
+            try:
+                qr_commands = self.kb_generator.from_json(config_json)
+                print(f"\n📱 Generated {len(qr_commands)} QR code(s)")
+                
+                # QR codes generated successfully
+                
+                # Add to generated commands
+                self.generated_commands.extend(qr_commands)
+                
+                # Ask if user wants to save
+                if confirm(f"\n💾 Save {len(qr_commands)} QR code(s) to output folder?"):
+                    self._save_qr_codes_batch(qr_commands, "complete_keyboard_config")
+                    
+            except Exception as e:
+                print(f"❌ Error generating QR codes: {e}")
+                
+        else:
+            print("\n🚫 Keyboard configuration cancelled")
             print("3. 🔤 Add alphabetic layout (A-P)")
             print("4. 🔢 Add numeric layout (0-9)")
             print("5. 📋 View current configuration")
@@ -783,7 +818,7 @@ class ScanPadQRInteractive:
         print("  Row 2: [7] [8] [9] [C]")
         print("  Row 3: [←] [0] [→] [D]")
         
-        if not self._confirm("Add standard layout?"):
+        if not confirm("Add standard layout?"):
             return
         
         # Define the standard layout
@@ -826,7 +861,7 @@ class ScanPadQRInteractive:
         print("\n🔤 ALPHABETIC LAYOUT")
         print("This will add/replace keys 0-15 with letters A-P")
         
-        if not self._confirm("Add alphabetic layout?"):
+        if not confirm("Add alphabetic layout?"):
             return
         
         added_count = 0
@@ -842,7 +877,7 @@ class ScanPadQRInteractive:
         print("\n🔢 NUMERIC LAYOUT")
         print("This will add/replace first 10 keys with numbers 0-9")
         
-        if not self._confirm("Add numeric layout?"):
+        if not confirm("Add numeric layout?"):
             return
         
         added_count = 0
@@ -899,7 +934,7 @@ class ScanPadQRInteractive:
             else:
                 print("❌ Key not found in configuration")
         elif choice == '2':
-            if self._confirm("Clear ALL keys?"):
+            if confirm("Clear ALL keys?"):
                 config.clear()
                 print("✅ All keys cleared")
             else:
@@ -1235,7 +1270,7 @@ class ScanPadQRInteractive:
             print("❌ No commands to clear")
             return
             
-        if self._confirm(f"Clear all {len(self.generated_commands)} generated commands?"):
+        if confirm(f"Clear all {len(self.generated_commands)} generated commands?"):
             self.generated_commands.clear()
             print("✅ All commands cleared")
     
@@ -1375,7 +1410,7 @@ class ScanPadQRInteractive:
             self.generated_commands.extend(qr_commands)
             
             # Ask if user wants to save immediately
-            if self._confirm(f"\n💾 Save {len(qr_commands)} QR code(s) to output folder?"):
+            if confirm(f"\n💾 Save {len(qr_commands)} QR code(s) to output folder?"):
                 self._save_json_qr_codes(qr_commands, json_file.stem)
             
         except Exception as e:
@@ -1411,10 +1446,6 @@ class ScanPadQRInteractive:
         else:
             print(f"\n❌ No QR codes were saved")
     
-    def _confirm(self, message: str) -> bool:
-        """Ask for user confirmation"""
-        response = input(f"{message} (y/n): ").strip().lower()
-        return response in ['y', 'yes']
     
     # ========================================
     # LUA SCRIPT DEPLOYMENT
@@ -1472,7 +1503,7 @@ class ScanPadQRInteractive:
             print(preview + ("..." if len(script_content) > 300 else ""))
             print("-" * 50)
             
-            if not self._confirm("\nGenerate QR codes for this script?"):
+            if not confirm("\nGenerate QR codes for this script?"):
                 return
             
             # QR generation options
@@ -1530,7 +1561,7 @@ class ScanPadQRInteractive:
             print(f"\n✅ Added {len(qr_commands)} Lua deployment QR codes to queue")
             
             # Ask to save immediately
-            if QR_AVAILABLE and self._confirm("Save QR codes to files now?"):
+            if QR_AVAILABLE and confirm("Save QR codes to files now?"):
                 self._save_lua_qr_sequence(qr_commands, script_path.stem)
         
         except Exception as e:
@@ -1575,7 +1606,7 @@ class ScanPadQRInteractive:
         print(script_content)
         print("-" * 50)
         
-        if not self._confirm("Generate QR codes for this script?"):
+        if not confirm("Generate QR codes for this script?"):
             return
         
         try:
@@ -1589,7 +1620,7 @@ class ScanPadQRInteractive:
             print(f"\n✅ Generated {len(qr_commands)} Lua deployment QR code(s)")
             
             # Ask to save immediately
-            if QR_AVAILABLE and self._confirm("Save QR codes to files now?"):
+            if QR_AVAILABLE and confirm("Save QR codes to files now?"):
                 self._save_lua_qr_sequence(qr_commands, "custom_lua_script")
             
         except Exception as e:
@@ -1602,7 +1633,7 @@ class ScanPadQRInteractive:
         print("This generates a QR code to clear/delete the currently")
         print("loaded Lua script from the device.")
         
-        if not self._confirm("Generate clear Lua script QR code?"):
+        if not confirm("Generate clear Lua script QR code?"):
             return
         
         try:
@@ -1619,7 +1650,7 @@ class ScanPadQRInteractive:
         print("This generates a QR code to request information about")
         print("the currently loaded Lua script from the device.")
         
-        if not self._confirm("Generate Lua script info QR code?"):
+        if not confirm("Generate Lua script info QR code?"):
             return
         
         try:

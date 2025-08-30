@@ -10,9 +10,17 @@ import os
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime
 import json
+from pathlib import Path
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Import common utilities
+from common import (
+    InteractiveBase, JSONBrowser,
+    confirm, get_int_input, get_text_input, get_choice_input,
+    pause_for_user, display_menu, get_menu_choice
+)
 
 from ardent_scanpad import ScanPad
 from ardent_scanpad.core.exceptions import (
@@ -25,18 +33,23 @@ from ardent_scanpad.utils.constants import (
 )
 
 
-class ScanPadInteractive:
+class ScanPadInteractive(InteractiveBase):
     """Interactive terminal application for comprehensive ScanPad testing"""
     
     def __init__(self):
+        super().__init__(
+            "🎮 aRdent ScanPad Interactive Terminal",
+            "Comprehensive device testing and configuration tool"
+        )
         self.scanpad: Optional[ScanPad] = None
         self.device_info: Dict = {}
         self.key_configs: Dict = {}
         self.pending_key_configs: Dict = {}  # For batch configuration
+        self.json_browser = JSONBrowser()  # For loading JSON configurations
         
     async def run(self):
         """Main entry point"""
-        self._print_header()
+        self.print_header()  # Use base class method
         
         # Connect to device
         if not await self._connect_to_device():
@@ -50,13 +63,6 @@ class ScanPadInteractive:
         
         # Cleanup
         await self._disconnect()
-    
-    def _print_header(self):
-        """Print application header"""
-        print("\n" + "="*70)
-        print("🎮 aRdent ScanPad Interactive Terminal")
-        print("Comprehensive device testing and configuration tool")
-        print("="*70 + "\n")
     
     async def _connect_to_device(self) -> bool:
         """Interactive device selection and connection"""
@@ -869,12 +875,13 @@ class ScanPadInteractive:
             print("1. 📋 View All Key Configurations")
             print("2. 🔧 Configure Single Key")
             print("3. 🎯 Configure Multiple Keys (Batch)")
-            print("4. 🗑️  Clear Key Configuration")
-            print("5. 💾 Save Configuration to Device")
-            print("6. 🏭 Factory Reset Keys")
+            print("4. 📄 Load Configuration from JSON File")
+            print("5. 🗑️  Clear Key Configuration")
+            print("6. 💾 Save Configuration to Device")
+            print("7. 🏭 Factory Reset Keys")
             print("0. ⬅️  Back to Main Menu")
             
-            choice = input("\nSelect option (0-6): ").strip()
+            choice = input("\nSelect option (0-7): ").strip()
             
             if choice == '0':
                 break
@@ -885,10 +892,12 @@ class ScanPadInteractive:
             elif choice == '3':
                 await self._configure_batch_keys()
             elif choice == '4':
-                await self._clear_key()
+                await self._load_json_configuration()
             elif choice == '5':
-                await self._save_key_config()
+                await self._clear_key()
             elif choice == '6':
+                await self._save_key_config()
+            elif choice == '7':
                 await self._factory_reset_keys()
             else:
                 print("❌ Invalid choice")
@@ -1489,10 +1498,11 @@ class ScanPadInteractive:
             print("1. 🔄 Change Orientation")
             print("2. 🌐 Change Keyboard Layout")
             print("3. ⏰ Configure Auto-shutdown")
-            print("4. 📱 Device Information")
+            print("4. 📄 Execute Device Commands from JSON")
+            print("5. 📱 Device Information")
             print("0. ⬅️  Back to Main Menu")
             
-            choice = input("\nSelect option (0-4): ").strip()
+            choice = input("\nSelect option (0-5): ").strip()
             
             if choice == '0':
                 break
@@ -1503,6 +1513,8 @@ class ScanPadInteractive:
             elif choice == '3':
                 await self._configure_auto_shutdown()
             elif choice == '4':
+                await self._load_json_device_commands()
+            elif choice == '5':
                 await self._show_device_info()
             else:
                 print("❌ Invalid choice")
@@ -1840,6 +1852,103 @@ class ScanPadInteractive:
                 
         except Exception as e:
             print(f"❌ Error checking status: {e}")
+    
+    async def _load_json_configuration(self):
+        """Load and apply keyboard configuration from JSON file"""
+        print("\n📄 LOAD JSON CONFIGURATION")
+        print("-" * 30)
+        
+        # Browse for keyboard configuration files
+        file_path = self.json_browser.display_json_menu("keyboard")
+        if not file_path:
+            return
+        
+        # Load the JSON
+        config = self.json_browser.load_json(file_path)
+        if not config:
+            return
+        
+        # Preview the configuration
+        print(f"\n🔍 Loading: {file_path.name}")
+        if "metadata" in config:
+            meta = config["metadata"]
+            if meta.get("name"):
+                print(f"  Name: {meta['name']}")
+            if meta.get("description"):
+                print(f"  Description: {meta['description']}")
+        
+        # Show key count
+        if "keys" in config:
+            print(f"  Keys configured: {len(config['keys'])}")
+        elif "matrix_keys" in config:
+            total = len(config.get("matrix_keys", {}))
+            total += len(config.get("external_buttons", {}))
+            print(f"  Keys configured: {total}")
+        
+        # Confirm application
+        if not confirm("\nApply this configuration?"):
+            return
+        
+        try:
+            print("\nApplying configuration...")
+            success = await self.scanpad.keys.apply_json_configuration(config)
+            if success:
+                print("✅ Configuration applied successfully!")
+                # Refresh local cache
+                await self._get_all_key_configs()
+            else:
+                print("❌ Failed to apply configuration")
+        except Exception as e:
+            print(f"❌ Error: {e}")
+        
+        pause_for_user()
+    
+    async def _load_json_device_commands(self):
+        """Load and execute device commands from JSON file"""
+        print("\n📄 LOAD JSON DEVICE COMMANDS")
+        print("-" * 30)
+        
+        # Browse for device command files
+        file_path = self.json_browser.display_json_menu("device")
+        if not file_path:
+            return
+        
+        # Load the JSON
+        config = self.json_browser.load_json(file_path)
+        if not config:
+            return
+        
+        # Preview the commands
+        print(f"\n🔍 Loading: {file_path.name}")
+        if "metadata" in config:
+            meta = config["metadata"]
+            if meta.get("name"):
+                print(f"  Name: {meta['name']}")
+            if meta.get("description"):
+                print(f"  Description: {meta['description']}")
+        
+        # Show command count
+        if "commands" in config:
+            print(f"  Commands to execute: {len(config['commands'])}")
+            print("\n  Commands:")
+            for i, cmd in enumerate(config["commands"].keys(), 1):
+                print(f"    {i}. {cmd}")
+        
+        # Confirm execution
+        if not confirm("\nExecute these commands?"):
+            return
+        
+        try:
+            print("\nExecuting commands...")
+            success = await self.scanpad.device.execute_commands_from_json(config)
+            if success:
+                print("✅ All commands executed successfully!")
+            else:
+                print("❌ Some commands may have failed")
+        except Exception as e:
+            print(f"❌ Error: {e}")
+        
+        pause_for_user()
     
     async def _disconnect(self):
         """Disconnect from device"""
