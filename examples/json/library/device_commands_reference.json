@@ -2,151 +2,49 @@
   "categories": {
     "LED Control": {
       "parameters": {
-        "LED State": {
+        "LED1 Green (GPIO7)": {
           "functions": [
             {
-              "function": "Turn LED 1 ON",
+              "function": "Turn LED1 ON",
               "command": "led_on",
               "domain": "led_control",
               "parameters": {"led_id": 1},
-              "remark": "LED 1 (Green GPIO7)",
+              "remark": "Green LED1 (ID=1)",
               "requires_data": true
             },
             {
-              "function": "Turn LED 1 OFF",
-              "command": "led_off", 
+              "function": "Turn LED1 OFF",
+              "command": "led_off",
               "domain": "led_control",
               "parameters": {"led_id": 1},
-              "remark": "LED 1 (Green GPIO7)",
+              "remark": "Green LED1 (ID=1)",
               "requires_data": true
             },
             {
-              "function": "Turn LED 2 ON",
-              "command": "led_on",
-              "domain": "led_control",
-              "parameters": {"led_id": 2},
-              "remark": "LED 2 (Green GPIO15)",
-              "requires_data": true
-            },
-            {
-              "function": "Turn LED 2 OFF", 
-              "command": "led_off",
-              "domain": "led_control",
-              "parameters": {"led_id": 2},
-              "remark": "LED 2 (Green GPIO15)",
-              "requires_data": true
-            },
-            {
-              "function": "Turn LED 3 ON",
-              "command": "led_on",
-              "domain": "led_control",
-              "parameters": {"led_id": 3},
-              "remark": "LED 3 (Green GPIO18)",
-              "requires_data": true
-            },
-            {
-              "function": "Turn LED 3 OFF",
-              "command": "led_off", 
-              "domain": "led_control",
-              "parameters": {"led_id": 3},
-              "remark": "LED 3 (Green GPIO18)",
-              "requires_data": true
-            },
-            {
-              "function": "Turn LED 4 ON",
-              "command": "led_on",
-              "domain": "led_control",
-              "parameters": {"led_id": 4},
-              "remark": "LED 4 (Red GPIO17)",
-              "requires_data": true
-            },
-            {
-              "function": "Turn LED 4 OFF",
-              "command": "led_off",
-              "domain": "led_control", 
-              "parameters": {"led_id": 4},
-              "remark": "LED 4 (Red GPIO17)",
-              "requires_data": true
-            },
-            {
-              "function": "Turn LED 5 ON",
-              "command": "led_on",
-              "domain": "led_control",
-              "parameters": {"led_id": 5},
-              "remark": "LED 5 (Blue GPIO16)",
-              "requires_data": true
-            },
-            {
-              "function": "Turn LED 5 OFF",
-              "command": "led_off",
-              "domain": "led_control",
-              "parameters": {"led_id": 5}, 
-              "remark": "LED 5 (Blue GPIO16)",
-              "requires_data": true
-            },
-            {
-              "function": "Turn All LEDs OFF",
-              "command": "all_leds_off",
-              "domain": "led_control",
-              "parameters": {},
-              "remark": "Turn off all LEDs at once",
-              "requires_data": false
-            }
-          ],
-          "description": "Contrôle individuel des 5 LEDs : 3 vertes, 1 rouge, 1 bleue"
-        },
-        "LED Blinking": {
-          "functions": [
-            {
-              "function": "Start LED 1 Blinking (2Hz)",
+              "function": "Blink LED1 (2Hz)",
               "command": "led_blink",
               "domain": "led_control",
               "parameters": {"led_id": 1, "frequency": 2.0},
-              "remark": "Default frequency 2Hz",
+              "remark": "Default blink frequency",
               "requires_data": true
             },
             {
-              "function": "Start LED 1 Blinking (5Hz)",
-              "command": "led_blink", 
-              "domain": "led_control",
-              "parameters": {"led_id": 1, "frequency": 5.0},
-              "remark": "Fast blinking 5Hz",
-              "requires_data": true
-            },
-            {
-              "function": "Stop LED 1 Blinking",
+              "function": "Stop LED1 Blinking",
               "command": "led_stop_blink",
               "domain": "led_control",
               "parameters": {"led_id": 1},
-              "remark": "Stop blinking LED 1",
+              "remark": "Stop blinking",
               "requires_data": true
             },
             {
-              "function": "Start LED 4 Blinking (1Hz)",
-              "command": "led_blink",
-              "domain": "led_control", 
-              "parameters": {"led_id": 4, "frequency": 1.0},
-              "remark": "Red LED slow blink",
-              "requires_data": true
-            },
-            {
-              "function": "Stop LED 4 Blinking",
-              "command": "led_stop_blink",
-              "domain": "led_control",
-              "parameters": {"led_id": 4},
-              "remark": "Stop blinking Red LED",
-              "requires_data": true
-            },
-            {
-              "function": "Custom LED Blinking",
+              "function": "Custom LED1 Blink",
               "command": "led_blink",
               "domain": "led_control",
               "parameters": {
                 "led_id": {
                   "type": "integer",
-                  "min": 1,
-                  "max": 9,
-                  "description": "LED identifier (1-5: individual, 6-9: RGB modes)"
+                  "value": 1,
+                  "hidden": true
                 },
                 "frequency": {
                   "type": "float",
@@ -156,49 +54,192 @@
                   "description": "Blink frequency"
                 }
               },
-              "remark": "Custom LED blinking with user-defined frequency",
+              "remark": "Custom blink frequency for LED1",
               "requires_data": true,
               "user_input": true
             }
           ],
-          "description": "Contrôle du clignotement des LEDs avec fréquence configurable (0.1-20Hz)"
+          "description": "Control Green LED1 (single color)"
         },
-        "RGB Modes": {
+        "LED2 RGB (GPIO15/16/17)": {
           "functions": [
             {
-              "function": "RGB Red Mode",
+              "function": "LED2 Red ON",
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {"led_id": 2},
+              "remark": "Red color (ID=2)",
+              "requires_data": true
+            },
+            {
+              "function": "LED2 Green ON",
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {"led_id": 3},
+              "remark": "Green color (ID=3)",
+              "requires_data": true
+            },
+            {
+              "function": "LED2 Blue ON",
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {"led_id": 4},
+              "remark": "Blue color (ID=4)",
+              "requires_data": true
+            },
+            {
+              "function": "LED2 Yellow ON",
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {"led_id": 5},
+              "remark": "Yellow (Red+Green, ID=5)",
+              "requires_data": true
+            },
+            {
+              "function": "LED2 Cyan ON",
               "command": "led_on",
               "domain": "led_control",
               "parameters": {"led_id": 6},
-              "remark": "LED ID 6 - RGB Red",
+              "remark": "Cyan (Green+Blue, ID=6)",
               "requires_data": true
             },
             {
-              "function": "RGB Green Mode",
+              "function": "LED2 Magenta ON",
               "command": "led_on",
               "domain": "led_control",
               "parameters": {"led_id": 7},
-              "remark": "LED ID 7 - RGB Green",
+              "remark": "Magenta (Red+Blue, ID=7)",
               "requires_data": true
             },
             {
-              "function": "RGB Blue Mode", 
+              "function": "LED2 White ON",
               "command": "led_on",
               "domain": "led_control",
               "parameters": {"led_id": 8},
-              "remark": "LED ID 8 - RGB Blue",
+              "remark": "White (All colors, ID=8)",
               "requires_data": true
             },
             {
-              "function": "RGB Yellow Mode",
+              "function": "LED2 OFF",
+              "command": "led_off",
+              "domain": "led_control",
+              "parameters": {"led_id": 2},
+              "remark": "Turn off LED2 (any color)",
+              "requires_data": true
+            },
+            {
+              "function": "Custom LED2 Color",
+              "command": "led_on",
+              "domain": "led_control",
+              "parameters": {
+                "led_id": {
+                  "type": "integer",
+                  "min": 2,
+                  "max": 8,
+                  "description": "Color (2=Red, 3=Green, 4=Blue, 5=Yellow, 6=Cyan, 7=Magenta, 8=White)"
+                }
+              },
+              "remark": "Choose RGB LED2 color",
+              "requires_data": true,
+              "user_input": true
+            },
+            {
+              "function": "Custom LED2 Blink",
+              "command": "led_blink",
+              "domain": "led_control",
+              "parameters": {
+                "led_id": {
+                  "type": "integer",
+                  "min": 2,
+                  "max": 8,
+                  "description": "Color to blink"
+                },
+                "frequency": {
+                  "type": "float",
+                  "min": 0.1,
+                  "max": 20.0,
+                  "unit": "Hz",
+                  "description": "Blink frequency"
+                }
+              },
+              "remark": "Custom color and blink frequency for LED2",
+              "requires_data": true,
+              "user_input": true
+            }
+          ],
+          "description": "Control RGB LED2 (multi-color)"
+        },
+        "LED3 Green (GPIO18)": {
+          "functions": [
+            {
+              "function": "Turn LED3 ON",
               "command": "led_on",
               "domain": "led_control",
               "parameters": {"led_id": 9},
-              "remark": "LED ID 9 - RGB Yellow",
+              "remark": "Green LED3 (ID=9)",
               "requires_data": true
+            },
+            {
+              "function": "Turn LED3 OFF",
+              "command": "led_off",
+              "domain": "led_control",
+              "parameters": {"led_id": 9},
+              "remark": "Green LED3 (ID=9)",
+              "requires_data": true
+            },
+            {
+              "function": "Blink LED3 (2Hz)",
+              "command": "led_blink",
+              "domain": "led_control",
+              "parameters": {"led_id": 9, "frequency": 2.0},
+              "remark": "Default blink frequency",
+              "requires_data": true
+            },
+            {
+              "function": "Stop LED3 Blinking",
+              "command": "led_stop_blink",
+              "domain": "led_control",
+              "parameters": {"led_id": 9},
+              "remark": "Stop blinking",
+              "requires_data": true
+            },
+            {
+              "function": "Custom LED3 Blink",
+              "command": "led_blink",
+              "domain": "led_control",
+              "parameters": {
+                "led_id": {
+                  "type": "integer",
+                  "value": 9,
+                  "hidden": true
+                },
+                "frequency": {
+                  "type": "float",
+                  "min": 0.1,
+                  "max": 20.0,
+                  "unit": "Hz",
+                  "description": "Blink frequency"
+                }
+              },
+              "remark": "Custom blink frequency for LED3",
+              "requires_data": true,
+              "user_input": true
             }
           ],
-          "description": "Modes RGB combinés (LED IDs 6-9 pour couleurs spéciales)"
+          "description": "Control Green LED3 (single color)"
+        },
+        "All LEDs": {
+          "functions": [
+            {
+              "function": "Turn All LEDs OFF",
+              "command": "all_leds_off",
+              "domain": "led_control",
+              "parameters": {},
+              "remark": "Turn off all LEDs at once",
+              "requires_data": false
+            }
+          ],
+          "description": "Global LED control"
         }
       }
     },
@@ -263,52 +304,84 @@
               "user_input": true
             }
           ],
-          "description": "Bips personnalisés avec durée (50-5000ms) et fréquence (100-5000Hz)"
+          "description": "Single beep sounds with customizable duration and frequency"
         },
         "Melodies": {
           "functions": [
             {
-              "function": "Play SUCCESS Melody",
+              "function": "KEY Melody",
               "command": "play_melody",
               "domain": "buzzer_control",
-              "parameters": {"melody": "SUCCESS"},
-              "remark": "Happy tune for success",
+              "parameters": {"melody": "KEY"},
+              "remark": "Key press sound (ID=1)",
               "requires_data": true
             },
             {
-              "function": "Play ERROR Melody", 
-              "command": "play_melody",
-              "domain": "buzzer_control",
-              "parameters": {"melody": "ERROR"},
-              "remark": "Alert tone for errors",
-              "requires_data": true
-            },
-            {
-              "function": "Play START Melody",
+              "function": "START Melody",
               "command": "play_melody",
               "domain": "buzzer_control",
               "parameters": {"melody": "START"},
-              "remark": "Welcome tone on startup",
+              "remark": "Startup sound (ID=2)",
               "requires_data": true
             },
             {
-              "function": "Play WARNING Melody",
+              "function": "STOP Melody",
+              "command": "play_melody",
+              "domain": "buzzer_control",
+              "parameters": {"melody": "STOP"},
+              "remark": "Shutdown sound (ID=3)",
+              "requires_data": true
+            },
+            {
+              "function": "NOTIF_UP Melody",
+              "command": "play_melody",
+              "domain": "buzzer_control",
+              "parameters": {"melody": "NOTIF_UP"},
+              "remark": "Notification up sound (ID=4)",
+              "requires_data": true
+            },
+            {
+              "function": "NOTIF_DOWN Melody",
+              "command": "play_melody",
+              "domain": "buzzer_control",
+              "parameters": {"melody": "NOTIF_DOWN"},
+              "remark": "Notification down sound (ID=5)",
+              "requires_data": true
+            },
+            {
+              "function": "CONFIRM Melody",
+              "command": "play_melody",
+              "domain": "buzzer_control",
+              "parameters": {"melody": "CONFIRM"},
+              "remark": "Confirmation sound (ID=6)",
+              "requires_data": true
+            },
+            {
+              "function": "WARNING Melody",
               "command": "play_melody",
               "domain": "buzzer_control",
               "parameters": {"melody": "WARNING"},
-              "remark": "Caution tone",
+              "remark": "Warning sound (ID=7)",
               "requires_data": true
             },
             {
-              "function": "Play NOTIFICATION Melody", 
+              "function": "ERROR Melody",
               "command": "play_melody",
               "domain": "buzzer_control",
-              "parameters": {"melody": "NOTIFICATION"},
-              "remark": "Info tone",
+              "parameters": {"melody": "ERROR"},
+              "remark": "Error sound (ID=8)",
+              "requires_data": true
+            },
+            {
+              "function": "SUCCESS Melody",
+              "command": "play_melody",
+              "domain": "buzzer_control",
+              "parameters": {"melody": "SUCCESS"},
+              "remark": "Success sound (ID=9)",
               "requires_data": true
             }
           ],
-          "description": "Mélodies prédéfinies pour différents événements système"
+          "description": "Predefined melodies for different events"
         },
         "Volume Control": {
           "functions": [
@@ -370,7 +443,7 @@
               "user_input": true
             }
           ],
-          "description": "Contrôle du volume du buzzer (0-100%)"
+          "description": "Control buzzer volume (0-100%)"
         }
       }
     },
@@ -411,28 +484,105 @@
               "requires_data": true
             }
           ],
-          "description": "Orientation de l'écran : portrait/paysage avec rotations (0-3)"
+          "description": "Screen orientation: portrait/landscape with rotations (0-3)"
         },
-        "Keyboard Language": {
+        "Windows/Linux Keyboard Layouts": {
           "functions": [
             {
-              "function": "English (US) - QWERTY",
+              "function": "US English QWERTY",
               "command": "set_language",
               "domain": "device_settings",
-              "parameters": {"language_code": "0x0409"},
-              "remark": "US English QWERTY layout",
+              "parameters": {"language_code": "0x1110"},
+              "remark": "Windows/Linux US layout",
               "requires_data": true
             },
             {
-              "function": "French (France) - AZERTY",
+              "function": "French AZERTY",
               "command": "set_language",
               "domain": "device_settings",
-              "parameters": {"language_code": "0x040C"},
-              "remark": "French AZERTY layout",
+              "parameters": {"language_code": "0x1220"},
+              "remark": "Windows/Linux French layout",
+              "requires_data": true
+            },
+            {
+              "function": "Belgian AZERTY",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {"language_code": "0x1230"},
+              "remark": "Windows/Linux Belgian French layout",
+              "requires_data": true
+            },
+            {
+              "function": "German QWERTZ",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {"language_code": "0x1340"},
+              "remark": "Windows/Linux German layout",
+              "requires_data": true
+            },
+            {
+              "function": "Spanish QWERTY",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {"language_code": "0x1150"},
+              "remark": "Windows/Linux Spanish layout",
+              "requires_data": true
+            },
+            {
+              "function": "Italian QWERTY",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {"language_code": "0x1160"},
+              "remark": "Windows/Linux Italian layout",
+              "requires_data": true
+            },
+            {
+              "function": "Portuguese QWERTY",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {"language_code": "0x1170"},
+              "remark": "Windows/Linux Portuguese layout",
+              "requires_data": true
+            },
+            {
+              "function": "Dutch QWERTY",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {"language_code": "0x1180"},
+              "remark": "Windows/Linux Dutch layout",
               "requires_data": true
             }
           ],
-          "description": "Layout du clavier HID : QWERTY (US) ou AZERTY (FR)"
+          "description": "Keyboard layouts for Windows and Linux systems"
+        },
+        "macOS Keyboard Layouts": {
+          "functions": [
+            {
+              "function": "macOS US English QWERTY",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {"language_code": "0x2110"},
+              "remark": "macOS US layout",
+              "requires_data": true
+            },
+            {
+              "function": "macOS French AZERTY",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {"language_code": "0x2220"},
+              "remark": "macOS French layout",
+              "requires_data": true
+            },
+            {
+              "function": "macOS Belgian AZERTY",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {"language_code": "0x2230"},
+              "remark": "macOS Belgian French layout",
+              "requires_data": true
+            }
+          ],
+          "description": "Keyboard layouts for macOS systems"
         },
         "Auto Shutdown": {
           "functions": [
@@ -493,7 +643,7 @@
               "user_input": true
             }
           ],
-          "description": "Arrêt automatique : timeout BLE déconnexion + timeout activité utilisateur"
+          "description": "Auto shutdown: BLE disconnect timeout + user activity timeout"
         }
       }
     },
@@ -551,7 +701,7 @@
               "user_input": true
             }
           ],
-          "description": "Gestion de l'alimentation : arrêt, redémarrage, veille profonde"
+          "description": "Power management: shutdown, restart, deep sleep"
         }
       }
     },
@@ -592,7 +742,7 @@
               "requires_data": true
             }
           ],
-          "description": "Gestion du moteur de script Lua : nettoyage, info, exécution de test"
+          "description": "Lua scripting engine management"
         }
       }
     }

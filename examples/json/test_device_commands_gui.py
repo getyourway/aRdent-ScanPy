@@ -98,11 +98,11 @@ class CommandsGUI:
     def populate_tree(self):
         """Remplir l'arbre avec les données des deux JSON"""
         # Ajouter les commandes device
-        device_root = self.tree.insert("", "end", text="📱 Device Commands", values=["root", "device"])
+        device_root = self.tree.insert("", "end", text="Device Commands", values=["root", "device"])
         self.populate_device_commands(device_root)
         
         # Ajouter les commandes scanner  
-        scanner_root = self.tree.insert("", "end", text="📷 Scanner Commands", values=["root", "scanner"])
+        scanner_root = self.tree.insert("", "end", text="Scanner Commands", values=["root", "scanner"])
         self.populate_scanner_commands(scanner_root)
     
     def populate_device_commands(self, parent_node):
@@ -396,8 +396,8 @@ def main():
 TEST GUI - Device & Scanner Commands Reference
 
 1. Naviguez dans l'arbre pour explorer les commandes:
-   📱 Device Commands - Commandes ESP32 (LED, Buzzer, Settings, etc.)
-   📷 Scanner Commands - Commandes scanner OEM 
+   - Device Commands : Commandes ESP32 (LED, Buzzer, Settings, etc.)
+   - Scanner Commands : Commandes scanner OEM 
 
 2. Sélectionnez une fonction pour voir les détails
 3. Pour les fonctions 'Custom' device : saisissez vos valeurs
