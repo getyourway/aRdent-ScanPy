@@ -2,12 +2,12 @@
   "type": "keyboard_configuration",
   "metadata": {
     "name": "Function Keys Layout",
-    "description": "Configuration avec touches de fonction F1-F12 + contrôles",
+    "description": "KISS format: Function keys F1-F12 + controls (unified keys 0-19)",
     "version": "1.0",
     "use_case": "development",
     "created_by": "aRdent ScanPad Team"
   },
-  "matrix_keys": {
+  "keys": {
     "0": [{"type": "hid", "keycode": 58, "modifier": 0, "delay": 10}],
     "1": [{"type": "hid", "keycode": 59, "modifier": 0, "delay": 10}],
     "2": [{"type": "hid", "keycode": 60, "modifier": 0, "delay": 10}],
@@ -23,15 +23,9 @@
     "12": [{"type": "hid", "keycode": 40, "modifier": 0, "delay": 10}],
     "13": [{"type": "hid", "keycode": 41, "modifier": 0, "delay": 10}],
     "14": [{"type": "hid", "keycode": 43, "modifier": 0, "delay": 10}],
-    "15": [{"type": "hid", "keycode": 42, "modifier": 0, "delay": 10}]
-  },
-  "external_buttons": {
-    "power_button": [
-      {"type": "hid", "keycode": 41, "modifier": 0, "delay": 30}
-    ],
-    "scan_trigger": [
-      {"type": "hid", "keycode": 44, "modifier": 0, "delay": 20}
-    ]
+    "15": [{"type": "hid", "keycode": 42, "modifier": 0, "delay": 10}],
+    "18": [{"type": "hid", "keycode": 41, "modifier": 0, "delay": 30}],
+    "16": [{"type": "hid", "keycode": 44, "modifier": 0, "delay": 20}]
   },
   "options": {
     "qr_format": "full", 
