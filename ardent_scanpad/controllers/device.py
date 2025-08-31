@@ -177,22 +177,15 @@ class BuzzerSubController:
             melody_name: Name of melody to play
             volume: Optional volume override (0-100)
                     """
-        melody_map = {
-            'KEY': BuzzerMelodies.KEY,
-            'START': BuzzerMelodies.START,
-            'STOP': BuzzerMelodies.STOP,
-            'NOTIF_UP': BuzzerMelodies.NOTIF_UP,
-            'NOTIF_DOWN': BuzzerMelodies.NOTIF_DOWN,
-            'CONFIRM': BuzzerMelodies.CONFIRM,
-            'WARNING': BuzzerMelodies.WARNING,
-            'ERROR': BuzzerMelodies.ERROR,
-            'SUCCESS': BuzzerMelodies.SUCCESS
-        }
+        # Use BuzzerMelodies constants directly instead of mapping dict
+        melody_name_upper = melody_name.upper()
         
-        melody_choices = list(melody_map.keys())
-        self.parent._validate_choices('melody_name', melody_name.upper(), melody_choices)  # Raises exception if invalid
+        # Validate melody name exists in BuzzerMelodies
+        if not hasattr(BuzzerMelodies, melody_name_upper):
+            available_melodies = [name for name in dir(BuzzerMelodies) if not name.startswith('_') and name != 'NAMES']
+            self.parent._validate_choices('melody_name', melody_name_upper, available_melodies)
         
-        melody_id = melody_map[melody_name.upper()]
+        melody_id = getattr(BuzzerMelodies, melody_name_upper)
         if volume is not None:
             self.parent._validate_range('volume', volume, 0, 100)  # Raises exception if invalid
             self._logger.debug(f"Playing melody: {melody_name} at {volume}% volume")

@@ -74,23 +74,15 @@ class BuzzerCommandBuilder:
     """Buzzer command payload builder"""
     
     def create_buzzer_melody_command(self, melody_name: str) -> CommandData:
-        melody_map = {
-            'KEY': BuzzerMelodies.KEY,
-            'START': BuzzerMelodies.START,
-            'STOP': BuzzerMelodies.STOP,
-            'NOTIF_UP': BuzzerMelodies.NOTIF_UP,
-            'NOTIF_DOWN': BuzzerMelodies.NOTIF_DOWN,
-            'CONFIRM': BuzzerMelodies.CONFIRM,
-            'WARNING': BuzzerMelodies.WARNING,
-            'ERROR': BuzzerMelodies.ERROR,
-            'SUCCESS': BuzzerMelodies.SUCCESS
-        }
-        
+        # Use BuzzerMelodies constants directly instead of mapping dict
         melody_upper = melody_name.upper()
-        if melody_upper not in melody_map:
-            raise ValueError(f"Invalid melody '{melody_name}'. Must be one of: {list(melody_map.keys())}")
+        
+        # Validate melody name exists in BuzzerMelodies
+        if not hasattr(BuzzerMelodies, melody_upper):
+            available_melodies = [name for name in dir(BuzzerMelodies) if not name.startswith('_') and name != 'NAMES']
+            raise ValueError(f"Invalid melody '{melody_name}'. Must be one of: {available_melodies}")
             
-        melody_id = melody_map[melody_upper]
+        melody_id = getattr(BuzzerMelodies, melody_upper)
         payload = bytes([melody_id])
         
         return CommandData(

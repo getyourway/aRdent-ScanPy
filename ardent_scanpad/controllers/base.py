@@ -10,7 +10,7 @@ import logging
 from typing import Optional, Dict, Any, Union, List
 
 from ..core.exceptions import InvalidParameterError, ConfigurationError, TimeoutError
-from ..utils.constants import MAX_ACTIONS_PER_KEY
+from ..utils.constants import MAX_ACTIONS_PER_KEY, LEDs
 
 
 class BaseController:
@@ -63,8 +63,9 @@ class BaseController:
         self._validate_range('key_id', key_id, 0, 19)
     
     def _validate_led_id(self, led_id: int) -> None:
-        """Validate LED ID"""
-        self._validate_range('led_id', led_id, 1, 9)
+        """Validate LED ID using LEDs constants"""
+        if led_id not in LEDs.ALL:
+            raise InvalidParameterError('led_id', led_id, f"Must be one of {LEDs.ALL}")
     
     def _validate_actions_count(self, actions: List[Any]) -> None:
         """Validate actions count"""
