@@ -523,12 +523,13 @@ class ScanPadInteractive(InteractiveBase):
             print("1. 🔧 Peripheral Control (LEDs, Buzzer, etc.)")
             print("2. ⌨️  Key Configuration")
             print("3. ⚙️  Device Settings")
-            print("4. 📊 Refresh Device Snapshot")
-            print("5. 🔄 Factory Reset")
-            print("6. 🎯 OTA Update")
+            print("4. 📋 JSON Commands (Device & Keyboard)")
+            print("5. 📊 Refresh Device Snapshot")
+            print("6. 🔄 Factory Reset")
+            print("7. 🎯 OTA Update")
             print("0. 🚪 Exit")
             
-            choice = input("\nSelect option (0-6): ").strip()
+            choice = input("\nSelect option (0-7): ").strip()
             
             if choice == '0':
                 break
@@ -539,10 +540,12 @@ class ScanPadInteractive(InteractiveBase):
             elif choice == '3':
                 await self._device_settings_menu()
             elif choice == '4':
-                await self._display_device_snapshot()
+                await self._json_commands_menu()
             elif choice == '5':
-                await self._factory_reset()
+                await self._display_device_snapshot()
             elif choice == '6':
+                await self._factory_reset()
+            elif choice == '7':
                 await self._ota_update()
             else:
                 print("❌ Invalid choice")
@@ -1947,6 +1950,285 @@ class ScanPadInteractive(InteractiveBase):
                 print("❌ Some commands may have failed")
         except Exception as e:
             print(f"❌ Error: {e}")
+        
+        pause_for_user()
+    
+    async def _json_commands_menu(self):
+        """JSON Commands menu for device commands and keyboard configurations"""
+        while True:
+            print("\n📋 JSON COMMANDS")
+            print("-" * 40)
+            print("1. 📁 Load Device Commands JSON")
+            print("2. ⌨️  Load Keyboard Configuration JSON")
+            print("3. ✏️  Manual JSON Input")
+            print("4. 📄 View Available JSON Examples")
+            print("0. 🔙 Back to Main Menu")
+            
+            choice = input("\nSelect option (0-4): ").strip()
+            
+            if choice == '0':
+                break
+            elif choice == '1':
+                await self._load_device_commands_json()
+            elif choice == '2':
+                await self._load_keyboard_config_json()
+            elif choice == '3':
+                await self._manual_json_input()
+            elif choice == '4':
+                await self._show_json_examples()
+            else:
+                print("❌ Invalid choice")
+    
+    async def _load_device_commands_json(self):
+        """Load and execute device commands from JSON file"""
+        print("\n📁 LOAD DEVICE COMMANDS JSON")
+        print("-" * 40)
+        
+        # Define the examples directory
+        examples_dir = Path(__file__).parent.parent / "json" / "device-commands"
+        
+        if not examples_dir.exists():
+            print("❌ Device commands examples directory not found")
+            return
+        
+        # List available JSON files
+        json_files = list(examples_dir.glob("*.json"))
+        if not json_files:
+            print("❌ No JSON files found in device-commands directory")
+            return
+        
+        print("Available device command files:")
+        for i, file_path in enumerate(json_files, 1):
+            print(f"{i}. {file_path.name}")
+        
+        try:
+            choice = int(input(f"\nSelect file (1-{len(json_files)}): "))
+            if 1 <= choice <= len(json_files):
+                selected_file = json_files[choice - 1]
+                await self._execute_json_file(selected_file, "device")
+            else:
+                print("❌ Invalid choice")
+        except ValueError:
+            print("❌ Please enter a valid number")
+    
+    async def _load_keyboard_config_json(self):
+        """Load and apply keyboard configuration from JSON file"""
+        print("\n⌨️  LOAD KEYBOARD CONFIGURATION JSON")
+        print("-" * 40)
+        
+        # Define the examples directory
+        examples_dir = Path(__file__).parent.parent / "json" / "keyboard-configs"
+        
+        if not examples_dir.exists():
+            print("❌ Keyboard configs examples directory not found")
+            return
+        
+        # List available JSON files
+        json_files = list(examples_dir.glob("*.json"))
+        if not json_files:
+            print("❌ No JSON files found in keyboard-configs directory")
+            return
+        
+        print("Available keyboard configuration files:")
+        for i, file_path in enumerate(json_files, 1):
+            print(f"{i}. {file_path.name}")
+        
+        try:
+            choice = int(input(f"\nSelect file (1-{len(json_files)}): "))
+            if 1 <= choice <= len(json_files):
+                selected_file = json_files[choice - 1]
+                await self._execute_json_file(selected_file, "keyboard")
+            else:
+                print("❌ Invalid choice")
+        except ValueError:
+            print("❌ Please enter a valid number")
+    
+    async def _execute_json_file(self, file_path: Path, json_type: str):
+        """Execute a JSON file (device commands or keyboard config)"""
+        try:
+            print(f"\n📄 Loading: {file_path.name}")
+            
+            # Load JSON data
+            with open(file_path, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+            
+            # Preview JSON content
+            print(f"📋 JSON Content Preview:")
+            print(json.dumps(json_data, indent=2)[:500] + "..." if len(str(json_data)) > 500 else json.dumps(json_data, indent=2))
+            
+            if not confirm("\n❓ Execute this JSON configuration?"):
+                return
+            
+            # Execute based on type
+            if json_type == "device":
+                await self._execute_device_commands_json(json_data)
+            elif json_type == "keyboard":
+                await self._execute_keyboard_config_json(json_data)
+            
+        except FileNotFoundError:
+            print(f"❌ File not found: {file_path}")
+        except json.JSONDecodeError as e:
+            print(f"❌ Invalid JSON format: {e}")
+        except Exception as e:
+            print(f"❌ Error loading JSON: {e}")
+    
+    async def _execute_device_commands_json(self, json_data: dict):
+        """Execute device commands from JSON data"""
+        try:
+            print("\n🚀 Executing device commands...")
+            result = await self.scanpad.device.execute_commands_from_json(json_data)
+            
+            if result["success"]:
+                print(f"✅ Device commands executed successfully!")
+                print(f"📊 Commands executed: {result['executed']}")
+            else:
+                print(f"❌ Device commands failed!")
+                print(f"📊 Commands executed: {result['executed']}")
+                if result["errors"]:
+                    print("🔴 Errors:")
+                    for error in result["errors"]:
+                        print(f"   • {error}")
+                        
+        except Exception as e:
+            print(f"❌ Error executing device commands: {e}")
+        
+        pause_for_user()
+    
+    async def _execute_keyboard_config_json(self, json_data: dict):
+        """Execute keyboard configuration from JSON data"""
+        try:
+            print("\n⌨️  Applying keyboard configuration...")
+            
+            # Extract keys from JSON
+            keys_data = json_data.get("keys", {})
+            if not keys_data:
+                print("❌ No 'keys' section found in JSON")
+                return
+            
+            success_count = 0
+            error_count = 0
+            errors = []
+            
+            # Apply each key configuration
+            for key_id_str, actions in keys_data.items():
+                try:
+                    # Convert key_id to int (handle both "0" and "0,0" formats)
+                    if "," in key_id_str:
+                        # Matrix format "row,col"
+                        row, col = map(int, key_id_str.split(","))
+                        key_id = row * 4 + col  # Convert to linear key ID
+                    else:
+                        key_id = int(key_id_str)
+                    
+                    # Convert actions to proper format
+                    converted_actions = []
+                    for action in actions:
+                        if action.get("type") == "text":
+                            # Text action
+                            converted_actions.append(self.scanpad.keys.create_text_action(action["value"]))
+                        elif action.get("type") == "hid":
+                            # HID action
+                            converted_actions.append(self.scanpad.keys.create_hid_action(
+                                action["keycode"], action.get("modifier", 0)
+                            ))
+                        # Add more action types as needed
+                    
+                    # Apply to device
+                    if converted_actions:
+                        await self.scanpad.keys.set_key_config(key_id, converted_actions)
+                        success_count += 1
+                        print(f"✅ Key {key_id}: {len(converted_actions)} action(s) configured")
+                    
+                except Exception as e:
+                    error_count += 1
+                    error_msg = f"Key {key_id_str}: {str(e)}"
+                    errors.append(error_msg)
+                    print(f"❌ {error_msg}")
+            
+            # Summary
+            if success_count > 0:
+                print(f"\n✅ Keyboard configuration completed!")
+                print(f"📊 Keys configured: {success_count}")
+                if error_count > 0:
+                    print(f"❌ Keys failed: {error_count}")
+            else:
+                print(f"\n❌ Keyboard configuration failed!")
+                print(f"📊 All {error_count} keys failed")
+                        
+        except Exception as e:
+            print(f"❌ Error applying keyboard configuration: {e}")
+        
+        pause_for_user()
+    
+    async def _manual_json_input(self):
+        """Manual JSON input for testing"""
+        print("\n✏️  MANUAL JSON INPUT")
+        print("-" * 40)
+        print("Enter JSON data (type 'END' on a new line to finish):")
+        print("Example formats:")
+        print('• Device: {"domain": "led_control", "action": "led_on", "parameters": {"led_id": 1}}')
+        print('• Keyboard: {"keys": {"0,0": [{"type": "UTF8", "data": "Hello"}]}}')
+        print()
+        
+        lines = []
+        while True:
+            line = input()
+            if line.strip() == 'END':
+                break
+            lines.append(line)
+        
+        json_text = '\n'.join(lines)
+        if not json_text.strip():
+            print("❌ No JSON data entered")
+            return
+        
+        try:
+            json_data = json.loads(json_text)
+            print(f"\n📋 Parsed JSON:")
+            print(json.dumps(json_data, indent=2))
+            
+            if not confirm("\n❓ Execute this JSON?"):
+                return
+            
+            # Auto-detect type
+            if 'domain' in json_data or 'commands' in json_data:
+                await self._execute_device_commands_json(json_data)
+            elif 'keys' in json_data:
+                await self._execute_keyboard_config_json(json_data)
+            else:
+                print("❌ Unknown JSON format - must contain 'domain'/'commands' or 'keys'")
+                
+        except json.JSONDecodeError as e:
+            print(f"❌ Invalid JSON format: {e}")
+        except Exception as e:
+            print(f"❌ Error processing JSON: {e}")
+    
+    async def _show_json_examples(self):
+        """Show available JSON examples"""
+        print("\n📄 AVAILABLE JSON EXAMPLES")
+        print("=" * 50)
+        
+        # Device Commands
+        device_dir = Path(__file__).parent.parent / "json" / "device-commands"
+        print("\n🔧 Device Commands:")
+        if device_dir.exists():
+            for file_path in device_dir.glob("*.json"):
+                print(f"   • {file_path.name}")
+        else:
+            print("   ❌ Directory not found")
+        
+        # Keyboard Configs
+        keyboard_dir = Path(__file__).parent.parent / "json" / "keyboard-configs"
+        print("\n⌨️  Keyboard Configurations:")
+        if keyboard_dir.exists():
+            for file_path in keyboard_dir.glob("*.json"):
+                print(f"   • {file_path.name}")
+        else:
+            print("   ❌ Directory not found")
+        
+        print(f"\n📂 Paths:")
+        print(f"   Device Commands: {device_dir}")
+        print(f"   Keyboard Configs: {keyboard_dir}")
         
         pause_for_user()
     
