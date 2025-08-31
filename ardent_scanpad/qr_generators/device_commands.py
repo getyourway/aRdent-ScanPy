@@ -8,11 +8,13 @@ Hybrid API for device commands:
 """
 
 import logging
-from typing import Dict, Any, List, Union, Optional
+import struct
+from typing import Dict, Any, List, Union, Optional, Callable
 from pathlib import Path
 
 from .utils.json_support import JSONValidator
 from .utils.qr_core import QRCore, QRCommand
+from ..controllers.base import Commands
 
 
 class DeviceCommandGenerator:
@@ -25,6 +27,10 @@ class DeviceCommandGenerator:
     def __init__(self):
         self._qr_core = QRCore()
         self._logger = logging.getLogger(self.__class__.__name__)
+        
+        # Command mapping table for easy maintenance
+        # Format: (domain, action) -> builder function
+        self._command_builders = self._init_command_builders()
     
     # ===== JSON API =====
     
@@ -45,7 +51,10 @@ class DeviceCommandGenerator:
         """
         Generate QR codes from JSON device commands
         
-        Format: {"commands": {"led_1_on": {}, "buzzer_success": {}}}
+        Supports multiple formats (auto-detected):
+        - Single command: {"domain": "led_control", "action": "led_on", ...}
+        - Batch commands: {"commands": [...]}
+        - With type field: {"type": "single_command", ...} (optional)
         
         Args:
             json_data: JSON device command dict
@@ -53,68 +62,266 @@ class DeviceCommandGenerator:
         Returns:
             List of QRCommand objects
         """
+        # Auto-detect format if type not specified
+        if 'type' not in json_data:
+            if 'commands' in json_data:
+                json_data['type'] = 'device_batch'
+            elif 'domain' in json_data and 'action' in json_data:
+                json_data['type'] = 'single_command'
+            else:
+                raise ValueError("Unable to auto-detect command format. Add 'type' field or use standard structure.")
+        
         # Validate JSON structure
         JSONValidator.validate_device_json(json_data)
         
-        # Handle device commands
-        if 'commands' in json_data:
+        # Handle different command formats
+        if json_data.get('type') == 'single_command':
+            # Single command format
+            self._logger.info("📱 Processing single device command")
+            return self._create_single_qr_command(json_data)
+        elif 'commands' in json_data:
+            # Batch commands format
             commands_data = json_data['commands']
             
-            if not isinstance(commands_data, dict):
-                raise ValueError("Commands must be an object. List format is not supported.")
+            # Accept both list (for batch) and dict (for legacy format)
+            if not isinstance(commands_data, (list, dict)):
+                raise ValueError("Commands must be a list or object")
             
-            self._logger.info("📱 Processing device commands")
+            self._logger.info("📱 Processing batch device commands")
             return self._create_batch_qr_command(json_data)
         
         return []
     
+    def from_simple_command(self, domain: str, action: str, parameters: Dict[str, Any] = None) -> List[QRCommand]:
+        """
+        Generate QR code from a single simple command (KISS approach)
+        
+        This is the simplest way to generate a QR code for GUI applications.
+        No need to build complex JSON structures.
+        
+        Args:
+            domain: Command domain (e.g., 'led_control', 'buzzer_control')
+            action: Command action (e.g., 'led_on', 'play_melody')
+            parameters: Optional parameters dict (e.g., {'led_id': 1})
+            
+        Returns:
+            List with single QRCommand object
+            
+        Example:
+            generator.from_simple_command('led_control', 'led_on', {'led_id': 1})
+            generator.from_simple_command('buzzer_control', 'play_melody', {'melody': 'SUCCESS'})
+        """
+        if parameters is None:
+            parameters = {}
+            
+        # Build minimal JSON structure
+        json_data = {
+            "type": "single_command",
+            "domain": domain,
+            "action": action,
+            "parameters": parameters
+        }
+        
+        return self.from_json(json_data)
+    
+    def _init_command_builders(self) -> Dict[tuple, Callable]:
+        """
+        Initialize command builder mapping table
+        
+        This makes it easy to add new commands without modifying _build_binary_command
+        Just add a new entry here!
+        """
+        return {
+            # LED Control
+            ('led_control', 'led_on'): self._build_led_on,
+            ('led_control', 'led_off'): self._build_led_off,
+            ('led_control', 'led_blink'): self._build_led_blink,
+            ('led_control', 'led_stop_blink'): self._build_led_stop_blink,
+            ('led_control', 'all_leds_off'): self._build_all_leds_off,
+            
+            # Buzzer Control
+            ('buzzer_control', 'play_melody'): self._build_play_melody,
+            ('buzzer_control', 'beep'): self._build_beep,
+            ('buzzer_control', 'set_volume'): self._build_set_volume,
+            
+            # Device Settings
+            ('device_settings', 'set_orientation'): self._build_set_orientation,
+            ('device_settings', 'set_language'): self._build_set_language,
+            ('device_settings', 'set_auto_shutdown'): self._build_set_auto_shutdown,
+            
+            # Power Management
+            ('power_management', 'shutdown'): self._build_shutdown,
+            ('power_management', 'restart'): self._build_restart,
+            ('power_management', 'deep_sleep'): self._build_deep_sleep,
+            
+            # Lua Management
+            ('lua_management', 'clear_script'): self._build_clear_script,
+            ('lua_management', 'get_script_info'): self._build_get_script_info,
+        }
+    
+    # === Command Builders (Easy to add new ones!) ===
+    
+    def _build_led_on(self, params: Dict) -> bytes:
+        """Build LED ON command"""
+        led_id = params.get('led_id', 1)
+        cmd_obj = self._qr_core._led_builder.create_led_on_command(led_id)
+        return bytes([cmd_obj.command_id]) + cmd_obj.payload
+    
+    def _build_led_off(self, params: Dict) -> bytes:
+        """Build LED OFF command"""
+        led_id = params.get('led_id', 1)
+        cmd_obj = self._qr_core._led_builder.create_led_off_command(led_id)
+        return bytes([cmd_obj.command_id]) + cmd_obj.payload
+    
+    def _build_led_blink(self, params: Dict) -> bytes:
+        """Build LED BLINK command"""
+        led_id = params.get('led_id', 1)
+        frequency = params.get('frequency', 2.0)
+        payload = bytes([led_id]) + struct.pack('<f', frequency)
+        return bytes([Commands.LED_START_BLINK]) + payload
+    
+    def _build_led_stop_blink(self, params: Dict) -> bytes:
+        """Build LED STOP BLINK command"""
+        led_id = params.get('led_id', 1)
+        return bytes([Commands.LED_STOP_BLINK, led_id])
+    
+    def _build_all_leds_off(self, params: Dict) -> bytes:
+        """Build ALL LEDs OFF command"""
+        cmd_obj = self._qr_core._led_builder.create_all_leds_off_command()
+        return bytes([cmd_obj.command_id]) + cmd_obj.payload
+    
+    def _build_play_melody(self, params: Dict) -> bytes:
+        """Build PLAY MELODY command"""
+        melody = params.get('melody', 'SUCCESS')
+        cmd_obj = self._qr_core._buzzer_builder.create_buzzer_melody_command(melody)
+        return bytes([cmd_obj.command_id]) + cmd_obj.payload
+    
+    def _build_beep(self, params: Dict) -> bytes:
+        """Build BEEP command"""
+        duration = params.get('duration', 200)
+        frequency = params.get('frequency', 1000)
+        payload = struct.pack('<HH', duration, frequency)
+        return bytes([Commands.BUZZER_BEEP]) + payload
+    
+    def _build_set_volume(self, params: Dict) -> bytes:
+        """Build SET VOLUME command"""
+        volume = params.get('volume', 50)
+        return bytes([Commands.BUZZER_SET_CONFIG, volume])
+    
+    def _build_set_orientation(self, params: Dict) -> bytes:
+        """Build SET ORIENTATION command"""
+        orientation = params.get('orientation', 0)
+        # Use existing builder method
+        cmd_obj = self._qr_core._device_builder.create_orientation_command(orientation)
+        return bytes([cmd_obj.command_id]) + cmd_obj.payload
+    
+    def _build_set_language(self, params: Dict) -> bytes:
+        """Build SET LANGUAGE command"""
+        language = params.get('language_code', 0x040C)
+        if isinstance(language, str):
+            language = int(language, 16) if language.startswith('0x') else int(language)
+        # Manual command building since no builder exists
+        import struct
+        payload = struct.pack('<I', language)  # 32-bit language code
+        return bytes([Commands.DEVICE_SET_LANGUAGE]) + payload
+    
+    def _build_set_auto_shutdown(self, params: Dict) -> bytes:
+        """Build SET AUTO SHUTDOWN command"""
+        ble_timeout = params.get('ble_timeout', 30)
+        activity_timeout = params.get('activity_timeout', 60)
+        # Manual command building
+        payload = struct.pack('<HH', ble_timeout, activity_timeout)
+        return bytes([Commands.POWER_SET_AUTO_SHUTDOWN]) + payload
+    
+    def _build_shutdown(self, params: Dict) -> bytes:
+        """Build SHUTDOWN command"""
+        return bytes([Commands.SYSTEM_SHUTDOWN])
+    
+    def _build_restart(self, params: Dict) -> bytes:
+        """Build RESTART command"""
+        return bytes([Commands.SYSTEM_RESTART])
+    
+    def _build_deep_sleep(self, params: Dict) -> bytes:
+        """Build DEEP SLEEP command"""
+        duration = params.get('duration', 0)
+        # Note: Implementation depends on ESP32 deep sleep command format
+        return bytes([0x74, duration & 0xFF, (duration >> 8) & 0xFF])  # Example
+    
+    def _build_clear_script(self, params: Dict) -> bytes:
+        """Build CLEAR SCRIPT command"""
+        # Use existing builder method  
+        cmd_obj = self._qr_core._device_builder.create_lua_clear_command()
+        return bytes([cmd_obj.command_id]) + cmd_obj.payload
+    
+    def _build_get_script_info(self, params: Dict) -> bytes:
+        """Build GET SCRIPT INFO command"""
+        # Use existing builder method
+        cmd_obj = self._qr_core._device_builder.create_lua_info_command()
+        return bytes([cmd_obj.command_id]) + cmd_obj.payload
 
     def _build_binary_command(self, cmd_data: Dict[str, Any]) -> bytes:
         """
-        Build binary command from JSON command data
-        Reuses existing QRCore command builders
+        Build binary command from JSON command data using mapping table
+        
+        Much cleaner and easier to maintain than big if/else blocks!
         """
         domain = cmd_data.get('domain', '')
         action = cmd_data.get('action', '')
         parameters = cmd_data.get('parameters', {})
         
-        # Route to appropriate command builder based on domain via QRCore
-        # CRITICAL FIX: Return [command_id] + payload instead of just payload
-        if domain == 'led_control':
-            if action == 'led_on':
-                led_id = parameters.get('led_id', 1)
-                cmd_obj = self._qr_core._led_builder.create_led_on_command(led_id)
-                return bytes([cmd_obj.command_id]) + cmd_obj.payload
-            elif action == 'led_off':
-                led_id = parameters.get('led_id', 1)
-                cmd_obj = self._qr_core._led_builder.create_led_off_command(led_id)
-                return bytes([cmd_obj.command_id]) + cmd_obj.payload
-            elif action == 'all_leds_off':
-                cmd_obj = self._qr_core._led_builder.create_all_leds_off_command()
-                return bytes([cmd_obj.command_id]) + cmd_obj.payload
-                
-        elif domain == 'buzzer_control':
-            if action == 'play_melody':
-                melody = parameters.get('melody', 'SUCCESS')
-                cmd_obj = self._qr_core._buzzer_builder.create_buzzer_melody_command(melody)
-                return bytes([cmd_obj.command_id]) + cmd_obj.payload
-                
-        elif domain == 'device_settings':
-            if action == 'set_orientation':
-                orientation = parameters.get('orientation', 0)
-                cmd_obj = self._qr_core._device_builder.create_orientation_command(orientation)
-                return bytes([cmd_obj.command_id]) + cmd_obj.payload
-                
-        elif domain == 'lua_management':
-            if action == 'clear_script':
-                cmd_obj = self._qr_core._device_builder.create_lua_clear_command()
-                return bytes([cmd_obj.command_id]) + cmd_obj.payload
-            elif action == 'get_script_info':
-                cmd_obj = self._qr_core._device_builder.create_lua_info_command()
-                return bytes([cmd_obj.command_id]) + cmd_obj.payload
+        # Look up command builder in mapping table
+        builder_key = (domain, action)
+        builder = self._command_builders.get(builder_key)
         
-        # If we reach here, command is not supported
-        raise ValueError(f"Unsupported command: {domain}.{action}")
+        if builder:
+            return builder(parameters)
+        else:
+            # Command not supported - list available commands for better debugging
+            available = [f"{d}.{a}" for (d, a) in self._command_builders.keys()]
+            raise ValueError(f"Unsupported command: {domain}.{action}\nAvailable commands: {', '.join(sorted(available))}")
+    
+    def _create_single_qr_command(self, json_data: Dict[str, Any]) -> List[QRCommand]:
+        """
+        Create a QR code for a single device command
+        
+        Args:
+            json_data: Single command JSON with domain, action, parameters
+            
+        Returns:
+            List with single QRCommand object
+        """
+        try:
+            # Build binary command
+            binary_command = self._build_binary_command(json_data)
+            
+            if not binary_command:
+                self._logger.error("Failed to build binary command")
+                return []
+            
+            # Format as QR command
+            import base64
+            encoded = base64.b64encode(binary_command).decode('utf-8')
+            qr_data = f"$DCMD:{encoded}$"
+            
+            # Create QRCommand object
+            from .utils.qr_core import QRCommand, CommandData
+            cmd_data = CommandData(
+                command_id=binary_command[0] if binary_command else 0,
+                payload=binary_command[1:] if len(binary_command) > 1 else b'',
+                domain="device",  # Device domain commands
+                command_type="Device Command",
+                description=f"{json_data.get('domain', '')}.{json_data.get('action', '')}",
+                metadata={"format": "single"}
+            )
+            
+            # Return QRCommand with pre-formatted data
+            qr_cmd = QRCommand(cmd_data)
+            qr_cmd.command_data = qr_data  # Override with our formatted data
+            return [qr_cmd]
+            
+        except Exception as e:
+            self._logger.error(f"Error creating single QR command: {e}")
+            return []
     
     def _create_batch_qr_command(self, json_data: Dict[str, Any]) -> List[QRCommand]:
         """

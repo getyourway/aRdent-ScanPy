@@ -2,39 +2,52 @@
   "categories": {
     "LED Control": {
       "parameters": {
-        "LED1 Green (GPIO7)": {
+        "LED1 Green": {
           "functions": [
             {
               "function": "Turn LED1 ON",
               "command": "led_on",
               "domain": "led_control",
-              "parameters": {"led_id": 1},
+              "parameters": {
+                "led_id": 1
+              },
               "remark": "Green LED1 (ID=1)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Turn LED1 OFF",
               "command": "led_off",
               "domain": "led_control",
-              "parameters": {"led_id": 1},
+              "parameters": {
+                "led_id": 1
+              },
               "remark": "Green LED1 (ID=1)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Blink LED1 (2Hz)",
               "command": "led_blink",
               "domain": "led_control",
-              "parameters": {"led_id": 1, "frequency": 2.0},
+              "parameters": {
+                "led_id": 1,
+                "frequency": 2.0
+              },
               "remark": "Default blink frequency",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Stop LED1 Blinking",
               "command": "led_stop_blink",
               "domain": "led_control",
-              "parameters": {"led_id": 1},
+              "parameters": {
+                "led_id": 1
+              },
               "remark": "Stop blinking",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Custom LED1 Blink",
@@ -56,76 +69,101 @@
               },
               "remark": "Custom blink frequency for LED1",
               "requires_data": true,
-              "user_input": true
+              "user_input": true,
+              "qr_supported": true
             }
           ],
           "description": "Control Green LED1 (single color)"
         },
-        "LED2 RGB (GPIO15/16/17)": {
+        "LED2 RGB": {
           "functions": [
             {
               "function": "LED2 Red ON",
               "command": "led_on",
               "domain": "led_control",
-              "parameters": {"led_id": 2},
+              "parameters": {
+                "led_id": 2
+              },
               "remark": "Red color (ID=2)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "LED2 Green ON",
               "command": "led_on",
               "domain": "led_control",
-              "parameters": {"led_id": 3},
+              "parameters": {
+                "led_id": 3
+              },
               "remark": "Green color (ID=3)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "LED2 Blue ON",
               "command": "led_on",
               "domain": "led_control",
-              "parameters": {"led_id": 4},
+              "parameters": {
+                "led_id": 4
+              },
               "remark": "Blue color (ID=4)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "LED2 Yellow ON",
               "command": "led_on",
               "domain": "led_control",
-              "parameters": {"led_id": 5},
+              "parameters": {
+                "led_id": 5
+              },
               "remark": "Yellow (Red+Green, ID=5)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "LED2 Cyan ON",
               "command": "led_on",
               "domain": "led_control",
-              "parameters": {"led_id": 6},
+              "parameters": {
+                "led_id": 6
+              },
               "remark": "Cyan (Green+Blue, ID=6)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "LED2 Magenta ON",
               "command": "led_on",
               "domain": "led_control",
-              "parameters": {"led_id": 7},
+              "parameters": {
+                "led_id": 7
+              },
               "remark": "Magenta (Red+Blue, ID=7)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "LED2 White ON",
               "command": "led_on",
               "domain": "led_control",
-              "parameters": {"led_id": 8},
+              "parameters": {
+                "led_id": 8
+              },
               "remark": "White (All colors, ID=8)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "LED2 OFF",
               "command": "led_off",
               "domain": "led_control",
-              "parameters": {"led_id": 2},
+              "parameters": {
+                "led_id": 2
+              },
               "remark": "Turn off LED2 (any color)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Custom LED2 Color",
@@ -141,7 +179,8 @@
               },
               "remark": "Choose RGB LED2 color",
               "requires_data": true,
-              "user_input": true
+              "user_input": true,
+              "qr_supported": true
             },
             {
               "function": "Custom LED2 Blink",
@@ -164,44 +203,58 @@
               },
               "remark": "Custom color and blink frequency for LED2",
               "requires_data": true,
-              "user_input": true
+              "user_input": true,
+              "qr_supported": true
             }
           ],
           "description": "Control RGB LED2 (multi-color)"
         },
-        "LED3 Green (GPIO18)": {
+        "LED3 Green": {
           "functions": [
             {
               "function": "Turn LED3 ON",
               "command": "led_on",
               "domain": "led_control",
-              "parameters": {"led_id": 9},
+              "parameters": {
+                "led_id": 9
+              },
               "remark": "Green LED3 (ID=9)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Turn LED3 OFF",
               "command": "led_off",
               "domain": "led_control",
-              "parameters": {"led_id": 9},
+              "parameters": {
+                "led_id": 9
+              },
               "remark": "Green LED3 (ID=9)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Blink LED3 (2Hz)",
               "command": "led_blink",
               "domain": "led_control",
-              "parameters": {"led_id": 9, "frequency": 2.0},
+              "parameters": {
+                "led_id": 9,
+                "frequency": 2.0
+              },
               "remark": "Default blink frequency",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Stop LED3 Blinking",
               "command": "led_stop_blink",
               "domain": "led_control",
-              "parameters": {"led_id": 9},
+              "parameters": {
+                "led_id": 9
+              },
               "remark": "Stop blinking",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Custom LED3 Blink",
@@ -223,7 +276,8 @@
               },
               "remark": "Custom blink frequency for LED3",
               "requires_data": true,
-              "user_input": true
+              "user_input": true,
+              "qr_supported": true
             }
           ],
           "description": "Control Green LED3 (single color)"
@@ -236,7 +290,8 @@
               "domain": "led_control",
               "parameters": {},
               "remark": "Turn off all LEDs at once",
-              "requires_data": false
+              "requires_data": false,
+              "qr_supported": true
             }
           ],
           "description": "Global LED control"
@@ -251,33 +306,49 @@
               "function": "Short Beep (100ms)",
               "command": "beep",
               "domain": "buzzer_control",
-              "parameters": {"duration": 100, "frequency": 1000},
+              "parameters": {
+                "duration": 100,
+                "frequency": 1000
+              },
               "remark": "Quick confirmation beep",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Long Beep (500ms)",
               "command": "beep",
-              "domain": "buzzer_control", 
-              "parameters": {"duration": 500, "frequency": 1000},
+              "domain": "buzzer_control",
+              "parameters": {
+                "duration": 500,
+                "frequency": 1000
+              },
               "remark": "Extended beep",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "High Pitch Beep (2000Hz)",
               "command": "beep",
               "domain": "buzzer_control",
-              "parameters": {"duration": 200, "frequency": 2000},
+              "parameters": {
+                "duration": 200,
+                "frequency": 2000
+              },
               "remark": "High frequency alert",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Low Pitch Beep (500Hz)",
-              "command": "beep", 
+              "command": "beep",
               "domain": "buzzer_control",
-              "parameters": {"duration": 300, "frequency": 500},
+              "parameters": {
+                "duration": 300,
+                "frequency": 500
+              },
               "remark": "Low frequency warning",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Custom Beep",
@@ -301,7 +372,8 @@
               },
               "remark": "Custom beep with user-defined duration and frequency",
               "requires_data": true,
-              "user_input": true
+              "user_input": true,
+              "qr_supported": true
             }
           ],
           "description": "Single beep sounds with customizable duration and frequency"
@@ -312,73 +384,100 @@
               "function": "KEY Melody",
               "command": "play_melody",
               "domain": "buzzer_control",
-              "parameters": {"melody": "KEY"},
+              "parameters": {
+                "melody": "KEY"
+              },
               "remark": "Key press sound (ID=1)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "START Melody",
               "command": "play_melody",
               "domain": "buzzer_control",
-              "parameters": {"melody": "START"},
+              "parameters": {
+                "melody": "START"
+              },
               "remark": "Startup sound (ID=2)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "STOP Melody",
               "command": "play_melody",
               "domain": "buzzer_control",
-              "parameters": {"melody": "STOP"},
+              "parameters": {
+                "melody": "STOP"
+              },
               "remark": "Shutdown sound (ID=3)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "NOTIF_UP Melody",
               "command": "play_melody",
               "domain": "buzzer_control",
-              "parameters": {"melody": "NOTIF_UP"},
+              "parameters": {
+                "melody": "NOTIF_UP"
+              },
               "remark": "Notification up sound (ID=4)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "NOTIF_DOWN Melody",
               "command": "play_melody",
               "domain": "buzzer_control",
-              "parameters": {"melody": "NOTIF_DOWN"},
+              "parameters": {
+                "melody": "NOTIF_DOWN"
+              },
               "remark": "Notification down sound (ID=5)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "CONFIRM Melody",
               "command": "play_melody",
               "domain": "buzzer_control",
-              "parameters": {"melody": "CONFIRM"},
+              "parameters": {
+                "melody": "CONFIRM"
+              },
               "remark": "Confirmation sound (ID=6)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "WARNING Melody",
               "command": "play_melody",
               "domain": "buzzer_control",
-              "parameters": {"melody": "WARNING"},
+              "parameters": {
+                "melody": "WARNING"
+              },
               "remark": "Warning sound (ID=7)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "ERROR Melody",
               "command": "play_melody",
               "domain": "buzzer_control",
-              "parameters": {"melody": "ERROR"},
+              "parameters": {
+                "melody": "ERROR"
+              },
               "remark": "Error sound (ID=8)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "SUCCESS Melody",
               "command": "play_melody",
               "domain": "buzzer_control",
-              "parameters": {"melody": "SUCCESS"},
+              "parameters": {
+                "melody": "SUCCESS"
+              },
               "remark": "Success sound (ID=9)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             }
           ],
           "description": "Predefined melodies for different events"
@@ -389,41 +488,56 @@
               "function": "Set Volume 25%",
               "command": "set_volume",
               "domain": "buzzer_control",
-              "parameters": {"volume": 25},
+              "parameters": {
+                "volume": 25
+              },
               "remark": "Low volume",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Set Volume 50%",
               "command": "set_volume",
               "domain": "buzzer_control",
-              "parameters": {"volume": 50},
+              "parameters": {
+                "volume": 50
+              },
               "remark": "Medium volume (default)",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Set Volume 75%",
-              "command": "set_volume", 
+              "command": "set_volume",
               "domain": "buzzer_control",
-              "parameters": {"volume": 75},
+              "parameters": {
+                "volume": 75
+              },
               "remark": "High volume",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Set Volume 100%",
               "command": "set_volume",
               "domain": "buzzer_control",
-              "parameters": {"volume": 100},
+              "parameters": {
+                "volume": 100
+              },
               "remark": "Maximum volume",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Mute Buzzer (0%)",
               "command": "set_volume",
               "domain": "buzzer_control",
-              "parameters": {"volume": 0},
+              "parameters": {
+                "volume": 0
+              },
               "remark": "Silent mode",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": true
             },
             {
               "function": "Custom Volume",
@@ -440,268 +554,341 @@
               },
               "remark": "Custom volume level (0-100%)",
               "requires_data": true,
-              "user_input": true
+              "user_input": true,
+              "qr_supported": true
             }
           ],
           "description": "Control buzzer volume (0-100%)"
         }
       }
     },
-    "Device Settings": {
-      "parameters": {
-        "Screen Orientation": {
-          "functions": [
-            {
-              "function": "Portrait (0°)",
-              "command": "set_orientation",
-              "domain": "device_settings",
-              "parameters": {"orientation": 0},
-              "remark": "Standard portrait mode",
-              "requires_data": true
-            },
-            {
-              "function": "Landscape Right (90°)",
-              "command": "set_orientation",
-              "domain": "device_settings", 
-              "parameters": {"orientation": 1},
-              "remark": "Rotated 90° clockwise",
-              "requires_data": true
-            },
-            {
-              "function": "Portrait Inverted (180°)",
-              "command": "set_orientation",
-              "domain": "device_settings",
-              "parameters": {"orientation": 2},
-              "remark": "Upside down",
-              "requires_data": true
-            },
-            {
-              "function": "Landscape Left (270°)",
-              "command": "set_orientation",
-              "domain": "device_settings",
-              "parameters": {"orientation": 3},
-              "remark": "Rotated 90° counter-clockwise",
-              "requires_data": true
-            }
-          ],
-          "description": "Screen orientation: portrait/landscape with rotations (0-3)"
+    "Screen Orientation": {
+      "functions": [
+        {
+          "function": "Portrait (0°)",
+          "command": "set_orientation",
+          "domain": "device_settings",
+          "parameters": {
+            "orientation": 0
+          },
+          "remark": "Standard portrait mode",
+          "requires_data": true,
+          "qr_supported": true
         },
-        "Windows/Linux Keyboard Layouts": {
-          "functions": [
-            {
-              "function": "US English QWERTY",
-              "command": "set_language",
-              "domain": "device_settings",
-              "parameters": {"language_code": "0x1110"},
-              "remark": "Windows/Linux US layout",
-              "requires_data": true
-            },
-            {
-              "function": "French AZERTY",
-              "command": "set_language",
-              "domain": "device_settings",
-              "parameters": {"language_code": "0x1220"},
-              "remark": "Windows/Linux French layout",
-              "requires_data": true
-            },
-            {
-              "function": "Belgian AZERTY",
-              "command": "set_language",
-              "domain": "device_settings",
-              "parameters": {"language_code": "0x1230"},
-              "remark": "Windows/Linux Belgian French layout",
-              "requires_data": true
-            },
-            {
-              "function": "German QWERTZ",
-              "command": "set_language",
-              "domain": "device_settings",
-              "parameters": {"language_code": "0x1340"},
-              "remark": "Windows/Linux German layout",
-              "requires_data": true
-            },
-            {
-              "function": "Spanish QWERTY",
-              "command": "set_language",
-              "domain": "device_settings",
-              "parameters": {"language_code": "0x1150"},
-              "remark": "Windows/Linux Spanish layout",
-              "requires_data": true
-            },
-            {
-              "function": "Italian QWERTY",
-              "command": "set_language",
-              "domain": "device_settings",
-              "parameters": {"language_code": "0x1160"},
-              "remark": "Windows/Linux Italian layout",
-              "requires_data": true
-            },
-            {
-              "function": "Portuguese QWERTY",
-              "command": "set_language",
-              "domain": "device_settings",
-              "parameters": {"language_code": "0x1170"},
-              "remark": "Windows/Linux Portuguese layout",
-              "requires_data": true
-            },
-            {
-              "function": "Dutch QWERTY",
-              "command": "set_language",
-              "domain": "device_settings",
-              "parameters": {"language_code": "0x1180"},
-              "remark": "Windows/Linux Dutch layout",
-              "requires_data": true
-            }
-          ],
-          "description": "Keyboard layouts for Windows and Linux systems"
+        {
+          "function": "Landscape Right (90°)",
+          "command": "set_orientation",
+          "domain": "device_settings",
+          "parameters": {
+            "orientation": 1
+          },
+          "remark": "Rotated 90° clockwise",
+          "requires_data": true,
+          "qr_supported": true
         },
-        "macOS Keyboard Layouts": {
-          "functions": [
-            {
-              "function": "macOS US English QWERTY",
-              "command": "set_language",
-              "domain": "device_settings",
-              "parameters": {"language_code": "0x2110"},
-              "remark": "macOS US layout",
-              "requires_data": true
-            },
-            {
-              "function": "macOS French AZERTY",
-              "command": "set_language",
-              "domain": "device_settings",
-              "parameters": {"language_code": "0x2220"},
-              "remark": "macOS French layout",
-              "requires_data": true
-            },
-            {
-              "function": "macOS Belgian AZERTY",
-              "command": "set_language",
-              "domain": "device_settings",
-              "parameters": {"language_code": "0x2230"},
-              "remark": "macOS Belgian French layout",
-              "requires_data": true
-            }
-          ],
-          "description": "Keyboard layouts for macOS systems"
+        {
+          "function": "Portrait Inverted (180°)",
+          "command": "set_orientation",
+          "domain": "device_settings",
+          "parameters": {
+            "orientation": 2
+          },
+          "remark": "Upside down",
+          "requires_data": true,
+          "qr_supported": true
         },
-        "Auto Shutdown": {
-          "functions": [
-            {
-              "function": "Set Auto Shutdown 15 min",
-              "command": "set_auto_shutdown",
-              "domain": "device_settings",
-              "parameters": {"ble_timeout": 15, "activity_timeout": 30},
-              "remark": "Quick shutdown timers",
-              "requires_data": true
-            },
-            {
-              "function": "Set Auto Shutdown 30 min",
-              "command": "set_auto_shutdown",
-              "domain": "device_settings",
-              "parameters": {"ble_timeout": 30, "activity_timeout": 60},
-              "remark": "Default shutdown timers",
-              "requires_data": true
-            },
-            {
-              "function": "Set Auto Shutdown 60 min", 
-              "command": "set_auto_shutdown",
-              "domain": "device_settings",
-              "parameters": {"ble_timeout": 60, "activity_timeout": 120},
-              "remark": "Extended shutdown timers",
-              "requires_data": true
-            },
-            {
-              "function": "Disable Auto Shutdown",
-              "command": "set_auto_shutdown",
-              "domain": "device_settings",
-              "parameters": {"ble_timeout": 240, "activity_timeout": 240},
-              "remark": "Maximum timeout (4h)",
-              "requires_data": true
-            },
-            {
-              "function": "Custom Auto Shutdown",
-              "command": "set_auto_shutdown",
-              "domain": "device_settings",
-              "parameters": {
-                "ble_timeout": {
-                  "type": "integer",
-                  "min": 1,
-                  "max": 1440,
-                  "unit": "minutes",
-                  "description": "BLE disconnection timeout"
-                },
-                "activity_timeout": {
-                  "type": "integer", 
-                  "min": 1,
-                  "max": 1440,
-                  "unit": "minutes",
-                  "description": "User activity timeout"
-                }
-              },
-              "remark": "Custom timeouts (1-1440 minutes)",
-              "requires_data": true,
-              "user_input": true
-            }
-          ],
-          "description": "Auto shutdown: BLE disconnect timeout + user activity timeout"
+        {
+          "function": "Landscape Left (270°)",
+          "command": "set_orientation",
+          "domain": "device_settings",
+          "parameters": {
+            "orientation": 3
+          },
+          "remark": "Rotated 90° counter-clockwise",
+          "requires_data": true,
+          "qr_supported": true
         }
-      }
+      ],
+      "description": "Screen orientation: portrait/landscape with rotations (0-3)"
     },
-    "Power Management": {
+    "Auto Shutdown": {
+      "functions": [
+        {
+          "function": "Set Auto Shutdown 15 min",
+          "command": "set_auto_shutdown",
+          "domain": "device_settings",
+          "parameters": {
+            "ble_timeout": 15,
+            "activity_timeout": 30
+          },
+          "remark": "Quick shutdown timers",
+          "requires_data": true,
+          "qr_supported": true
+        },
+        {
+          "function": "Set Auto Shutdown 30 min",
+          "command": "set_auto_shutdown",
+          "domain": "device_settings",
+          "parameters": {
+            "ble_timeout": 30,
+            "activity_timeout": 60
+          },
+          "remark": "Default shutdown timers",
+          "requires_data": true,
+          "qr_supported": true
+        },
+        {
+          "function": "Set Auto Shutdown 60 min",
+          "command": "set_auto_shutdown",
+          "domain": "device_settings",
+          "parameters": {
+            "ble_timeout": 60,
+            "activity_timeout": 120
+          },
+          "remark": "Extended shutdown timers",
+          "requires_data": true,
+          "qr_supported": true
+        },
+        {
+          "function": "Disable Auto Shutdown",
+          "command": "set_auto_shutdown",
+          "domain": "device_settings",
+          "parameters": {
+            "ble_timeout": 240,
+            "activity_timeout": 240
+          },
+          "remark": "Maximum timeout (4h)",
+          "requires_data": true,
+          "qr_supported": true
+        },
+        {
+          "function": "Custom Auto Shutdown",
+          "command": "set_auto_shutdown",
+          "domain": "device_settings",
+          "parameters": {
+            "ble_timeout": {
+              "type": "integer",
+              "min": 1,
+              "max": 1440,
+              "unit": "minutes",
+              "description": "BLE disconnection timeout"
+            },
+            "activity_timeout": {
+              "type": "integer",
+              "min": 1,
+              "max": 1440,
+              "unit": "minutes",
+              "description": "User activity timeout"
+            }
+          },
+          "remark": "Custom timeouts (1-1440 minutes)",
+          "requires_data": true,
+          "user_input": true,
+          "qr_supported": true
+        }
+      ],
+      "description": "Auto shutdown: BLE disconnect timeout + user activity timeout"
+    },
+    "Power Control": {
+      "functions": [
+        {
+          "function": "Shutdown Device",
+          "command": "shutdown",
+          "domain": "power_management",
+          "parameters": {},
+          "remark": "Immediate device shutdown",
+          "requires_data": false,
+          "qr_supported": true
+        },
+        {
+          "function": "Restart Device",
+          "command": "restart",
+          "domain": "power_management",
+          "parameters": {},
+          "remark": "ESP32 restart",
+          "requires_data": false,
+          "qr_supported": true
+        },
+        {
+          "function": "Deep Sleep 1 Hour",
+          "command": "deep_sleep",
+          "domain": "power_management",
+          "parameters": {
+            "duration": 3600
+          },
+          "remark": "Low power mode for 1 hour",
+          "requires_data": true,
+          "qr_supported": true
+        },
+        {
+          "function": "Deep Sleep Indefinite",
+          "command": "deep_sleep",
+          "domain": "power_management",
+          "parameters": {
+            "duration": 0
+          },
+          "remark": "Sleep until button press",
+          "requires_data": true,
+          "qr_supported": true
+        },
+        {
+          "function": "Custom Deep Sleep",
+          "command": "deep_sleep",
+          "domain": "power_management",
+          "parameters": {
+            "duration": {
+              "type": "integer",
+              "min": 0,
+              "max": 86400,
+              "unit": "seconds",
+              "description": "Sleep duration (0=indefinite)"
+            }
+          },
+          "remark": "Custom deep sleep duration (max 24 hours)",
+          "requires_data": true,
+          "user_input": true,
+          "qr_supported": true
+        }
+      ],
+      "description": "Power management: shutdown, restart, deep sleep"
+    },
+    "Keyboard Language": {
       "parameters": {
-        "Power Control": {
+        "US/UK English": {
           "functions": [
             {
-              "function": "Shutdown Device",
-              "command": "shutdown",
-              "domain": "power_management",
-              "parameters": {},
-              "remark": "Immediate device shutdown",
-              "requires_data": false
-            },
-            {
-              "function": "Restart Device",
-              "command": "restart",
-              "domain": "power_management",
-              "parameters": {},
-              "remark": "ESP32 restart",
-              "requires_data": false
-            },
-            {
-              "function": "Deep Sleep 1 Hour",
-              "command": "deep_sleep",
-              "domain": "power_management",
-              "parameters": {"duration": 3600},
-              "remark": "Low power mode for 1 hour",
-              "requires_data": true
-            },
-            {
-              "function": "Deep Sleep Indefinite",
-              "command": "deep_sleep",
-              "domain": "power_management",
-              "parameters": {"duration": 0},
-              "remark": "Sleep until button press",
-              "requires_data": true
-            },
-            {
-              "function": "Custom Deep Sleep",
-              "command": "deep_sleep",
-              "domain": "power_management",
+              "function": "US English QWERTY (Windows/Linux)",
+              "command": "set_language",
+              "domain": "device_settings",
               "parameters": {
-                "duration": {
-                  "type": "integer",
-                  "min": 0,
-                  "max": 86400,
-                  "unit": "seconds",
-                  "description": "Sleep duration (0=indefinite)"
-                }
+                "language_code": "0x1110"
               },
-              "remark": "Custom deep sleep duration (max 24 hours)",
+              "remark": "Windows/Linux US layout",
               "requires_data": true,
-              "user_input": true
+              "qr_supported": true
+            },
+            {
+              "function": "US English QWERTY (macOS)",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {
+                "language_code": "0x2110"
+              },
+              "remark": "macOS US layout",
+              "requires_data": true,
+              "qr_supported": true
             }
           ],
-          "description": "Power management: shutdown, restart, deep sleep"
+          "description": "Standard English keyboard layouts"
+        },
+        "European Languages": {
+          "functions": [
+            {
+              "function": "French AZERTY (Windows/Linux)",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {
+                "language_code": "0x1220"
+              },
+              "remark": "Windows/Linux French layout",
+              "requires_data": true,
+              "qr_supported": true
+            },
+            {
+              "function": "Belgian AZERTY (Windows/Linux)",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {
+                "language_code": "0x1230"
+              },
+              "remark": "Windows/Linux Belgian French layout",
+              "requires_data": true,
+              "qr_supported": true
+            },
+            {
+              "function": "German QWERTZ (Windows/Linux)",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {
+                "language_code": "0x1340"
+              },
+              "remark": "Windows/Linux German layout",
+              "requires_data": true,
+              "qr_supported": true
+            },
+            {
+              "function": "Spanish QWERTY (Windows/Linux)",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {
+                "language_code": "0x1150"
+              },
+              "remark": "Windows/Linux Spanish layout",
+              "requires_data": true,
+              "qr_supported": true
+            },
+            {
+              "function": "Italian QWERTY (Windows/Linux)",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {
+                "language_code": "0x1160"
+              },
+              "remark": "Windows/Linux Italian layout",
+              "requires_data": true,
+              "qr_supported": true
+            },
+            {
+              "function": "Portuguese QWERTY (Windows/Linux)",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {
+                "language_code": "0x1170"
+              },
+              "remark": "Windows/Linux Portuguese layout",
+              "requires_data": true,
+              "qr_supported": true
+            },
+            {
+              "function": "Dutch QWERTY (Windows/Linux)",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {
+                "language_code": "0x1180"
+              },
+              "remark": "Windows/Linux Dutch layout",
+              "requires_data": true,
+              "qr_supported": true
+            }
+          ],
+          "description": "European keyboard layouts (French, German, Spanish, etc.)"
+        },
+        "macOS Layouts": {
+          "functions": [
+            {
+              "function": "French AZERTY (macOS)",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {
+                "language_code": "0x2220"
+              },
+              "remark": "macOS French layout",
+              "requires_data": true,
+              "qr_supported": true
+            },
+            {
+              "function": "Belgian AZERTY (macOS)",
+              "command": "set_language",
+              "domain": "device_settings",
+              "parameters": {
+                "language_code": "0x2230"
+              },
+              "remark": "macOS Belgian French layout",
+              "requires_data": true,
+              "qr_supported": true
+            }
+          ],
+          "description": "macOS-specific keyboard layouts"
         }
       }
     },
@@ -715,7 +902,8 @@
               "domain": "lua_management",
               "parameters": {},
               "remark": "Remove current script, restore default",
-              "requires_data": false
+              "requires_data": false,
+              "qr_supported": true
             },
             {
               "function": "Get Script Information",
@@ -723,23 +911,30 @@
               "domain": "lua_management",
               "parameters": {},
               "remark": "Current script status and info",
-              "requires_data": false
+              "requires_data": false,
+              "qr_supported": true
             },
             {
               "function": "Execute Test Lua Code",
               "command": "execute_lua",
               "domain": "lua_management",
-              "parameters": {"code": "led_blink(1, 3); buzzer_beep(100, 1000)"},
+              "parameters": {
+                "code": "led_blink(1, 3); buzzer_beep(100, 1000)"
+              },
               "remark": "Test Lua execution",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": false
             },
             {
               "function": "Test LED Control Lua",
               "command": "execute_lua",
-              "domain": "lua_management", 
-              "parameters": {"code": "led_on(4); sleep(500); led_off(4)"},
+              "domain": "lua_management",
+              "parameters": {
+                "code": "led_on(4); sleep(500); led_off(4)"
+              },
               "remark": "Red LED flash test",
-              "requires_data": true
+              "requires_data": true,
+              "qr_supported": false
             }
           ],
           "description": "Lua scripting engine management"

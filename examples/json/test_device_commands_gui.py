@@ -13,6 +13,18 @@ from tkinter import ttk, messagebox, filedialog
 import json
 import os
 from pathlib import Path
+import sys
+
+# Ajouter le chemin de la librairie ardent_scanpad
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+try:
+    from ardent_scanpad.qr_generators import DeviceCommandGenerator
+    from PIL import Image, ImageTk
+    QR_SUPPORT = True
+except ImportError:
+    QR_SUPPORT = False
+    print("Note: QR code support unavailable. Install ardent_scanpad and PIL for QR generation.")
 
 class CommandsGUI:
     def __init__(self, root):
@@ -93,7 +105,11 @@ class CommandsGUI:
         
         ttk.Button(buttons_frame, text="Générer JSON", command=self.generate_json).pack(side=tk.LEFT, padx=(0, 5))
         ttk.Button(buttons_frame, text="Sauvegarder JSON", command=self.save_json).pack(side=tk.LEFT, padx=(0, 5))
-        ttk.Button(buttons_frame, text="Copier", command=self.copy_json).pack(side=tk.LEFT)
+        ttk.Button(buttons_frame, text="Copier", command=self.copy_json).pack(side=tk.LEFT, padx=(0, 5))
+        
+        # Bouton QR Code (si supporté)
+        if QR_SUPPORT:
+            ttk.Button(buttons_frame, text="Générer QR Code", command=self.generate_qr).pack(side=tk.LEFT)
     
     def populate_tree(self):
         """Remplir l'arbre avec les données des deux JSON"""
@@ -113,17 +129,27 @@ class CommandsGUI:
             # Ajouter la catégorie principale
             category_node = self.tree.insert(parent_node, "end", text=category_name, values=["category", "device"])
             
-            parameters = category_data.get("parameters", {})
-            for param_name, param_data in parameters.items():
-                # Ajouter le sous-paramètre
-                param_node = self.tree.insert(category_node, "end", text=param_name, values=["parameter", "device"])
-                
-                functions = param_data.get("functions", [])
+            # Check if this category has direct functions or sub-parameters
+            if "functions" in category_data:
+                # Direct functions (e.g., Screen Orientation, Power Control)
+                functions = category_data.get("functions", [])
                 for i, function in enumerate(functions):
-                    # Ajouter chaque fonction
                     func_name = function.get("function", f"Function {i}")
-                    func_node = self.tree.insert(param_node, "end", text=func_name, 
-                                                values=["function", "device", category_name, param_name, i])
+                    func_node = self.tree.insert(category_node, "end", text=func_name, 
+                                                values=["function", "device", category_name, "direct", i])
+            elif "parameters" in category_data:
+                # Sub-parameters (e.g., LED Control, Keyboard Language)
+                parameters = category_data.get("parameters", {})
+                for param_name, param_data in parameters.items():
+                    # Ajouter le sous-paramètre
+                    param_node = self.tree.insert(category_node, "end", text=param_name, values=["parameter", "device"])
+                    
+                    functions = param_data.get("functions", [])
+                    for i, function in enumerate(functions):
+                        # Ajouter chaque fonction
+                        func_name = function.get("function", f"Function {i}")
+                        func_node = self.tree.insert(param_node, "end", text=func_name, 
+                                                    values=["function", "device", category_name, param_name, i])
     
     def populate_scanner_commands(self, parent_node):
         """Remplir l'arbre avec les commandes scanner"""
@@ -167,8 +193,14 @@ class CommandsGUI:
             else:
                 commands_data = self.scanner_commands
             
-            function_data = (commands_data["categories"][category_name]
-                           ["parameters"][param_name]["functions"][func_index])
+            # Handle both direct functions and sub-parameter functions
+            if param_name == "direct":
+                # Direct function (e.g., Screen Orientation, Power Control)
+                function_data = commands_data["categories"][category_name]["functions"][func_index]
+            else:
+                # Sub-parameter function (e.g., LED Control -> Individual LEDs)
+                function_data = (commands_data["categories"][category_name]
+                               ["parameters"][param_name]["functions"][func_index])
             
             self.selected_function = function_data
             self.selected_source = source
@@ -214,9 +246,10 @@ class CommandsGUI:
         
         # Pour les commandes device avec user_input
         if source == "device" and function_data.get("user_input", False):
-            # Créer des champs d'input pour chaque paramètre
+            # Créer des champs d'input pour chaque paramètre (ignorer les paramètres cachés)
             for param_name, param_config in parameters.items():
-                self.create_user_input_field(param_name, param_config)
+                if not param_config.get("hidden", False):
+                    self.create_user_input_field(param_name, param_config)
         else:
             # Afficher les paramètres fixes (device standard ou scanner)
             for param_name, param_value in parameters.items():
@@ -242,9 +275,21 @@ class CommandsGUI:
         
         # Champ d'input avec validation
         var = tk.StringVar()
+        
+        # Définir une valeur par défaut basée sur les limites
+        default_value = ""
+        min_val = param_config.get("min")
+        max_val = param_config.get("max")
+        if min_val is not None:
+            default_value = str(min_val)
+        
+        var.set(default_value)
+        
         self.user_inputs[param_name] = {
             'var': var,
-            'config': param_config
+            'config': param_config,
+            'valid': True,  # Valide par défaut
+            'value': min_val if min_val is not None else ""
         }
         
         entry = ttk.Entry(frame, textvariable=var, width=20)
@@ -258,8 +303,11 @@ class CommandsGUI:
                                   foreground="gray", font=("TkDefaultFont", 8))
             range_label.pack(anchor=tk.W)
         
-        # Bind validation
-        var.trace('w', lambda *args, p=param_name: self.validate_input(p))
+        # Bind validation (Python 3.13+ compatible)
+        if hasattr(var, 'trace_add'):
+            var.trace_add('write', lambda *args, p=param_name: self.validate_input(p))
+        else:
+            var.trace('w', lambda *args, p=param_name: self.validate_input(p))
     
     def validate_input(self, param_name):
         """Valider une entrée utilisateur"""
@@ -268,7 +316,8 @@ class CommandsGUI:
         config = input_data['config']
         
         if not value_str:
-            return  # Vide = pas d'erreur pour l'instant
+            input_data['valid'] = False
+            return  # Vide = invalide
         
         try:
             # Convertir selon le type
@@ -307,6 +356,14 @@ class CommandsGUI:
         
         if self.selected_source == "device" and self.selected_function.get("user_input", False):
             # Paramètres utilisateur pour device commands
+            function_params = self.selected_function.get("parameters", {})
+            
+            # Ajouter d'abord tous les paramètres cachés avec leurs valeurs par défaut
+            for param_name, param_config in function_params.items():
+                if param_config.get("hidden", False):
+                    parameters[param_name] = param_config.get("value")
+            
+            # Puis ajouter les paramètres utilisateur
             for param_name, input_data in self.user_inputs.items():
                 if 'valid' not in input_data or not input_data['valid']:
                     messagebox.showerror("Erreur", f"Paramètre invalide: {param_name}")
@@ -318,6 +375,7 @@ class CommandsGUI:
         
         # Construire la commande JSON selon le source
         if self.selected_source == "device":
+            # Format simple sans type (auto-détecté)
             command_json = {
                 "domain": self.selected_function.get("domain"),
                 "action": self.selected_function.get("command"),
@@ -371,6 +429,132 @@ class CommandsGUI:
         self.root.clipboard_clear()
         self.root.clipboard_append(json_str)
         messagebox.showinfo("Succès", "JSON copié dans le presse-papier")
+    
+    def generate_qr(self):
+        """Générer et afficher le QR code pour la commande JSON"""
+        if not QR_SUPPORT:
+            messagebox.showerror("Erreur", "Support QR code non disponible")
+            return
+            
+        if not hasattr(self, 'current_json'):
+            messagebox.showwarning("Attention", "Aucun JSON généré")
+            return
+        
+        # Générer uniquement si c'est une commande device (pas scanner)
+        if self.selected_source != "device":
+            messagebox.showinfo("Info", "QR code disponible uniquement pour les commandes device")
+            return
+        
+        try:
+            # Créer le générateur et générer les QR codes
+            generator = DeviceCommandGenerator()
+            
+            # Utiliser la nouvelle API simplifiée
+            domain = self.selected_function.get("domain")
+            action = self.selected_function.get("command")
+            
+            # Récupérer les paramètres
+            if self.selected_source == "device" and self.selected_function.get("user_input", False):
+                # Paramètres utilisateur + cachés
+                parameters = {}
+                function_params = self.selected_function.get("parameters", {})
+                
+                # Ajouter les paramètres cachés
+                for param_name, param_config in function_params.items():
+                    if param_config.get("hidden", False):
+                        parameters[param_name] = param_config.get("value")
+                
+                # Ajouter les paramètres utilisateur
+                for param_name, input_data in self.user_inputs.items():
+                    if 'valid' in input_data and input_data['valid']:
+                        parameters[param_name] = input_data['value']
+            else:
+                parameters = self.selected_function.get("parameters", {})
+            
+            # Utiliser la méthode simple
+            print(f"DEBUG: Generating QR for domain={domain}, action={action}, parameters={parameters}")
+            qr_commands = generator.from_simple_command(domain, action, parameters)
+            
+            print(f"DEBUG: QR commands generated: {qr_commands}")
+            
+            if not qr_commands:
+                messagebox.showerror("Erreur", "Impossible de générer le QR code (liste vide retournée)")
+                return
+            
+            # Générer l'image QR à partir du QRCommand
+            qr_command = qr_commands[0]
+            qr_image = qr_command.generate_qr_image()
+            
+            # Créer une fenêtre popup pour afficher le QR code
+            self.show_qr_popup(qr_image)
+            
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Erreur lors de la génération du QR code: {str(e)}")
+    
+    def show_qr_popup(self, qr_image):
+        """Afficher le QR code dans une fenêtre popup"""
+        popup = tk.Toplevel(self.root)
+        popup.title("QR Code Généré")
+        popup.geometry("450x500")
+        
+        # Frame principal
+        main_frame = ttk.Frame(popup, padding="10")
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Titre
+        title_label = ttk.Label(main_frame, text="QR Code - Device Command", 
+                               font=("TkDefaultFont", 12, "bold"))
+        title_label.pack(pady=(0, 10))
+        
+        # Convertir l'image PIL en PhotoImage pour Tkinter
+        photo = ImageTk.PhotoImage(qr_image)
+        
+        # Label pour afficher l'image
+        qr_label = ttk.Label(main_frame, image=photo)
+        qr_label.image = photo  # Garder une référence pour éviter garbage collection
+        qr_label.pack()
+        
+        # Instructions
+        instructions = ttk.Label(main_frame, 
+                                text="Scannez ce QR code avec votre aRdent ScanPad\npour exécuter la commande",
+                                justify=tk.CENTER)
+        instructions.pack(pady=10)
+        
+        # Afficher le JSON en dessous (compact)
+        json_frame = ttk.LabelFrame(main_frame, text="Commande JSON", padding="5")
+        json_frame.pack(fill=tk.BOTH, expand=True, pady=(10, 0))
+        
+        json_text = tk.Text(json_frame, height=8, width=50, wrap=tk.WORD)
+        json_text.pack(fill=tk.BOTH, expand=True)
+        
+        # Afficher le JSON formaté
+        json_str = json.dumps(self.current_json, indent=2, ensure_ascii=False)
+        json_text.insert(1.0, json_str)
+        json_text.config(state=tk.DISABLED)
+        
+        # Boutons
+        buttons_frame = ttk.Frame(main_frame)
+        buttons_frame.pack(pady=(10, 0))
+        
+        ttk.Button(buttons_frame, text="Sauvegarder QR", 
+                  command=lambda: self.save_qr_image(qr_image)).pack(side=tk.LEFT, padx=5)
+        ttk.Button(buttons_frame, text="Fermer", 
+                  command=popup.destroy).pack(side=tk.LEFT, padx=5)
+    
+    def save_qr_image(self, qr_image):
+        """Sauvegarder l'image QR code"""
+        filename = filedialog.asksaveasfilename(
+            defaultextension=".png",
+            filetypes=[("PNG files", "*.png"), ("All files", "*.*")],
+            title="Sauvegarder le QR code"
+        )
+        
+        if filename:
+            try:
+                qr_image.save(filename)
+                messagebox.showinfo("Succès", f"QR code sauvegardé: {filename}")
+            except Exception as e:
+                messagebox.showerror("Erreur", f"Erreur lors de la sauvegarde: {str(e)}")
     
     def clear_details(self):
         """Nettoyer l'affichage des détails"""
