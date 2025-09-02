@@ -167,6 +167,70 @@ class KeyConfigurationController(BaseController):
                 configs[key_id] = config
                 
         return configs
+
+    async def export_complete_configuration(self) -> List[Dict[str, Any]]:
+        """
+        Export complete keyboard configuration in standard JSON format
+        
+        Returns list of JSON commands compatible with QR codes and BLE transmission.
+        Each command follows the standard format:
+        {
+            "domain": "keyboard_config",
+            "action": "set_key_config", 
+            "parameters": {
+                "key_id": int,
+                "actions": [{"type": int, "data": str, "delay": int}]
+            }
+        }
+        
+        Returns:
+            List of JSON command dictionaries
+        """
+        logger.info("🔧 Exporting complete keyboard configuration to JSON format...")
+        
+        try:
+            # Get all current configurations
+            configs = await self.get_all_configs()
+            json_commands = []
+            
+            # Convert each configured key to standard JSON format
+            for key_id, config in configs.items():
+                actions_data = config.get('actions', [])
+                if not actions_data:
+                    continue
+                
+                # Convert actions to JSON format
+                json_actions = []
+                for action in actions_data:
+                    if isinstance(action, dict):
+                        action_type = action.get('type')
+                        action_data = action.get('data', '')
+                        action_delay = action.get('delay', 0)
+                        
+                        if action_type is not None:
+                            json_actions.append({
+                                'type': action_type,
+                                'data': str(action_data),
+                                'delay': action_delay
+                            })
+                
+                if json_actions:
+                    # Create standard JSON command format
+                    json_commands.append({
+                        'domain': 'keyboard_config',
+                        'action': 'set_key_config',
+                        'parameters': {
+                            'key_id': key_id,
+                            'actions': json_actions
+                        }
+                    })
+            
+            logger.info(f"✅ Exported {len(json_commands)} key configurations to JSON format")
+            return json_commands
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to export configuration: {e}")
+            raise ConfigurationError(f"Export failed: {e}")
     
     async def save_config(self) -> bool:
         """

@@ -697,6 +697,34 @@ class ScanPad:
         
         logger.info(f"💾 Backed up configuration ({len(config['keys'])} keys)")
         return config
+
+    async def export_complete_configuration(self) -> List[Dict[str, Any]]:
+        """
+        Export complete keyboard configuration in standard JSON format
+        
+        Returns list of JSON commands compatible with QR codes and BLE transmission.
+        Same format as used by sendJsonCommand and QR generation.
+        
+        Returns:
+            List of JSON command dictionaries in standard format
+        
+        Example:
+            config = await scanpad.export_complete_configuration()
+            # Returns: [
+            #   {
+            #     "domain": "keyboard_config",
+            #     "action": "set_key_config",
+            #     "parameters": {
+            #       "key_id": 0,
+            #       "actions": [{"type": 0, "data": "Hello", "delay": 0}]
+            #     }
+            #   }
+            # ]
+        """
+        if not self.is_connected:
+            raise ConnectionError("Device not connected")
+        
+        return await self.keys.export_complete_configuration()
     
     async def restore_config(self, config: Dict[str, Any]) -> None:
         """
