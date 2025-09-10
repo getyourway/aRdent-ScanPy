@@ -537,7 +537,7 @@ class ScanPad:
                 try:
                     current_orientation = await self.device.get_orientation()
                     if current_orientation is not None:
-                        orientations = {0: "Portrait", 1: "Landscape", 2: "Reverse Portrait", 3: "Reverse Landscape"}
+                        orientations = {0: "Normal", 1: "Right", 2: "Inverted", 3: "Left"}
                         info["current_orientation"] = orientations.get(current_orientation, f"Unknown({current_orientation})")
                 except Exception as e:
                     logger.debug(f"Could not fetch orientation: {e}")

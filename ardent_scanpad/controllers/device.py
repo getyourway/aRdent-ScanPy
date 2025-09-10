@@ -558,7 +558,7 @@ class PeripheralController(BaseController):
     # DEVICE SETTINGS (Direct methods)
     
     async def set_orientation(self, orientation: int) -> bool:
-        """Set device orientation (0=Portrait, 1=Landscape, 2=Reverse Portrait, 3=Reverse Landscape)"""
+        """Set device orientation (0=Normal, 1=Right, 2=Inverted, 3=Left)"""
         self._validate_type('orientation', orientation, int)
         self._validate_choices('orientation', orientation, [0, 1, 2, 3])  # Raises exception if invalid
         
@@ -794,32 +794,32 @@ class PeripheralController(BaseController):
         from ..utils.constants import DeviceOrientations
         
         orientations = {
-            DeviceOrientations.PORTRAIT: {
-                "id": DeviceOrientations.PORTRAIT,
-                "name": "Portrait",
-                "description": "0° rotation - Normal vertical orientation",
-                "icon": "portrait",
+            DeviceOrientations.NORMAL: {
+                "id": DeviceOrientations.NORMAL,
+                "name": "Normal",
+                "description": "Normal orientation (0°)",
+                "icon": "normal",
                 "rotation_degrees": 0
             },
-            DeviceOrientations.LANDSCAPE: {
-                "id": DeviceOrientations.LANDSCAPE,
-                "name": "Landscape",
-                "description": "90° clockwise rotation - Horizontal orientation",
-                "icon": "landscape",
+            DeviceOrientations.RIGHT: {
+                "id": DeviceOrientations.RIGHT,
+                "name": "Right",
+                "description": "Rotated 90° right",
+                "icon": "right",
                 "rotation_degrees": 90
             },
-            DeviceOrientations.REVERSE_PORTRAIT: {
-                "id": DeviceOrientations.REVERSE_PORTRAIT,
-                "name": "Reverse Portrait",
-                "description": "180° rotation - Upside down vertical",
-                "icon": "reverse_portrait",
+            DeviceOrientations.INVERTED: {
+                "id": DeviceOrientations.INVERTED,
+                "name": "Inverted",
+                "description": "Rotated 180°",
+                "icon": "inverted",
                 "rotation_degrees": 180
             },
-            DeviceOrientations.REVERSE_LANDSCAPE: {
-                "id": DeviceOrientations.REVERSE_LANDSCAPE,
-                "name": "Reverse Landscape",
-                "description": "270° clockwise rotation - Reverse horizontal",
-                "icon": "reverse_landscape",
+            DeviceOrientations.LEFT: {
+                "id": DeviceOrientations.LEFT,
+                "name": "Left",
+                "description": "Rotated 90° left (270°)",
+                "icon": "left",
                 "rotation_degrees": 270
             }
         }

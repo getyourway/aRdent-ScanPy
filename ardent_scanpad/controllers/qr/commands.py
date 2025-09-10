@@ -100,8 +100,8 @@ class DeviceCommandBuilder:
             raise ValueError(f"Orientation must be 0-3, got {orientation}")
             
         orientation_names = {
-            0: "Portrait", 1: "Landscape", 
-            2: "Reverse Portrait", 3: "Reverse Landscape"
+            0: "Normal", 1: "Right", 
+            2: "Inverted", 3: "Left"
         }
         
         payload = bytes([orientation])

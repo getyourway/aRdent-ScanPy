@@ -118,11 +118,17 @@ class BLECharacteristics:
 
 
 class DeviceOrientations:
-    """Simple device orientation constants - just integers 0-3"""
-    PORTRAIT = 0           # 0° rotation
-    LANDSCAPE = 1          # 90° clockwise rotation
-    REVERSE_PORTRAIT = 2   # 180° rotation
-    REVERSE_LANDSCAPE = 3  # 270° clockwise rotation
+    """Device orientation constants matching ESP32 firmware"""
+    NORMAL = 0    # Normal orientation (0°)
+    RIGHT = 1     # Rotated 90° right
+    INVERTED = 2  # Rotated 180°
+    LEFT = 3      # Rotated 90° left (270°)
+    
+    # Legacy aliases for backward compatibility
+    PORTRAIT = NORMAL
+    LANDSCAPE = RIGHT
+    REVERSE_PORTRAIT = INVERTED
+    REVERSE_LANDSCAPE = LEFT
 
 
 class LEDs:
