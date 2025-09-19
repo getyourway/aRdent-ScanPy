@@ -15,7 +15,7 @@ from ..core.exceptions import (
 )
 from ..utils.constants import (
     KeyIDs, KeyTypes, HIDKeyCodes, HIDModifiers, ConsumerCodes,
-    MAX_ACTIONS_PER_KEY
+    HardwareActions, MAX_ACTIONS_PER_KEY
 )
 
 logger = logging.getLogger(__name__)
@@ -343,11 +343,11 @@ class KeyConfigurationController(BaseController):
     def create_consumer_action(self, consumer_code: int, delay: int = 0) -> Dict[str, Any]:
         """
         Create consumer control action
-        
+
         Args:
             consumer_code: Consumer control code
             delay: Delay after action (ms)
-            
+
         Returns:
             Action dictionary
         """
@@ -357,7 +357,64 @@ class KeyConfigurationController(BaseController):
             'mask': (consumer_code >> 8) & 0xFF,
             'delay': delay
         }
-    
+
+    def create_hardware_action(self, action_id: int, parameters: bytes = None,
+                              delay: int = 0) -> Dict[str, Any]:
+        """
+        Create hardware action (processed locally on device)
+
+        Hardware actions are executed directly on the device without BLE transmission.
+        They provide immediate local control for scanner triggers.
+
+        Args:
+            action_id: Hardware action ID from HardwareActions class
+                - SCAN_TRIGGER (20): Send scan trigger pulse [duration_ms]
+                - Future: NFC_TRIGGER (30)
+            parameters: Action-specific parameters as bytes
+                Examples:
+                - SCAN_TRIGGER: struct.pack('<H', duration_ms)
+            delay: Delay after action (ms)
+
+        Returns:
+            Action dictionary
+
+        Examples:
+            # Trigger scanner for 100ms
+            import struct
+            scan = create_hardware_action(HardwareActions.SCAN_TRIGGER,
+                                         struct.pack('<H', 100))
+        """
+        if parameters is None:
+            parameters = bytes()
+
+        return {
+            'type': KeyTypes.HARDWARE,
+            'value': action_id,
+            'data': parameters,
+            'delay': delay
+        }
+
+    def create_scan_trigger_action(self, duration_ms: int = 100, delay: int = 0) -> Dict[str, Any]:
+        """
+        Create scan trigger hardware action (convenience method)
+
+        Args:
+            duration_ms: Trigger pulse duration in milliseconds (1-5000)
+            delay: Delay after action (ms)
+
+        Returns:
+            Action dictionary
+        """
+        import struct
+        from ..utils.constants import HardwareActions
+
+        # Validate duration
+        if not 1 <= duration_ms <= 5000:
+            raise ValueError(f"Duration must be between 1-5000ms, got {duration_ms}")
+
+        parameters = struct.pack('<H', duration_ms)  # Little-endian 16-bit
+        return self.create_hardware_action(HardwareActions.SCAN_TRIGGER, parameters, delay)
+
     async def apply_json_configuration(self, json_config: dict) -> bool:
         """
         Apply complete keyboard configuration from JSON
@@ -787,6 +844,38 @@ class KeyConfigurationController(BaseController):
                 else:
                     # Empty text
                     payload.extend([0])  # No UTF-8 data
+
+            # Hardware data handling according to ESP32 firmware specification
+            # Maximum 8 bytes hardware parameters per action (same limit as UTF-8)
+            elif action_type == KeyTypes.HARDWARE and 'data' in action:
+                hardware_data = action['data']
+                if isinstance(hardware_data, bytes):
+                    hardware_bytes = hardware_data
+                elif isinstance(hardware_data, list):
+                    hardware_bytes = bytes(hardware_data)
+                elif isinstance(hardware_data, str):
+                    # Allow hex string format: "6400" = [100, 0]
+                    try:
+                        hardware_bytes = bytes.fromhex(hardware_data)
+                    except ValueError:
+                        logger.warning(f"Invalid hex string for hardware data: {hardware_data}")
+                        hardware_bytes = bytes()
+                else:
+                    hardware_bytes = bytes()
+
+                if hardware_bytes:
+                    if len(hardware_bytes) <= 8:
+                        # Hardware parameters fit within 8-byte limit
+                        payload.extend([len(hardware_bytes)] + list(hardware_bytes))
+                        logger.debug(f"Hardware action {value}: {len(hardware_bytes)} bytes = {hardware_bytes.hex()}")
+                    else:
+                        # Hardware parameters exceed 8-byte limit - truncate and warn
+                        truncated_bytes = hardware_bytes[:8]
+                        payload.extend([len(truncated_bytes)] + list(truncated_bytes))
+                        logger.warning(f"Hardware parameters truncated from {len(hardware_bytes)} to 8 bytes")
+                else:
+                    # No hardware parameters
+                    payload.extend([0])  # No hardware data
         
         final_payload = bytes(payload)
         logger.debug(f"Final payload: {len(final_payload)} bytes = {final_payload.hex()}")
@@ -816,10 +905,12 @@ class KeyConfigurationController(BaseController):
                     (delay >> 8) & 0xFF  # delay high byte
                 ])
                 
-                # UTF-8 text strings longer than 8 bytes are not supported in batch mode (ESP32 limitation)
+                # UTF-8 text and hardware data are not supported in batch mode (ESP32 limitation)
                 # The ESP32 handler only processes basic action data for performance reasons
                 if action_type == KeyTypes.UTF8 and 'text' in action:
                     logger.warning(f"UTF-8 text '{action['text']}' ignored in batch mode for key {key_id}")
+                elif action_type == KeyTypes.HARDWARE and 'data' in action:
+                    logger.warning(f"Hardware data ignored in batch mode for key {key_id}, action {value}")
         
         return bytes(payload)
     

@@ -8,9 +8,19 @@ used throughout the library.
 class KeyTypes:
     """Action types for key configuration"""
     UTF8 = 0        # UTF-8 character (language-aware conversion)
-    HID = 1         # Direct HID keycode  
+    HID = 1         # Direct HID keycode
     CONSUMER = 2    # Consumer control (media keys)
-    API = 3         # API call (reserved for future use)
+    HARDWARE = 3    # Hardware actions (LED, BUZZER, SCAN_TRIGGER) - processed locally
+    API = 4         # API call (reserved for future use)
+
+
+class HardwareActions:
+    """Hardware action IDs for KeyTypes.HARDWARE actions"""
+    # Scanner actions
+    SCAN_TRIGGER = 20       # Send scan trigger pulse [duration_ms]
+
+    # Future expansion
+    # NFC_TRIGGER = 30      # Future: NFC trigger
 
 
 class KeyIDs:

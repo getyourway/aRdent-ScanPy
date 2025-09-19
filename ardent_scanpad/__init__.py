@@ -35,7 +35,7 @@ from .core.exceptions import (
     InvalidParameterError
 )
 from .utils.constants import (
-    KeyIDs, KeyTypes, HIDKeyCodes, HIDModifiers, ConsumerCodes,
+    KeyIDs, KeyTypes, HardwareActions, HIDKeyCodes, HIDModifiers, ConsumerCodes,
     BuzzerMelodies, KeyboardLayouts, DeviceOrientations, LEDs
 )
 
@@ -59,12 +59,13 @@ __all__ = [
     
     # Constants
     "KeyIDs",
-    "KeyTypes", 
+    "KeyTypes",
+    "HardwareActions",
     "HIDKeyCodes",
     "HIDModifiers",
     "ConsumerCodes",
     "BuzzerMelodies",
-    "KeyboardLayouts", 
+    "KeyboardLayouts",
     "DeviceOrientations",
     "LEDs"
 ]
