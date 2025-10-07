@@ -111,6 +111,10 @@ class KeyboardConfigGenerator:
     def create_consumer_action(self, control_code: int, delay: int = 10) -> Dict[str, Any]:
         """Create consumer control action (traditional API)"""
         return self._qr_core.create_consumer_action(control_code, delay)
+
+    def create_modifier_toggle_action(self, modifier_mask: int, delay: int = 10) -> Dict[str, Any]:
+        """Create modifier toggle action (traditional API - Mecalux feature)"""
+        return self._qr_core.create_modifier_toggle_action(modifier_mask, delay)
     
     def create_key_config_command(self, key_id: int, actions: List[Dict[str, Any]]) -> QRCommand:
         """Create single key configuration QR (traditional API)"""

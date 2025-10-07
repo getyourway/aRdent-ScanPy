@@ -7,11 +7,12 @@ used throughout the library.
 
 class KeyTypes:
     """Action types for key configuration"""
-    UTF8 = 0        # UTF-8 character (language-aware conversion)
-    HID = 1         # Direct HID keycode
-    CONSUMER = 2    # Consumer control (media keys)
-    HARDWARE = 3    # Hardware actions (LED, BUZZER, SCAN_TRIGGER) - processed locally
-    API = 4         # API call (reserved for future use)
+    UTF8 = 0              # UTF-8 character (language-aware conversion)
+    HID = 1               # Direct HID keycode
+    CONSUMER = 2          # Consumer control (media keys)
+    HARDWARE = 3          # Hardware actions (LED, BUZZER, SCAN_TRIGGER) - processed locally
+    MODIFIER_TOGGLE = 4   # ⭐ NEW - Sticky modifier toggle (Shift, Ctrl, Alt, GUI) - Mecalux feature
+    API = 5               # ⚠️ SHIFTED from 4 to 5 - API call (reserved for future use)
 
 
 class HardwareActions:

@@ -110,6 +110,9 @@ class QRCore:
     
     def create_consumer_action(self, control_code: int, delay: int = 10) -> Dict[str, Any]:
         return self._key_builder.create_consumer_action(control_code, delay)
+
+    def create_modifier_toggle_action(self, modifier_mask: int, delay: int = 10) -> Dict[str, Any]:
+        return self._key_builder.create_modifier_toggle_action(modifier_mask, delay)
     
     def create_key_config_command(self, key_id: int, actions: list) -> QRCommand:
         cmd_data = self._key_builder.create_key_config_command(key_id, actions)

@@ -156,10 +156,39 @@ class KeyConfigCommandBuilder:
     def create_consumer_action(self, control_code: int, delay: int = 10) -> Dict[str, Any]:
         if not (0 <= control_code <= 65535):
             raise ValueError(f"Consumer control code must be 0-65535, got {control_code}")
-            
+
         return {
             'type': KeyTypes.CONSUMER,
             'value': control_code,
+            'delay': delay
+        }
+
+    def create_modifier_toggle_action(self, modifier_mask: int, delay: int = 10) -> Dict[str, Any]:
+        """
+        Create modifier toggle action (Mecalux feature)
+
+        Args:
+            modifier_mask: HID modifier bitmask to toggle
+                           0x01 = Left Ctrl
+                           0x02 = Left Shift
+                           0x04 = Left Alt
+                           0x08 = Left GUI
+                           0x10 = Right Ctrl
+                           0x20 = Right Shift
+                           0x40 = Right Alt
+                           0x80 = Right GUI
+            delay: Delay after toggle operation (milliseconds)
+
+        Returns:
+            Action dictionary for MODIFIER_TOGGLE type
+        """
+        if not (0 < modifier_mask <= 255):
+            raise ValueError(f"Modifier mask must be 1-255, got {modifier_mask}")
+
+        return {
+            'type': KeyTypes.MODIFIER_TOGGLE,
+            'mask': modifier_mask,
+            'value': 0,  # Reserved, not used
             'delay': delay
         }
     
@@ -287,17 +316,44 @@ class FullConfigCommandBuilder:
                     value = action.get('value', 0)
                     mask = action.get('mask', 0)
                     delay = action.get('delay', 10)
-                    
+
                     if not (0 <= value <= 255):
                         raise ValueError(f"Key {key_id} HID value must be 0-255: {value}")
                     if not (0 <= mask <= 255):
                         raise ValueError(f"Key {key_id} HID mask must be 0-255: {mask}")
-                        
+
                     binary_config.append(1)        # HID type
                     binary_config.append(value)    # HID keycode
-                    binary_config.append(mask)     # HID modifiers 
+                    binary_config.append(mask)     # HID modifiers
                     binary_config.append(delay & 0xFF)  # delay
-                    
+
+                elif action_type == KeyTypes.CONSUMER:
+                    # Consumer action: [type=2][code_low][code_high][delay]
+                    value = action.get('value', 0)
+                    delay = action.get('delay', 10)
+
+                    if not (0 <= value <= 65535):
+                        raise ValueError(f"Key {key_id} Consumer code must be 0-65535: {value}")
+
+                    binary_config.append(2)               # Consumer type
+                    binary_config.append(value & 0xFF)    # Consumer code low byte
+                    binary_config.append((value >> 8) & 0xFF)  # Consumer code high byte
+                    binary_config.append(delay & 0xFF)    # delay
+
+                elif action_type == KeyTypes.MODIFIER_TOGGLE:
+                    # Modifier Toggle action: [type=4][mask][reserved][delay]
+                    # Mecalux feature - sticky modifiers
+                    mask = action.get('mask', 0)
+                    delay = action.get('delay', 10)
+
+                    if not (0 < mask <= 255):
+                        raise ValueError(f"Key {key_id} Modifier mask must be 1-255: {mask}")
+
+                    binary_config.append(4)        # MODIFIER_TOGGLE type
+                    binary_config.append(mask)     # Modifier bitmask to toggle
+                    binary_config.append(0)        # Reserved (value field, unused)
+                    binary_config.append(delay & 0xFF)  # delay
+
                 else:
                     raise ValueError(f"Key {key_id} unsupported action type: {action_type}")
                     
