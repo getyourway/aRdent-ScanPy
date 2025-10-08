@@ -104,32 +104,30 @@ class ScanPadQRInteractive(InteractiveBase):
             print("  5. Custom beep command")
             print()
             print("⌨️  KEY CONFIGURATION:")
-            print("  6. Single text key")
-            print("  7. HID key command")
-            print("  8. Multi-action key")
-            print("  9. 🛠️  Complete Keyboard Builder (All 16 keys + multi-actions)")
-            print("  10. Numeric keypad preset (legacy)")
+            print("  6. Configure Single Key (UTF8/HID/Consumer/Hardware/Modifier Toggle)")
+            print("  7. 🛠️  Complete Keyboard Builder (All 16 keys + multi-actions)")
+            print("  8. Numeric keypad preset (legacy)")
             print()
             print("⚙️  DEVICE SETTINGS:")
-            print("  11. Device orientation")
-            print("  12. Keyboard language")
+            print("  9. Device orientation")
+            print("  10. Keyboard language")
             print()
             print("📦 BATCH OPERATIONS:")
-            print("  13. View generated commands")
-            print("  14. Save all QR codes to files")
-            print("  15. Clear command list")
-            print("  16. 🗂️  Load JSON configuration (Browse examples or custom file)")
+            print("  11. View generated commands")
+            print("  12. Save all QR codes to files")
+            print("  13. Clear command list")
+            print("  14. 🗂️  Load JSON configuration (Browse examples or custom file)")
             print()
             print("🔧 LUA SCRIPT DEPLOYMENT:")
-            print("  17. 🛠️  Deploy Lua script from file")
-            print("  18. 📝 Deploy custom Lua script")
-            print("  19. 🗑️  Clear Lua script")
-            print("  20. ℹ️  Lua script info")
+            print("  15. 🛠️  Deploy Lua script from file")
+            print("  16. 📝 Deploy custom Lua script")
+            print("  17. 🗑️  Clear Lua script")
+            print("  18. ℹ️  Lua script info")
             print()
             print("❌ EXIT:")
-            print("  21. Exit")
-            
-            choice = input("\nSelect option (1-21): ").strip()
+            print("  19. Exit")
+
+            choice = input("\nSelect option (1-19): ").strip()
             
             try:
                 if choice == "1":
@@ -143,39 +141,35 @@ class ScanPadQRInteractive(InteractiveBase):
                 elif choice == "5":
                     self._buzzer_beep_menu()
                 elif choice == "6":
-                    self._text_key_menu()
+                    self._unified_key_config_menu()
                 elif choice == "7":
-                    self._hid_key_menu()
-                elif choice == "8":
-                    self._multi_action_key_menu()
-                elif choice == "9":
                     self._complete_keyboard_builder()
-                elif choice == "10":
+                elif choice == "8":
                     self._numeric_keypad_preset()
-                elif choice == "11":
+                elif choice == "9":
                     self._orientation_menu()
-                elif choice == "12":
+                elif choice == "10":
                     self._language_menu()
-                elif choice == "13":
+                elif choice == "11":
                     self._view_commands()
-                elif choice == "14":
+                elif choice == "12":
                     self._save_all_qr_codes()
-                elif choice == "15":
+                elif choice == "13":
                     self._clear_commands()
-                elif choice == "16":
+                elif choice == "14":
                     self._load_config_json()
-                elif choice == "17":
+                elif choice == "15":
                     self._lua_script_from_file_menu()
-                elif choice == "18":
+                elif choice == "16":
                     self._lua_custom_script_menu()
-                elif choice == "19":
+                elif choice == "17":
                     self._lua_clear_script()
-                elif choice == "20":
+                elif choice == "18":
                     self._lua_script_info()
-                elif choice == "21":
+                elif choice == "19":
                     break
                 else:
-                    print("❌ Invalid choice. Please select 1-21.")
+                    print("❌ Invalid choice. Please select 1-19.")
                     
             except Exception as e:
                 print(f"❌ Error: {e}")
@@ -319,7 +313,72 @@ class ScanPadQRInteractive(InteractiveBase):
     # ========================================
     # KEY CONFIGURATION
     # ========================================
-    
+
+    def _unified_key_config_menu(self):
+        """Unified single key configuration with all action types"""
+        print("\n⌨️  CONFIGURE SINGLE KEY")
+        print("="*50)
+        print("Configure a single key with one or more actions")
+        print("Supports: UTF8 Text, HID Keys, Consumer Controls,")
+        print("          Hardware Actions, Modifier Toggle")
+        print()
+
+        # Show matrix keys layout
+        print("Matrix keys (4x4 layout):")
+        print("  Row 0: [0] [1] [2] [3]")
+        print("  Row 1: [4] [5] [6] [7]")
+        print("  Row 2: [8] [9] [10] [11]")
+        print("  Row 3: [12] [13] [14] [15]")
+
+        try:
+            key_id = int(input("\nEnter key ID (0-15): "))
+            if not (0 <= key_id <= 15):
+                print("❌ Key ID must be 0-15")
+                return
+
+            actions = []
+            print("\nAdd actions (max 10). Enter empty line to finish:")
+
+            for i in range(10):
+                print(f"\n⚡ Action {i+1}:")
+                print("  1. 📝 UTF-8 Text")
+                print("  2. ⌨️  HID Key (with modifiers)")
+                print("  3. 🎛️  Consumer Control")
+                print("  4. 🔧 Hardware Action")
+                print("  5. 🔀 Modifier Toggle (Sticky modifiers)")
+                print("  6. ✅ Finish")
+
+                choice = input("\nSelect action type (1-6): ").strip()
+
+                if choice == "6" or not choice:
+                    break
+                elif choice == "1":
+                    action = self._create_utf8_action_interactive()
+                elif choice == "2":
+                    action = self._create_hid_action_interactive()
+                elif choice == "3":
+                    action = self._create_consumer_action_interactive()
+                elif choice == "4":
+                    action = self._create_hardware_action_interactive()
+                elif choice == "5":
+                    action = self._create_modifier_toggle_action_interactive()
+                else:
+                    print("❌ Invalid choice")
+                    continue
+
+                if action:
+                    actions.append(action)
+                    print(f"✅ Action {len(actions)} added: {self._action_summary(action)}")
+
+            if actions:
+                command = self.qr_generator.create_key_config_command(key_id, actions)
+                self._add_and_preview_command(command)
+            else:
+                print("❌ No actions added")
+
+        except ValueError:
+            print("❌ Invalid key ID. Must be a number.")
+
     def _text_key_menu(self):
         """Single text key configuration"""
         print("\n⌨️  TEXT KEY CONFIGURATION")
@@ -638,11 +697,13 @@ class ScanPadQRInteractive(InteractiveBase):
             print("1. 📝 UTF-8 Text")
             print("2. ⌨️  HID Key (with modifiers)")
             print("3. 🎛️  Consumer Control")
-            print("4. ✅ Finish configuration")
-            
-            choice = input("\nAction type (1-4): ").strip()
-            
-            if choice == '4' or not choice:
+            print("4. 🔧 Hardware Action")
+            print("5. 🔀 Modifier Toggle (Sticky modifiers)")
+            print("6. ✅ Finish configuration")
+
+            choice = input("\nAction type (1-6): ").strip()
+
+            if choice == '6' or not choice:
                 break
             elif choice == '1':
                 action = self._create_utf8_action_interactive()
@@ -650,6 +711,10 @@ class ScanPadQRInteractive(InteractiveBase):
                 action = self._create_hid_action_interactive()
             elif choice == '3':
                 action = self._create_consumer_action_interactive()
+            elif choice == '4':
+                action = self._create_hardware_action_interactive()
+            elif choice == '5':
+                action = self._create_modifier_toggle_action_interactive()
             else:
                 print("❌ Invalid choice")
                 continue
@@ -784,11 +849,59 @@ class ScanPadQRInteractive(InteractiveBase):
             delay = 0
         
         return self.qr_generator.create_consumer_action(control, delay)
-    
+
+    def _create_hardware_action_interactive(self):
+        """Create hardware action interactively"""
+        print("\n🔧 HARDWARE ACTION")
+        print("Hardware actions control on-device features:")
+        print("  • LEDs")
+        print("  • Buzzer")
+        print("  • Other hardware features")
+        print("\n⚠️  Hardware actions are not yet fully implemented in the QR generation library.")
+        print("This is a placeholder for future hardware action support.")
+
+        # For now, return None as hardware actions need more implementation
+        input("Press Enter to return to menu...")
+        return None
+
+    def _create_modifier_toggle_action_interactive(self):
+        """Create modifier toggle action interactively (Mecalux feature)"""
+        print("\n🔀 MODIFIER TOGGLE ACTION (Sticky Modifiers)")
+        print("Toggle persistent HID modifiers that stay active across key presses")
+        print()
+        print("Available modifiers:")
+        print("  1 = Left Ctrl       2 = Left Shift")
+        print("  4 = Left Alt        8 = Left Win/Cmd")
+        print("  16 = Right Ctrl     32 = Right Shift")
+        print("  64 = Right Alt      128 = Right Win/Cmd")
+        print()
+        print("Examples:")
+        print("  2 = Toggle Shift (for CAPS mode)")
+        print("  1 = Toggle Ctrl (for shortcuts)")
+        print("  4 = Toggle Alt (for special chars)")
+
+        modifier_mask = input("\nEnter modifier bitmask (1-255): ").strip()
+        try:
+            modifier_mask = int(modifier_mask)
+            if not (1 <= modifier_mask <= 255):
+                print("❌ Modifier mask must be 1-255")
+                return None
+        except ValueError:
+            print("❌ Invalid modifier mask")
+            return None
+
+        delay = input("Delay after toggle (ms, default 10): ").strip()
+        try:
+            delay = int(delay) if delay else 10
+        except ValueError:
+            delay = 10
+
+        return self.kb_generator.create_modifier_toggle_action(modifier_mask, delay)
+
     def _action_summary(self, action):
         """Get summary description of an action"""
         action_type = action.get('type', 0)
-        
+
         if action_type == KeyTypes.UTF8:  # UTF8 = 0
             text = action.get('text', '')
             return f"Text: '{text}'"
@@ -806,6 +919,20 @@ class ScanPadQRInteractive(InteractiveBase):
             return desc
         elif action_type == KeyTypes.CONSUMER:  # CONSUMER = 2
             return f"Consumer: {action.get('value', 0)}"
+        elif action_type == KeyTypes.HARDWARE:  # HARDWARE = 3
+            return f"Hardware: {action.get('value', 0)}"
+        elif action_type == KeyTypes.MODIFIER_TOGGLE:  # MODIFIER_TOGGLE = 4
+            mask = action.get('mask', 0)
+            mod_names = []
+            if mask & 1: mod_names.append("LCtrl")
+            if mask & 2: mod_names.append("LShift")
+            if mask & 4: mod_names.append("LAlt")
+            if mask & 8: mod_names.append("LGUI")
+            if mask & 16: mod_names.append("RCtrl")
+            if mask & 32: mod_names.append("RShift")
+            if mask & 64: mod_names.append("RAlt")
+            if mask & 128: mod_names.append("RGUI")
+            return f"Toggle: {'+'.join(mod_names) if mod_names else 'None'} (0x{mask:02X})"
         else:
             return f"Unknown (type={action_type})"
     
