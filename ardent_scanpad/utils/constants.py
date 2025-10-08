@@ -25,8 +25,9 @@ class HardwareActions:
 
 
 class KeyIDs:
-    """Unified key identifiers (0-19)"""
-    # Matrix keys (0-15) - 4×4 grid in row-major order
+    """Unified key identifiers (0-19, 100-115) with long press support"""
+
+    # Matrix keys SHORT PRESS (0-15) - 4×4 grid in row-major order
     MATRIX_0_0 = 0   # Row 0, Col 0 (typically '1')
     MATRIX_0_1 = 1   # Row 0, Col 1 (typically '2')
     MATRIX_0_2 = 2   # Row 0, Col 2 (typically '3')
@@ -43,31 +44,95 @@ class KeyIDs:
     MATRIX_3_1 = 13  # Row 3, Col 1 (typically '0')
     MATRIX_3_2 = 14  # Row 3, Col 2 (typically '→')
     MATRIX_3_3 = 15  # Row 3, Col 3 (typically 'D')
-    
+
     # Button actions (16-19) - external buttons
     SCAN_TRIGGER_DOUBLE = 16  # Scan trigger double-press
-    SCAN_TRIGGER_LONG = 17    # Scan trigger long-press  
+    SCAN_TRIGGER_LONG = 17    # Scan trigger long-press
     POWER_SINGLE = 18         # Power button single-press
     POWER_DOUBLE = 19         # Power button double-press
-    
+
+    # Matrix keys LONG PRESS (100-115) - same 4×4 layout, offset +100
+    MATRIX_0_0_LONG = 100  # Row 0, Col 0 long press
+    MATRIX_0_1_LONG = 101  # Row 0, Col 1 long press
+    MATRIX_0_2_LONG = 102  # Row 0, Col 2 long press
+    MATRIX_0_3_LONG = 103  # Row 0, Col 3 long press
+    MATRIX_1_0_LONG = 104  # Row 1, Col 0 long press
+    MATRIX_1_1_LONG = 105  # Row 1, Col 1 long press
+    MATRIX_1_2_LONG = 106  # Row 1, Col 2 long press
+    MATRIX_1_3_LONG = 107  # Row 1, Col 3 long press
+    MATRIX_2_0_LONG = 108  # Row 2, Col 0 long press
+    MATRIX_2_1_LONG = 109  # Row 2, Col 1 long press
+    MATRIX_2_2_LONG = 110  # Row 2, Col 2 long press
+    MATRIX_2_3_LONG = 111  # Row 2, Col 3 long press
+    MATRIX_3_0_LONG = 112  # Row 3, Col 0 long press
+    MATRIX_3_1_LONG = 113  # Row 3, Col 1 long press
+    MATRIX_3_2_LONG = 114  # Row 3, Col 2 long press
+    MATRIX_3_3_LONG = 115  # Row 3, Col 3 long press
+
+    # Long press offset constant (KISS - simple addition/subtraction)
+    LONG_PRESS_OFFSET = 100
+
     # Collections
-    ALL_MATRIX = list(range(0, 16))
+    ALL_MATRIX_SHORT = list(range(0, 16))
+    ALL_MATRIX_LONG = list(range(100, 116))
+    ALL_MATRIX = ALL_MATRIX_SHORT + ALL_MATRIX_LONG
     ALL_BUTTONS = list(range(16, 20))
-    ALL_KEYS = list(range(0, 20))
-    
+    ALL_KEYS = ALL_MATRIX_SHORT + ALL_BUTTONS + ALL_MATRIX_LONG
+
+    # Helper methods (matching firmware macros)
+    @staticmethod
+    def is_long_press(key_id):
+        """Check if key_id is a long press (100-115)"""
+        return 100 <= key_id <= 115
+
+    @staticmethod
+    def is_short_press(key_id):
+        """Check if key_id is a matrix short press (0-15)"""
+        return 0 <= key_id <= 15
+
+    @staticmethod
+    def is_button(key_id):
+        """Check if key_id is a button action (16-19)"""
+        return 16 <= key_id <= 19
+
+    @staticmethod
+    def get_base_key(long_press_id):
+        """Convert long press ID to base key ID (100-115 → 0-15)"""
+        if KeyIDs.is_long_press(long_press_id):
+            return long_press_id - KeyIDs.LONG_PRESS_OFFSET
+        return long_press_id
+
+    @staticmethod
+    def get_long_press(base_key_id):
+        """Convert base key ID to long press ID (0-15 → 100-115)"""
+        if 0 <= base_key_id <= 15:
+            return base_key_id + KeyIDs.LONG_PRESS_OFFSET
+        return None
+
+    @staticmethod
+    def is_valid(key_id):
+        """Validate key ID (0-19, 100-115)"""
+        return KeyIDs.is_short_press(key_id) or KeyIDs.is_button(key_id) or KeyIDs.is_long_press(key_id)
+
     # Names for display
     NAMES = {
-        # Matrix keys (4×4 layout)
+        # Matrix keys SHORT PRESS (4×4 layout)
         0: "Key [0,0] (1)", 1: "Key [0,1] (2)", 2: "Key [0,2] (3)", 3: "Key [0,3] (A)",
         4: "Key [1,0] (4)", 5: "Key [1,1] (5)", 6: "Key [1,2] (6)", 7: "Key [1,3] (B)",
         8: "Key [2,0] (7)", 9: "Key [2,1] (8)", 10: "Key [2,2] (9)", 11: "Key [2,3] (C)",
         12: "Key [3,0] (←)", 13: "Key [3,1] (0)", 14: "Key [3,2] (→)", 15: "Key [3,3] (D)",
-        
+
         # Button actions
         16: "Scan Trigger Double-Press",
         17: "Scan Trigger Long-Press",
-        18: "Power Button Single-Press", 
-        19: "Power Button Double-Press"
+        18: "Power Button Single-Press",
+        19: "Power Button Double-Press",
+
+        # Matrix keys LONG PRESS (same 4×4 layout, offset +100)
+        100: "Key [0,0] Long Press", 101: "Key [0,1] Long Press", 102: "Key [0,2] Long Press", 103: "Key [0,3] Long Press",
+        104: "Key [1,0] Long Press", 105: "Key [1,1] Long Press", 106: "Key [1,2] Long Press", 107: "Key [1,3] Long Press",
+        108: "Key [2,0] Long Press", 109: "Key [2,1] Long Press", 110: "Key [2,2] Long Press", 111: "Key [2,3] Long Press",
+        112: "Key [3,0] Long Press", 113: "Key [3,1] Long Press", 114: "Key [3,2] Long Press", 115: "Key [3,3] Long Press"
     }
 
 

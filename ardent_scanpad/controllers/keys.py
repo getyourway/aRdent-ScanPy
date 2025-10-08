@@ -47,9 +47,9 @@ class KeyConfigurationController(BaseController):
     async def set_key_config(self, key_id: int, actions: List[Dict[str, Any]]) -> bool:
         """
         Set key configuration with multiple actions
-        
+
         Args:
-            key_id: Key ID (0-19)
+            key_id: Key ID (0-19 for short press/buttons, 100-115 for long press)
             actions: List of action dictionaries
             
         Raises:
@@ -81,9 +81,9 @@ class KeyConfigurationController(BaseController):
     async def get_key_config(self, key_id: int) -> Dict[str, Any]:
         """
         Get key configuration
-        
+
         Args:
-            key_id: Key ID (0-19)
+            key_id: Key ID (0-19 for short press/buttons, 100-115 for long press)
             
         Returns:
             Configuration dictionary
@@ -108,9 +108,9 @@ class KeyConfigurationController(BaseController):
     async def clear_key(self, key_id: int) -> bool:
         """
         Clear key configuration
-        
+
         Args:
-            key_id: Key ID (0-19)
+            key_id: Key ID (0-19 for short press/buttons, 100-115 for long press)
             
         Returns:
             True if successful, False if failed
@@ -130,9 +130,9 @@ class KeyConfigurationController(BaseController):
     async def set_key_enabled(self, key_id: int, enabled: bool) -> bool:
         """
         Enable or disable a key
-        
+
         Args:
-            key_id: Key ID (0-19)
+            key_id: Key ID (0-19 for short press/buttons, 100-115 for long press)
             enabled: True to enable, False to disable
             
         Returns:
@@ -476,8 +476,8 @@ class KeyConfigurationController(BaseController):
                 for key_str, actions in keys_config.items():
                     try:
                         key_id = int(key_str)
-                        if not (0 <= key_id <= 19):
-                            logger.warning(f"Invalid key ID: {key_id} (must be 0-19)")
+                        if not KeyIDs.is_valid(key_id):
+                            logger.warning(f"Invalid key ID: {key_id} (valid: 0-19, 100-115)")
                             continue
                         
                         # Convert JSON actions to internal format
@@ -630,8 +630,8 @@ class KeyConfigurationController(BaseController):
                 }
         """
         key_info = {}
-        
-        # Matrix keys (0-15)
+
+        # Matrix keys SHORT PRESS (0-15)
         for key_id in range(16):
             row = key_id // 4
             col = key_id % 4
@@ -642,7 +642,7 @@ class KeyConfigurationController(BaseController):
                 "gpio": None,
                 "display_name": f"Key {key_id} ({row},{col})"
             }
-        
+
         # External buttons (16-19)
         external_buttons = {
             16: {"description": "Scan Trigger Double", "gpio": 13, "press_type": "double", "timeout": "500ms"},
@@ -650,7 +650,7 @@ class KeyConfigurationController(BaseController):
             18: {"description": "Power Button", "gpio": 6, "press_type": "single", "timeout": None},
             19: {"description": "Power Double (Shutdown)", "gpio": 6, "press_type": "double", "timeout": "250ms"}
         }
-        
+
         for key_id, info in external_buttons.items():
             key_info[key_id] = {
                 "type": "external",
@@ -660,23 +660,37 @@ class KeyConfigurationController(BaseController):
                 "timeout": info["timeout"],
                 "display_name": info["description"]
             }
-        
+
+        # Matrix keys LONG PRESS (100-115)
+        for long_press_id in range(100, 116):
+            base_id = long_press_id - KeyIDs.LONG_PRESS_OFFSET
+            row = base_id // 4
+            col = base_id % 4
+            key_info[long_press_id] = {
+                "type": "matrix_long",
+                "description": f"Matrix {row},{col} Long Press",
+                "position": (row, col),
+                "gpio": None,
+                "base_key_id": base_id,
+                "display_name": f"Key {base_id} ({row},{col}) Long Press"
+            }
+
         return key_info
     
     @staticmethod
     def get_key_description(key_id: int) -> str:
         """
         Get human-readable description for a key ID
-        
+
         Args:
-            key_id: Key ID (0-19)
+            key_id: Key ID (0-19 for short press/buttons, 100-115 for long press)
             
         Returns:
             str: Human-readable description
         """
-        if not (0 <= key_id <= 19):
+        if not KeyIDs.is_valid(key_id):
             return f"Invalid Key {key_id}"
-        
+
         key_info = KeyConfigurationController.get_all_key_info()
         return key_info.get(key_id, {}).get("description", f"Key {key_id}")
     
@@ -684,14 +698,14 @@ class KeyConfigurationController(BaseController):
     def is_valid_key_id(key_id: int) -> bool:
         """
         Check if key ID is valid for configuration
-        
+
         Args:
             key_id: Key ID to validate
-            
+
         Returns:
-            bool: True if valid (0-19)
+            bool: True if valid (0-19, 100-115)
         """
-        return 0 <= key_id <= 19
+        return KeyIDs.is_valid(key_id)
     
     @staticmethod
     def get_matrix_position(key_id: int) -> Optional[tuple]:
@@ -749,7 +763,7 @@ class KeyConfigurationController(BaseController):
             try:
                 key_id = int(key_str)
                 if not KeyConfigurationController.is_valid_key_id(key_id):
-                    result["errors"].append(f"Invalid key ID: {key_id} (must be 0-19)")
+                    result["errors"].append(f"Invalid key ID: {key_id} (must be 0-19 or 100-115)")
                     result["valid"] = False
                     continue
                 

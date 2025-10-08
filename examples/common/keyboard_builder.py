@@ -62,11 +62,11 @@ class KeyboardConfigBuilder:
         print("\n📱 External Buttons:")
         button_names = {
             "16": "Scan Double",
-            "17": "Scan Long", 
+            "17": "Scan Long",
             "18": "Power Single",
             "19": "Power Double"
         }
-        
+
         for key_id, name in button_names.items():
             if key_id in config:
                 actions = config[key_id]
@@ -79,10 +79,26 @@ class KeyboardConfigBuilder:
             else:
                 status = "---"
             print(f"  [{key_id}:{status:^12}] {name}")
-        
-        # Summary
+
+        # Show long press keys (compact view - only configured ones)
+        long_press_configured = [key_id for key_id in config if key_id.isdigit() and 100 <= int(key_id) <= 115]
+        if long_press_configured:
+            print("\n⏱️  Long Press Keys:")
+            for key_id in sorted(long_press_configured, key=lambda x: int(x)):
+                base_id = int(key_id) - 100
+                row, col = divmod(base_id, 4)
+                actions = config[key_id]
+                if len(actions) == 1:
+                    display_value = self._get_action_display_value(actions[0])
+                    status = display_value
+                else:
+                    display_value = self._get_action_display_value(actions[0])
+                    status = f"{display_value}({len(actions)})"
+                print(f"  [{key_id}:{status:^12}] Key ({row},{col}) Long")
+
+        # Summary (updated to 36 total keys)
         total_configured = len(config)
-        print(f"\n📊 Status: {total_configured}/20 keys configured")
+        print(f"\n📊 Status: {total_configured}/36 keys configured (16 short + 4 buttons + 16 long press)")
         
         if config:
             total_actions = sum(len(actions) for actions in config.values())
@@ -489,10 +505,11 @@ class KeyboardConfigBuilder:
         """Configure a single key with interactive menu"""
         print("\n🔧 CONFIGURE SINGLE KEY")
         print("-" * 30)
-        print("Matrix keys: 0-15")
+        print("Matrix keys (short press): 0-15")
         print("External buttons: 16=Scan Double, 17=Scan Long, 18=Power, 19=Power Double")
-        
-        key_id = get_int_input("Enter key ID (0-19): ", 0, 19)
+        print("Matrix keys (long press): 100-115")
+
+        key_id = get_int_input("Enter key ID (0-19 or 100-115): ", min_val=0, max_val=115)
         if key_id is None:
             return
         
@@ -541,7 +558,7 @@ class KeyboardConfigBuilder:
         choice = input("Select option (1-2): ").strip()
         
         if choice == "1":
-            key_id = get_int_input("Enter key ID to clear (0-19): ", 0, 19)
+            key_id = get_int_input("Enter key ID to clear (0-19 or 100-115): ", min_val=0, max_val=115)
             if key_id is not None and str(key_id) in config:
                 del config[str(key_id)]
                 print(f"✅ Key {key_id} cleared")
